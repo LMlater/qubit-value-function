@@ -694,6 +694,92 @@ def test_case14_t2_learned_small_max_affine_uses_true_cost_gaps() -> None:
     assert top3_calibration["selected_row"]["exact_marked_set"]
     assert top3_marked == ["1100", "1110", "1101"]
     assert commitment_to_bitstring(embedded_commitments[embedded_best_index]) == "110011111100"
+
+
+def test_case14_t2_adaptive_max_affine_finds_embedded_true_optimum() -> None:
+    from experiments.stage1_case14_t2_adaptive_max_affine_minimum_search import (
+        run_adaptive_trial,
+    )
+
+    instance = leading_time_window_instance(load_uc_instance("data/case14.json.gz"), 2)
+    commitments = all_commitments(len(instance.generators), instance.time_horizon)
+    values, _ = evaluate_values(instance, commitments)
+    base_commitment = commitments[int(np.nanargmin(values))]
+    embedded_commitments = embedded_selected_commitments(base_commitment, (0, 5))
+    embedded_values, _ = evaluate_values(instance, embedded_commitments)
+    embedded_best_index = int(np.nanargmin(embedded_values))
+    learned = learn_gap_weighted_max_affine_pieces(
+        instance=instance,
+        selected_generator_indices=(0, 5),
+        embedded_values=embedded_values,
+        embedded_best_index=embedded_best_index,
+        max_weight=7,
+    )
+    template_spec = GateLevelMaxAffineOracleSpec(
+        pieces=learned.pieces,
+        threshold=0,
+        bit_labels=learned.bit_labels,
+    )
+
+    result = run_adaptive_trial(
+        predicted_values=template_spec.values_for_all_x(),
+        true_values=embedded_values,
+        embedded_commitments=embedded_commitments,
+        learned_pieces=learned.pieces,
+        bit_labels=learned.bit_labels,
+        initial_index=7,
+        max_rounds=5,
+        rng=np.random.default_rng(0),
+    )
+
+    assert result["success"]
+    assert result["best_index"] == embedded_best_index
+    assert result["best_true_value"] == embedded_values[embedded_best_index]
+    assert result["accepted_update_count"] >= 1
+
+
+def test_case14_t2_adaptive_success_uses_true_not_predicted_optimum() -> None:
+    from experiments.stage1_case14_t2_adaptive_max_affine_minimum_search import (
+        run_adaptive_trial,
+    )
+
+    pieces = (
+        GateLevelAffinePieceSpec(
+            weights=(1, 1),
+            inverted_bit_indices=(1,),
+            name="misordered_piece",
+        ),
+    )
+    predicted_values = GateLevelMaxAffineOracleSpec(
+        pieces=pieces,
+        threshold=0,
+        bit_labels=("x0", "x1"),
+    ).values_for_all_x()
+    true_values = np.array([0.0, 10.0, 1.0, 2.0])
+    embedded_commitments = np.array(
+        [
+            [[0, 0]],
+            [[1, 0]],
+            [[0, 1]],
+            [[1, 1]],
+        ],
+        dtype=int,
+    )
+
+    result = run_adaptive_trial(
+        predicted_values=predicted_values,
+        true_values=true_values,
+        embedded_commitments=embedded_commitments,
+        learned_pieces=pieces,
+        bit_labels=("x0", "x1"),
+        initial_index=3,
+        max_rounds=4,
+        rng=np.random.default_rng(0),
+    )
+
+    assert int(np.argmin(predicted_values)) != int(np.argmin(true_values))
+    assert result["success"] == (result["best_index"] == int(np.argmin(true_values)))
+    assert not result["success"]
 def test_tie_tolerant_threshold_keeps_nearly_equal_costs_together() -> None:
     values = np.array([1.0, 2.0, 2.0 + 1e-12, 3.0])
     strict = tie_tolerant_threshold_case_for_top_count(values, 2, 0.0)
