@@ -1,0 +1,1644 @@
+{
+  "instance": "data\\case14.json.gz",
+  "method": "case14 Hamming-distance phase features around the optimum",
+  "period": 0,
+  "fixed_load_mw": [
+    310.50480000000005
+  ],
+  "generators": [
+    "g1",
+    "g2",
+    "g3",
+    "g4",
+    "g5",
+    "g6"
+  ],
+  "num_bits": 6,
+  "num_commitments": 64,
+  "optimum": {
+    "bitstring": "101110",
+    "total_cost": 12641.692592000003,
+    "hamming_to_optimum": 0
+  },
+  "runner_up": {
+    "bitstring": "110110",
+    "total_cost": 15086.220966352943,
+    "hamming_to_optimum": 2
+  },
+  "center_bitstring": "101110",
+  "max_degree": 6,
+  "experiments": [
+    {
+      "target_count": 1,
+      "requested_target_count": 1,
+      "threshold": 13863.956779176473,
+      "best_degree": {
+        "degree": 6,
+        "correct_marked_set": true,
+        "max_phase_factor_error": 2.2737367544323206e-13,
+        "self_inverse_error": 4.547473508864641e-13,
+        "target_probability": 0.996585680786799
+      },
+      "degree_rows": [
+        {
+          "degree": 1,
+          "feature_count": 2,
+          "evaluation": {
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "target_count": 1,
+            "predicted_count": 0,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_phase_error": 2.7979809571034093,
+            "max_phase_factor_error": 1.9705552847778824
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 0.6737797067844402,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.012251115947386232,
+          "non_target_probability": 0.987748884052615,
+          "iterations": 6,
+          "coefficients": [
+            0.3436116964863836,
+            -0.5890486225480864
+          ]
+        },
+        {
+          "degree": 2,
+          "feature_count": 3,
+          "evaluation": {
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "target_count": 1,
+            "predicted_count": 0,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_phase_error": 2.0616701789183027,
+            "max_phase_factor_error": 1.715457220000545
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.7638425286967088,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.018566647994446694,
+          "non_target_probability": 0.9814333520055538,
+          "iterations": 6,
+          "coefficients": [
+            1.0799224746714902,
+            -4.123340357836604,
+            3.5342917352885186
+          ]
+        },
+        {
+          "degree": 3,
+          "feature_count": 4,
+          "evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "target_count": 1,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_phase_error": 1.0799224746714842,
+            "max_phase_factor_error": 1.0282054883864373
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.7638425286967034,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.07492201301195264,
+          "non_target_probability": 0.9250779869880444,
+          "iterations": 6,
+          "coefficients": [
+            2.061670178918309,
+            -13.155419236907278,
+            24.74004214701963,
+            -14.137166941154074
+          ]
+        },
+        {
+          "degree": 4,
+          "feature_count": 5,
+          "evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "target_count": 1,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_phase_error": 0.3436116964863718,
+            "max_phase_factor_error": 0.3419237775205908
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 0.673779706784418,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.5669799300904191,
+          "non_target_probability": 0.4330200699095781,
+          "iterations": 6,
+          "coefficients": [
+            2.7979809571034213,
+            -26.114488932965074,
+            80.11061266653925,
+            -98.96016858807786,
+            42.41150082346195
+          ]
+        },
+        {
+          "degree": 5,
+          "feature_count": 6,
+          "evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "target_count": 1,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_phase_error": 0.04908738521238609,
+            "max_phase_factor_error": 0.04908245704587014
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 0.09813534865492705,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.985546811586801,
+          "non_target_probability": 0.014453188413198698,
+          "iterations": 6,
+          "coefficients": [
+            3.092505268377479,
+            -38.01327110843661,
+            164.9336143134669,
+            -325.154839646554,
+            296.88050576424905,
+            -101.78760197631512
+          ]
+        },
+        {
+          "degree": 6,
+          "feature_count": 7,
+          "evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "target_count": 1,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_phase_error": 2.2737367544323206e-13,
+            "max_phase_factor_error": 2.2737367544323206e-13
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 4.547473508864641e-13,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.996585680786799,
+          "non_target_probability": 0.003414319213200956,
+          "iterations": 6,
+          "coefficients": [
+            3.141592653589831,
+            -46.1814120077687,
+            255.09732347148378,
+            -692.7211801165244,
+            989.601685880732,
+            -712.5132138341104,
+            203.575203952598
+          ]
+        }
+      ]
+    },
+    {
+      "target_count": 2,
+      "requested_target_count": 2,
+      "threshold": 15863.956779176471,
+      "best_degree": {
+        "degree": 6,
+        "correct_marked_set": false,
+        "max_phase_factor_error": 1.9890437907365248,
+        "self_inverse_error": 0.415823381635924,
+        "target_probability": 0.8130688001947924
+      },
+      "degree_rows": [
+        {
+          "degree": 1,
+          "feature_count": 2,
+          "evaluation": {
+            "marked_accuracy": 0.96875,
+            "correct_marked_set": false,
+            "target_count": 2,
+            "predicted_count": 0,
+            "false_positive_count": 0,
+            "false_negative_count": 2,
+            "max_phase_error": 2.9125181892655374,
+            "max_phase_factor_error": 1.986895558038889
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 0.9427934736519954,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.027058331902296763,
+          "non_target_probability": 0.9729416680977041,
+          "iterations": 4,
+          "coefficients": [
+            0.49087385212340523,
+            -0.7853981633974487
+          ]
+        },
+        {
+          "degree": 2,
+          "feature_count": 3,
+          "evaluation": {
+            "marked_accuracy": 0.96875,
+            "correct_marked_set": false,
+            "target_count": 2,
+            "predicted_count": 0,
+            "false_positive_count": 0,
+            "false_negative_count": 2,
+            "max_phase_error": 2.9583330821303897,
+            "max_phase_factor_error": 1.9916098551493235
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 1.8477590650225726,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.06067257847542889,
+          "non_target_probability": 0.9393274215245712,
+          "iterations": 4,
+          "coefficients": [
+            1.178097245096171,
+            -4.084070449666731,
+            3.2986722862692828
+          ]
+        },
+        {
+          "degree": 3,
+          "feature_count": 4,
+          "evaluation": {
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "target_count": 2,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_phase_error": 3.115412714809878,
+            "max_phase_factor_error": 1.999828655148014
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.8477590650225701,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.021080531172753575,
+          "non_target_probability": 0.9789194688272479,
+          "iterations": 4,
+          "coefficients": [
+            1.9634954084936256,
+            -11.309733552923266,
+            20.26327261565416,
+            -11.309733552923255
+          ]
+        },
+        {
+          "degree": 4,
+          "feature_count": 5,
+          "evaluation": {
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "target_count": 2,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_phase_error": 3.121957699504863,
+            "max_phase_factor_error": 1.999903617918656
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 0.9427934736519784,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.4563782110405048,
+          "non_target_probability": 0.5436217889594933,
+          "iterations": 4,
+          "coefficients": [
+            2.6507188014663976,
+            -23.404865269243885,
+            71.94247176720583,
+            -90.47786842338543,
+            39.584067435231134
+          ]
+        },
+        {
+          "degree": 5,
+          "feature_count": 6,
+          "evaluation": {
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "target_count": 2,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_phase_error": 3.0303279137750945,
+            "max_phase_factor_error": 1.9969058375678965
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 0.2220706171086749,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.7848323657924854,
+          "non_target_probability": 0.21516763420751708,
+          "iterations": 4,
+          "coefficients": [
+            3.0434178831651426,
+            -39.269908169872686,
+            185.039807296443,
+            -392.07076316802096,
+            378.8760740229478,
+            -135.716802635087
+          ]
+        },
+        {
+          "degree": 6,
+          "feature_count": 7,
+          "evaluation": {
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "target_count": 2,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_phase_error": 2.9321531433502663,
+            "max_phase_factor_error": 1.9890437907365248
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 0.415823381635924,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.8130688001947924,
+          "non_target_probability": 0.18693119980520634,
+          "iterations": 4,
+          "coefficients": [
+            3.1415926535898744,
+            -55.60618996853736,
+            365.36722561248183,
+            -1127.2034441079818,
+            1764.3184342559528,
+            -1357.1680263507124,
+            407.1504079052077
+          ]
+        }
+      ]
+    },
+    {
+      "target_count": 6,
+      "requested_target_count": 5,
+      "threshold": 17103.95451764706,
+      "best_degree": {
+        "degree": 6,
+        "correct_marked_set": false,
+        "max_phase_factor_error": 1.9318516525780318,
+        "self_inverse_error": 1.486289650955289,
+        "target_probability": 0.3504478206303173
+      },
+      "degree_rows": [
+        {
+          "degree": 1,
+          "feature_count": 2,
+          "evaluation": {
+            "marked_accuracy": 0.90625,
+            "correct_marked_set": false,
+            "target_count": 6,
+            "predicted_count": 0,
+            "false_positive_count": 0,
+            "false_negative_count": 6,
+            "max_phase_error": 2.552544031041707,
+            "max_phase_factor_error": 1.9138806714644176
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.8477590650225737,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.08321846181738692,
+          "non_target_probability": 0.9167815381826139,
+          "iterations": 2,
+          "coefficients": [
+            1.1780972450961726,
+            -1.76714586764426
+          ]
+        },
+        {
+          "degree": 2,
+          "feature_count": 3,
+          "evaluation": {
+            "marked_accuracy": 0.921875,
+            "correct_marked_set": false,
+            "target_count": 6,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 5,
+            "max_phase_error": 2.604903908601538,
+            "max_phase_factor_error": 1.9284223663406588
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.8477590650225746,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.1448228769609373,
+          "non_target_probability": 0.8551771230390633,
+          "iterations": 2,
+          "coefficients": [
+            1.9634954084936194,
+            -5.5370570519520115,
+            3.7699111843077526
+          ]
+        },
+        {
+          "degree": 3,
+          "feature_count": 4,
+          "evaluation": {
+            "marked_accuracy": 0.921875,
+            "correct_marked_set": false,
+            "target_count": 6,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 5,
+            "max_phase_error": 2.6441738167714077,
+            "max_phase_factor_error": 1.9384618194135084
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.821727649842353,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.18166882809624757,
+          "non_target_probability": 0.8183311719037526,
+          "iterations": 2,
+          "coefficients": [
+            2.159844949342984,
+            -7.3434728277661385,
+            8.011061266653961,
+            -2.827433388230808
+          ]
+        },
+        {
+          "degree": 4,
+          "feature_count": 5,
+          "evaluation": {
+            "marked_accuracy": 0.921875,
+            "correct_marked_set": false,
+            "target_count": 6,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 5,
+            "max_phase_error": 2.6638087708563427,
+            "max_phase_factor_error": 1.943201533888241
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.732050807568883,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.24784549431713818,
+          "non_target_probability": 0.7521545056828617,
+          "iterations": 2,
+          "coefficients": [
+            2.454369260617027,
+            -12.52710070618923,
+            30.15928947446168,
+            -36.75663404700009,
+            16.96460032938466
+          ]
+        },
+        {
+          "degree": 5,
+          "feature_count": 6,
+          "evaluation": {
+            "marked_accuracy": 0.921875,
+            "correct_marked_set": false,
+            "target_count": 6,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 5,
+            "max_phase_error": 2.5001841534818183,
+            "max_phase_factor_error": 1.8980272983764095
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.3186916302001972,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.3419480370741304,
+          "non_target_probability": 0.6580519629258691,
+          "iterations": 2,
+          "coefficients": [
+            2.9452431127404632,
+            -32.358404331975414,
+            171.53095888600905,
+            -413.74775247779667,
+            441.07960856403275,
+            -169.6460032938596
+          ]
+        },
+        {
+          "degree": 6,
+          "feature_count": 7,
+          "evaluation": {
+            "marked_accuracy": 0.921875,
+            "correct_marked_set": false,
+            "target_count": 6,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 5,
+            "max_phase_error": 2.61799387799109,
+            "max_phase_factor_error": 1.9318516525780318
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.486289650955289,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.3504478206303173,
+          "non_target_probability": 0.6495521793696818,
+          "iterations": 2,
+          "coefficients": [
+            3.1415926535899605,
+            -65.03096792930555,
+            532.1857955180944,
+            -1884.0131143577485,
+            3211.9643290300983,
+            -2612.54845072516,
+            814.3008158104318
+          ]
+        }
+      ]
+    },
+    {
+      "target_count": 10,
+      "requested_target_count": 10,
+      "threshold": 19979.262592,
+      "best_degree": {
+        "degree": 6,
+        "correct_marked_set": false,
+        "max_phase_factor_error": 1.7320508075685845,
+        "self_inverse_error": 1.9890437907366494,
+        "target_probability": 0.3314946436244187
+      },
+      "degree_rows": [
+        {
+          "degree": 1,
+          "feature_count": 2,
+          "evaluation": {
+            "marked_accuracy": 0.859375,
+            "correct_marked_set": false,
+            "target_count": 10,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 9,
+            "max_phase_error": 2.1925698728178773,
+            "max_phase_factor_error": 1.7790321508437126
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.973286664169758,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.2010809247379174,
+          "non_target_probability": 0.7989190752620833,
+          "iterations": 1,
+          "coefficients": [
+            1.8653206380689393,
+            -2.74889357189107
+          ]
+        },
+        {
+          "degree": 2,
+          "feature_count": 3,
+          "evaluation": {
+            "marked_accuracy": 0.828125,
+            "correct_marked_set": false,
+            "target_count": 10,
+            "predicted_count": 7,
+            "false_positive_count": 4,
+            "false_negative_count": 7,
+            "max_phase_error": 2.251474735072687,
+            "max_phase_factor_error": 1.805170568699722
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 1.9828897227476214,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.270359796276396,
+          "non_target_probability": 0.7296402037236038,
+          "iterations": 1,
+          "coefficients": [
+            2.7488935718910668,
+            -6.99004365423729,
+            4.241150082346223
+          ]
+        },
+        {
+          "degree": 3,
+          "feature_count": 4,
+          "evaluation": {
+            "marked_accuracy": 0.828125,
+            "correct_marked_set": false,
+            "target_count": 10,
+            "predicted_count": 7,
+            "false_positive_count": 4,
+            "false_negative_count": 7,
+            "max_phase_error": 2.1729349187329414,
+            "max_phase_factor_error": 1.7699752749260842
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.982889722747621,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.2556544234182072,
+          "non_target_probability": 0.7443455765817922,
+          "iterations": 1,
+          "coefficients": [
+            2.3561944901923413,
+            -3.377212102609014,
+            -4.2411500823462465,
+            5.654866776461641
+          ]
+        },
+        {
+          "degree": 4,
+          "feature_count": 5,
+          "evaluation": {
+            "marked_accuracy": 0.828125,
+            "correct_marked_set": false,
+            "target_count": 10,
+            "predicted_count": 7,
+            "false_positive_count": 4,
+            "false_negative_count": 7,
+            "max_phase_error": 2.1663899340379644,
+            "max_phase_factor_error": 1.7669183629494667
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.9732866641697595,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.25506188299930443,
+          "non_target_probability": 0.7449381170006961,
+          "iterations": 1,
+          "coefficients": [
+            2.2580197197676544,
+            -1.6493361431345774,
+            -11.623892818282462,
+            16.964600329385224,
+            -5.654866776461795
+          ]
+        },
+        {
+          "degree": 5,
+          "feature_count": 6,
+          "evaluation": {
+            "marked_accuracy": 0.859375,
+            "correct_marked_set": false,
+            "target_count": 10,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 9,
+            "max_phase_error": 1.9700403931885333,
+            "max_phase_factor_error": 1.666566512415472
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.947753958554684,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.2703865574270808,
+          "non_target_probability": 0.7296134425729186,
+          "iterations": 1,
+          "coefficients": [
+            2.8470683423157834,
+            -25.446900494078093,
+            158.02211047557492,
+            -435.42474178757186,
+            503.2831431051171,
+            -203.57520395263194
+          ]
+        },
+        {
+          "degree": 6,
+          "feature_count": 7,
+          "evaluation": {
+            "marked_accuracy": 0.859375,
+            "correct_marked_set": false,
+            "target_count": 10,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 9,
+            "max_phase_error": 2.0943951023926104,
+            "max_phase_factor_error": 1.7320508075685845
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 1.9890437907366494,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.3314946436244187,
+          "non_target_probability": 0.6685053563755815,
+          "iterations": 1,
+          "coefficients": [
+            3.1415926535900467,
+            -74.45574589007374,
+            699.0043654237072,
+            -2640.822784607517,
+            4659.610223804248,
+            -3867.9288750996093,
+            1221.4512237156575
+          ]
+        }
+      ]
+    },
+    {
+      "target_count": 21,
+      "requested_target_count": 20,
+      "threshold": 24383.954517647064,
+      "best_degree": {
+        "degree": 6,
+        "correct_marked_set": false,
+        "max_phase_factor_error": 1.9021130325902447,
+        "self_inverse_error": 1.9890437907364138,
+        "target_probability": 0.34898379487150466
+      },
+      "degree_rows": [
+        {
+          "degree": 1,
+          "feature_count": 2,
+          "evaluation": {
+            "marked_accuracy": 0.65625,
+            "correct_marked_set": false,
+            "target_count": 21,
+            "predicted_count": 7,
+            "false_positive_count": 4,
+            "false_negative_count": 18,
+            "max_phase_error": 2.405281875404687,
+            "max_phase_factor_error": 1.8659855976694781
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.997590912410345,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.3268437280624613,
+          "non_target_probability": 0.6731562719375399,
+          "iterations": 1,
+          "coefficients": [
+            1.914408023281279,
+            -1.7671458676442593
+          ]
+        },
+        {
+          "degree": 2,
+          "feature_count": 3,
+          "evaluation": {
+            "marked_accuracy": 0.65625,
+            "correct_marked_set": false,
+            "target_count": 21,
+            "predicted_count": 7,
+            "false_positive_count": 4,
+            "false_negative_count": 18,
+            "max_phase_error": 2.402009383057198,
+            "max_phase_factor_error": 1.8648053465395509
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 1.9989291749527316,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.3235107325712056,
+          "non_target_probability": 0.6764892674287942,
+          "iterations": 1,
+          "coefficients": [
+            1.8653206380689373,
+            -1.5315264186250221,
+            -0.2356194490192366
+          ]
+        },
+        {
+          "degree": 3,
+          "feature_count": 4,
+          "evaluation": {
+            "marked_accuracy": 0.65625,
+            "correct_marked_set": false,
+            "target_count": 21,
+            "predicted_count": 7,
+            "false_positive_count": 4,
+            "false_negative_count": 18,
+            "max_phase_error": 2.2841996585475823,
+            "max_phase_factor_error": 1.8190167388502025
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.9989291749527311,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.32679273487818905,
+          "non_target_probability": 0.6732072651218107,
+          "iterations": 1,
+          "coefficients": [
+            2.4543692606170273,
+            -6.9507737460674175,
+            12.48783079801941,
+            -8.482300164692433
+          ]
+        },
+        {
+          "degree": 4,
+          "feature_count": 5,
+          "evaluation": {
+            "marked_accuracy": 0.6875,
+            "correct_marked_set": false,
+            "target_count": 21,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 20,
+            "max_phase_error": 2.2940171355900496,
+            "max_phase_factor_error": 1.8230757911799127
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.9997322758191234,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.33204902015043486,
+          "non_target_probability": 0.667950979849565,
+          "iterations": 1,
+          "coefficients": [
+            2.6016314162540586,
+            -9.542587685279138,
+            23.561944901923987,
+            -25.446900494078136,
+            8.482300164692852
+          ]
+        },
+        {
+          "degree": 5,
+          "feature_count": 6,
+          "evaluation": {
+            "marked_accuracy": 0.6875,
+            "correct_marked_set": false,
+            "target_count": 21,
+            "predicted_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 20,
+            "max_phase_error": 2.3267420590649515,
+            "max_phase_factor_error": 1.8362881647444123
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 1.993310478618359,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.3399525577031673,
+          "non_target_probability": 0.6600474422968325,
+          "iterations": 1,
+          "coefficients": [
+            2.699806186678782,
+            -13.508848410437674,
+            51.83627878424268,
+            -100.8451241802618,
+            93.30530181164963,
+            -33.92920065878273
+          ]
+        },
+        {
+          "degree": 6,
+          "feature_count": 7,
+          "evaluation": {
+            "marked_accuracy": 0.703125,
+            "correct_marked_set": false,
+            "target_count": 21,
+            "predicted_count": 16,
+            "false_positive_count": 7,
+            "false_negative_count": 12,
+            "max_phase_error": 2.513274122871632,
+            "max_phase_factor_error": 1.9021130325902447
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 1.9890437907364138,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.34898379487150466,
+          "non_target_probability": 0.6510162051284961,
+          "iterations": 1,
+          "coefficients": [
+            3.141592653590209,
+            -87.02211650443422,
+            863.3096612064722,
+            -3408.942188410307,
+            6327.79592286059,
+            -5530.459707379463,
+            1832.1768355735546
+          ]
+        }
+      ]
+    },
+    {
+      "target_count": 32,
+      "requested_target_count": 32,
+      "threshold": 88364.59705882357,
+      "best_degree": {
+        "degree": 5,
+        "correct_marked_set": false,
+        "max_phase_factor_error": 1.931851652578132,
+        "self_inverse_error": 2.0,
+        "target_probability": 0.500000000000002
+      },
+      "degree_rows": [
+        {
+          "degree": 1,
+          "feature_count": 2,
+          "evaluation": {
+            "marked_accuracy": 0.625,
+            "correct_marked_set": false,
+            "target_count": 32,
+            "predicted_count": 22,
+            "false_positive_count": 7,
+            "false_negative_count": 17,
+            "max_phase_error": 2.4870941840919216,
+            "max_phase_factor_error": 1.8938602589902118
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 2.0,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.5000000000000001,
+          "non_target_probability": 0.5000000000000004,
+          "iterations": 1,
+          "coefficients": [
+            2.9452431127404304,
+            -2.7488935718910708
+          ]
+        },
+        {
+          "degree": 2,
+          "feature_count": 3,
+          "evaluation": {
+            "marked_accuracy": 0.625,
+            "correct_marked_set": false,
+            "target_count": 32,
+            "predicted_count": 22,
+            "false_positive_count": 7,
+            "false_negative_count": 17,
+            "max_phase_error": 2.4870941840919225,
+            "max_phase_factor_error": 1.893860258990212
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.0,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.5,
+          "non_target_probability": 0.5000000000000002,
+          "iterations": 1,
+          "coefficients": [
+            2.9452431127404277,
+            -2.748893571891064,
+            -5.10702591327572e-15
+          ]
+        },
+        {
+          "degree": 3,
+          "feature_count": 4,
+          "evaluation": {
+            "marked_accuracy": 0.625,
+            "correct_marked_set": false,
+            "target_count": 32,
+            "predicted_count": 22,
+            "false_positive_count": 7,
+            "false_negative_count": 17,
+            "max_phase_error": 2.4870941840919247,
+            "max_phase_factor_error": 1.893860258990213
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.0,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.5000000000000002,
+          "non_target_probability": 0.5,
+          "iterations": 1,
+          "coefficients": [
+            3.3379421944391527,
+            -6.361725123519305,
+            8.482300164692365,
+            -5.654866776461579
+          ]
+        },
+        {
+          "degree": 4,
+          "feature_count": 5,
+          "evaluation": {
+            "marked_accuracy": 0.625,
+            "correct_marked_set": false,
+            "target_count": 32,
+            "predicted_count": 22,
+            "false_positive_count": 7,
+            "false_negative_count": 17,
+            "max_phase_error": 2.487094184091923,
+            "max_phase_factor_error": 1.8938602589902123
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 2.0,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.5000000000000002,
+          "non_target_probability": 0.4999999999999998,
+          "iterations": 1,
+          "coefficients": [
+            3.3379421944391563,
+            -6.361725123519402,
+            8.482300164692735,
+            -5.654866776462071,
+            2.255973186038318e-13
+          ]
+        },
+        {
+          "degree": 5,
+          "feature_count": 6,
+          "evaluation": {
+            "marked_accuracy": 0.625,
+            "correct_marked_set": false,
+            "target_count": 32,
+            "predicted_count": 22,
+            "false_positive_count": 7,
+            "false_negative_count": 17,
+            "max_phase_error": 2.617993877991477,
+            "max_phase_factor_error": 1.931851652578132
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 1.1102230246251565e-16,
+            "self_inverse_error": 2.0,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.500000000000002,
+          "non_target_probability": 0.4999999999999981,
+          "iterations": 1,
+          "coefficients": [
+            3.1415926535898,
+            1.570796326794508,
+            -48.06636759992231,
+            145.14158059584622,
+            -169.64600329384743,
+            67.85840131753922
+          ]
+        },
+        {
+          "degree": 6,
+          "feature_count": 7,
+          "evaluation": {
+            "marked_accuracy": 0.625,
+            "correct_marked_set": false,
+            "target_count": 32,
+            "predicted_count": 42,
+            "false_positive_count": 17,
+            "false_negative_count": 7,
+            "max_phase_error": 2.6179938779915126,
+            "max_phase_factor_error": 1.9318516525781417
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": false,
+            "real_diagonal": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.0,
+            "diagonal_error": 0.0
+          },
+          "target_probability": 0.5000000000000016,
+          "non_target_probability": 0.4999999999999977,
+          "iterations": 1,
+          "coefficients": [
+            3.1415926535897634,
+            1.5707963268006977,
+            -48.06636759998974,
+            145.14158059611853,
+            -169.64600329435697,
+            67.85840131798582,
+            -1.4818607452227184e-10
+          ]
+        }
+      ]
+    }
+  ],
+  "rows": [
+    {
+      "bitstring": "101110",
+      "total_cost": 12641.692592000003,
+      "hamming_to_optimum": 0
+    },
+    {
+      "bitstring": "110110",
+      "total_cost": 15086.220966352943,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "111110",
+      "total_cost": 16641.692592,
+      "hamming_to_optimum": 1
+    },
+    {
+      "bitstring": "100111",
+      "total_cost": 16979.262592,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "111010",
+      "total_cost": 17103.95451764706,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "111100",
+      "total_cost": 17103.95451764706,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "011110",
+      "total_cost": 18275.49451764706,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "101111",
+      "total_cost": 18917.037000000004,
+      "hamming_to_optimum": 1
+    },
+    {
+      "bitstring": "101011",
+      "total_cost": 18979.262592,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "101101",
+      "total_cost": 18979.262592,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "110111",
+      "total_cost": 20979.262592,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "110011",
+      "total_cost": 21194.680966352942,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "110101",
+      "total_cost": 21194.680966352942,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "010111",
+      "total_cost": 22287.310400000002,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "111111",
+      "total_cost": 22917.037000000004,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "111011",
+      "total_cost": 22979.262592,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "111101",
+      "total_cost": 22979.262592,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "111001",
+      "total_cost": 23212.414517647063,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "011111",
+      "total_cost": 23667.15655458824,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "011011",
+      "total_cost": 24383.954517647064,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "011101",
+      "total_cost": 24383.954517647064,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "001111",
+      "total_cost": 29701.567058823577,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "110010",
+      "total_cost": 49716.34000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "110100",
+      "total_cost": 49716.34000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "111000",
+      "total_cost": 51921.314117647096,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "110001",
+      "total_cost": 55824.80000000005,
+      "hamming_to_optimum": 5
+    },
+    {
+      "bitstring": "100110",
+      "total_cost": 83425.66000000005,
+      "hamming_to_optimum": 1
+    },
+    {
+      "bitstring": "010110",
+      "total_cost": 84207.88000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "101010",
+      "total_cost": 85425.66000000005,
+      "hamming_to_optimum": 1
+    },
+    {
+      "bitstring": "101100",
+      "total_cost": 85425.66000000005,
+      "hamming_to_optimum": 1
+    },
+    {
+      "bitstring": "011010",
+      "total_cost": 86412.85411764708,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "011100",
+      "total_cost": 86412.85411764708,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "010011",
+      "total_cost": 90316.34000000005,
+      "hamming_to_optimum": 5
+    },
+    {
+      "bitstring": "010101",
+      "total_cost": 90316.34000000005,
+      "hamming_to_optimum": 5
+    },
+    {
+      "bitstring": "100011",
+      "total_cost": 91018.55000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "100101",
+      "total_cost": 91018.55000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "101001",
+      "total_cost": 91904.80000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "011001",
+      "total_cost": 92521.31411764708,
+      "hamming_to_optimum": 5
+    },
+    {
+      "bitstring": "001110",
+      "total_cost": 119701.56705882358,
+      "hamming_to_optimum": 1
+    },
+    {
+      "bitstring": "000111",
+      "total_cost": 124025.66000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "001011",
+      "total_cost": 126025.66000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "001101",
+      "total_cost": 126025.66000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "110000",
+      "total_cost": 145824.80000000005,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "010010",
+      "total_cost": 180316.34000000005,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "010100",
+      "total_cost": 180316.34000000005,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "100010",
+      "total_cost": 181018.55000000005,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "100100",
+      "total_cost": 181018.55000000005,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "101000",
+      "total_cost": 181904.80000000005,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "011000",
+      "total_cost": 182521.31411764707,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "010001",
+      "total_cost": 186424.80000000005,
+      "hamming_to_optimum": 6
+    },
+    {
+      "bitstring": "100001",
+      "total_cost": 189904.80000000005,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "000110",
+      "total_cost": 214025.66000000003,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "001010",
+      "total_cost": 216025.66000000003,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "001100",
+      "total_cost": 216025.66000000003,
+      "hamming_to_optimum": 2
+    },
+    {
+      "bitstring": "000011",
+      "total_cost": 221618.55000000005,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "000101",
+      "total_cost": 221618.55000000005,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "001001",
+      "total_cost": 222504.80000000005,
+      "hamming_to_optimum": 4
+    },
+    {
+      "bitstring": "010000",
+      "total_cost": 276424.80000000005,
+      "hamming_to_optimum": 5
+    },
+    {
+      "bitstring": "100000",
+      "total_cost": 279904.80000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "000010",
+      "total_cost": 311618.55000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "000100",
+      "total_cost": 311618.55000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "001000",
+      "total_cost": 312504.80000000005,
+      "hamming_to_optimum": 3
+    },
+    {
+      "bitstring": "000001",
+      "total_cost": 320504.80000000005,
+      "hamming_to_optimum": 5
+    },
+    {
+      "bitstring": "000000",
+      "total_cost": 410504.80000000005,
+      "hamming_to_optimum": 4
+    }
+  ]
+}

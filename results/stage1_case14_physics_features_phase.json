@@ -1,0 +1,410 @@
+{
+  "instance": "data\\case14.json.gz",
+  "method": "case14 fixed-threshold physics-feature phase model",
+  "period": 0,
+  "fixed_load_mw": [
+    310.50480000000005
+  ],
+  "generators": [
+    "g1",
+    "g2",
+    "g3",
+    "g4",
+    "g5",
+    "g6"
+  ],
+  "num_bits": 6,
+  "num_commitments": 64,
+  "threshold": 13863.956779176473,
+  "optimum": {
+    "bitstring": "101110",
+    "total_cost": 12641.692592000003,
+    "target": true
+  },
+  "runner_up": {
+    "bitstring": "110110",
+    "total_cost": 15086.220966352943,
+    "target": false
+  },
+  "feature_names": [
+    "1",
+    "unit_count",
+    "pmax_capacity",
+    "pmin_generation",
+    "startup_cost",
+    "pmax_cost",
+    "avg_cost_sum",
+    "reserve_capacity",
+    "capacity_margin",
+    "reserve_margin",
+    "capacity_margin_sq",
+    "reserve_margin_sq",
+    "startup_x_margin",
+    "cost_x_margin",
+    "capacity_x_reserve"
+  ],
+  "coefficients": [
+    -0.5405112438784938,
+    1.9911571814100415,
+    0.3526278112924117,
+    -0.15431411885939783,
+    -0.003868945581749328,
+    -1.2109582528068106,
+    0.5601246060614118,
+    -0.3069126528890419,
+    1.1134717502469629,
+    -0.25382206402780233,
+    1.8158346653631843,
+    0.07916877950389656,
+    -0.9817194073816142,
+    -2.886842106655743,
+    0.5133770325875201
+  ],
+  "evaluation": {
+    "marked_accuracy": 0.984375,
+    "correct_marked_set": false,
+    "target_count": 1,
+    "predicted_count": 0,
+    "false_positive_count": 0,
+    "false_negative_count": 1,
+    "max_phase_error": 2.6072295904747946,
+    "max_phase_factor_error": 1.9290376830511728
+  },
+  "oracle_checks": {
+    "unitary": true,
+    "self_inverse": false,
+    "real_diagonal": true
+  },
+  "oracle_errors": {
+    "unitarity_error": 2.220446049250313e-16,
+    "self_inverse_error": 1.018585998452811,
+    "diagonal_error": 0.0
+  },
+  "grover": {
+    "iterations": 6,
+    "target_probability": 0.01634136580405189,
+    "non_target_probability": 0.9836586341959488
+  },
+  "rows": [
+    {
+      "bitstring": "101110",
+      "total_cost": 12641.692592000003,
+      "target": true
+    },
+    {
+      "bitstring": "110110",
+      "total_cost": 15086.220966352943,
+      "target": false
+    },
+    {
+      "bitstring": "111110",
+      "total_cost": 16641.692592,
+      "target": false
+    },
+    {
+      "bitstring": "100111",
+      "total_cost": 16979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "111010",
+      "total_cost": 17103.95451764706,
+      "target": false
+    },
+    {
+      "bitstring": "111100",
+      "total_cost": 17103.95451764706,
+      "target": false
+    },
+    {
+      "bitstring": "011110",
+      "total_cost": 18275.49451764706,
+      "target": false
+    },
+    {
+      "bitstring": "101111",
+      "total_cost": 18917.037000000004,
+      "target": false
+    },
+    {
+      "bitstring": "101011",
+      "total_cost": 18979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "101101",
+      "total_cost": 18979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "110111",
+      "total_cost": 20979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "110011",
+      "total_cost": 21194.680966352942,
+      "target": false
+    },
+    {
+      "bitstring": "110101",
+      "total_cost": 21194.680966352942,
+      "target": false
+    },
+    {
+      "bitstring": "010111",
+      "total_cost": 22287.310400000002,
+      "target": false
+    },
+    {
+      "bitstring": "111111",
+      "total_cost": 22917.037000000004,
+      "target": false
+    },
+    {
+      "bitstring": "111011",
+      "total_cost": 22979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "111101",
+      "total_cost": 22979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "111001",
+      "total_cost": 23212.414517647063,
+      "target": false
+    },
+    {
+      "bitstring": "011111",
+      "total_cost": 23667.15655458824,
+      "target": false
+    },
+    {
+      "bitstring": "011011",
+      "total_cost": 24383.954517647064,
+      "target": false
+    },
+    {
+      "bitstring": "011101",
+      "total_cost": 24383.954517647064,
+      "target": false
+    },
+    {
+      "bitstring": "001111",
+      "total_cost": 29701.567058823577,
+      "target": false
+    },
+    {
+      "bitstring": "110010",
+      "total_cost": 49716.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "110100",
+      "total_cost": 49716.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "111000",
+      "total_cost": 51921.314117647096,
+      "target": false
+    },
+    {
+      "bitstring": "110001",
+      "total_cost": 55824.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100110",
+      "total_cost": 83425.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010110",
+      "total_cost": 84207.88000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101010",
+      "total_cost": 85425.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101100",
+      "total_cost": 85425.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "011010",
+      "total_cost": 86412.85411764708,
+      "target": false
+    },
+    {
+      "bitstring": "011100",
+      "total_cost": 86412.85411764708,
+      "target": false
+    },
+    {
+      "bitstring": "010011",
+      "total_cost": 90316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010101",
+      "total_cost": 90316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100011",
+      "total_cost": 91018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100101",
+      "total_cost": 91018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101001",
+      "total_cost": 91904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "011001",
+      "total_cost": 92521.31411764708,
+      "target": false
+    },
+    {
+      "bitstring": "001110",
+      "total_cost": 119701.56705882358,
+      "target": false
+    },
+    {
+      "bitstring": "000111",
+      "total_cost": 124025.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001011",
+      "total_cost": 126025.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001101",
+      "total_cost": 126025.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "110000",
+      "total_cost": 145824.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010010",
+      "total_cost": 180316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010100",
+      "total_cost": 180316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100010",
+      "total_cost": 181018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100100",
+      "total_cost": 181018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101000",
+      "total_cost": 181904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "011000",
+      "total_cost": 182521.31411764707,
+      "target": false
+    },
+    {
+      "bitstring": "010001",
+      "total_cost": 186424.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100001",
+      "total_cost": 189904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000110",
+      "total_cost": 214025.66000000003,
+      "target": false
+    },
+    {
+      "bitstring": "001010",
+      "total_cost": 216025.66000000003,
+      "target": false
+    },
+    {
+      "bitstring": "001100",
+      "total_cost": 216025.66000000003,
+      "target": false
+    },
+    {
+      "bitstring": "000011",
+      "total_cost": 221618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000101",
+      "total_cost": 221618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001001",
+      "total_cost": 222504.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010000",
+      "total_cost": 276424.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100000",
+      "total_cost": 279904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000010",
+      "total_cost": 311618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000100",
+      "total_cost": 311618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001000",
+      "total_cost": 312504.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000001",
+      "total_cost": 320504.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000000",
+      "total_cost": 410504.80000000005,
+      "target": false
+    }
+  ]
+}

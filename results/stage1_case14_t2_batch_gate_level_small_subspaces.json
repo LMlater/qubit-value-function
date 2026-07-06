@@ -1,0 +1,5042 @@
+{
+  "instance": "case14_T2",
+  "source": "data\\case14.json.gz",
+  "method": "batch T=2 true-cost-learned small max-affine gate-level Grover oracle validation",
+  "scope": {
+    "full_case14_bits": 12,
+    "screened_subspace_count": 15,
+    "gate_level_subspace_count": 3,
+    "subspace_type": "2 selected generators over 2 periods, giving 4 Grover x qubits per gate-level case",
+    "note": "The batch screens multiple small T=2 subspaces and runs full Qiskit statevector gate-level Grover simulations only for selected high-quality small subspaces."
+  },
+  "fixed_load_mw": [
+    310.50480000000005,
+    291.96720999999997
+  ],
+  "generators": [
+    "g1",
+    "g2",
+    "g3",
+    "g4",
+    "g5",
+    "g6"
+  ],
+  "bit_order": "selected generator-major order: g_i_t0,g_i_t1,...",
+  "learning_rule": {
+    "summary": "For each selected subspace, find the true best embedded commitment, flip each selected bit once, use exact UC cost increases as local sensitivities, quantize to nonnegative integer weights, and build generator-wise max-affine mismatch pieces.",
+    "max_integer_weight": 7,
+    "encoded_object": "small integer max-affine value surrogate; not a true-cost lookup table"
+  },
+  "full_t2_reference": {
+    "logic_feasible_count": 768,
+    "finite_value_count": 768,
+    "value_evaluation_seconds": 1.5435807000003479,
+    "optimum": {
+      "bitstring_generator_major": "110011111100",
+      "bitstring_time_major": "101110101110",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 0,
+          "t1": 0
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 20578.2152604
+    }
+  },
+  "screening_summary": {
+    "screened_subspace_count": 15,
+    "target_counts": [
+      1,
+      3
+    ],
+    "exact_by_target_count": {
+      "1": 15,
+      "3": 3
+    },
+    "all_requested_targets_exact_count": 3,
+    "selected_gate_level_rule": "prefer subspaces with exact requested gate targets and lower estimated qubit count; then use screening exactness and generator-index order for deterministic selection"
+  },
+  "screened_cases": [
+    {
+      "selected_generator_indices": [
+        0,
+        1
+      ],
+      "selected_generators": [
+        "g1",
+        "g2"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 12,
+      "finite_value_count": 12,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g1_t0",
+          "g1_t1",
+          "g2_t0",
+          "g2_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          109059.87446682357,
+          91227.45439042349,
+          null,
+          4000.0
+        ],
+        "integer_weights": [
+          7,
+          6,
+          7,
+          1
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g1_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g1_t0)",
+              "6*(1-g1_t1)"
+            ]
+          },
+          {
+            "name": "L1_g2_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              1
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "7*g2_t0",
+              "1*g2_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g1_t0",
+            "g1_t1",
+            "g2_t0",
+            "g2_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            6,
+            7,
+            1
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1100"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 1,
+          "selected_row": {
+            "threshold": 1,
+            "marked_count": 2,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1100",
+            "1101",
+            "1111"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1111",
+          "full_bitstring": "111111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1001",
+          "full_bitstring": "100111111100",
+          "true_cost": 27956.61606872647
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1011",
+          "full_bitstring": "101111111100",
+          "true_cost": 27956.61606872647
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        0,
+        2
+      ],
+      "selected_generators": [
+        "g1",
+        "g3"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 16,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 72,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 4,
+      "finite_value_count": 4,
+      "embedded_best_selected_bitstring": "1111",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g1_t0",
+          "g1_t1",
+          "g3_t0",
+          "g3_t1"
+        ],
+        "optimum_selected_bitstring": "1111",
+        "single_flip_cost_gaps": [
+          109059.87446682357,
+          91227.45439042349,
+          null,
+          null
+        ],
+        "integer_weights": [
+          7,
+          6,
+          7,
+          7
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g1_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g1_t0)",
+              "6*(1-g1_t1)"
+            ]
+          },
+          {
+            "name": "L1_g3_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              7
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "7*(1-g3_t0)",
+              "7*(1-g3_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g1_t0",
+            "g1_t1",
+            "g3_t0",
+            "g3_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1111",
+          "integer_weights": [
+            7,
+            6,
+            7,
+            7
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 6,
+          "selected_row": {
+            "threshold": 6,
+            "marked_count": 2,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1111",
+            "1011",
+            "0111"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1011",
+          "full_bitstring": "100011111100",
+          "true_cost": 111805.66965082349
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "0111",
+          "full_bitstring": "010011111100",
+          "true_cost": 129638.08972722357
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "0011",
+          "full_bitstring": "000011111100",
+          "true_cost": 218865.54411764708
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        0,
+        3
+      ],
+      "selected_generators": [
+        "g1",
+        "g4"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 16,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 72,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1111",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g1_t0",
+          "g1_t1",
+          "g4_t0",
+          "g4_t1"
+        ],
+        "optimum_selected_bitstring": "1111",
+        "single_flip_cost_gaps": [
+          109059.87446682357,
+          91227.45439042349,
+          72783.96740800004,
+          54951.54733159997
+        ],
+        "integer_weights": [
+          7,
+          6,
+          5,
+          4
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g1_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g1_t0)",
+              "6*(1-g1_t1)"
+            ]
+          },
+          {
+            "name": "L1_g4_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              5,
+              4
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "5*(1-g4_t0)",
+              "4*(1-g4_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g1_t0",
+            "g1_t1",
+            "g4_t0",
+            "g4_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1111",
+          "integer_weights": [
+            7,
+            6,
+            5,
+            4
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 5,
+          "selected_row": {
+            "threshold": 5,
+            "marked_count": 3,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111",
+            "1110",
+            "1101"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": true,
+      "exact_target_count": 2,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011101100",
+          "true_cost": 75529.76259199997
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011011100",
+          "true_cost": 93362.18266840004
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1011",
+          "full_bitstring": "100011111100",
+          "true_cost": 111805.66965082349
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "0111",
+          "full_bitstring": "010011111100",
+          "true_cost": 129638.08972722357
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        0,
+        4
+      ],
+      "selected_generators": [
+        "g1",
+        "g5"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 16,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 72,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1111",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g1_t0",
+          "g1_t1",
+          "g5_t0",
+          "g5_t1"
+        ],
+        "optimum_selected_bitstring": "1111",
+        "single_flip_cost_gaps": [
+          109059.87446682357,
+          91227.45439042349,
+          72783.96740800004,
+          54951.54733159997
+        ],
+        "integer_weights": [
+          7,
+          6,
+          5,
+          4
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g1_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g1_t0)",
+              "6*(1-g1_t1)"
+            ]
+          },
+          {
+            "name": "L1_g5_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              5,
+              4
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "5*(1-g5_t0)",
+              "4*(1-g5_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g1_t0",
+            "g1_t1",
+            "g5_t0",
+            "g5_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1111",
+          "integer_weights": [
+            7,
+            6,
+            5,
+            4
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 5,
+          "selected_row": {
+            "threshold": 5,
+            "marked_count": 3,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111",
+            "1110",
+            "1101"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": true,
+      "exact_target_count": 2,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111000",
+          "true_cost": 75529.76259199997
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011110100",
+          "true_cost": 93362.18266840004
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1011",
+          "full_bitstring": "100011111100",
+          "true_cost": 111805.66965082349
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "0111",
+          "full_bitstring": "010011111100",
+          "true_cost": 129638.08972722357
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        0,
+        5
+      ],
+      "selected_generators": [
+        "g1",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 21,
+          "depth": 13,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 21,
+          "depth": 56,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g1_t0",
+          "g1_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          109059.87446682357,
+          91227.45439042349,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          6,
+          1,
+          1
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g1_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g1_t0)",
+              "6*(1-g1_t1)"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "1*g6_t0",
+              "1*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g1_t0",
+            "g1_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            6,
+            1,
+            1
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1100"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 1,
+          "selected_row": {
+            "threshold": 1,
+            "marked_count": 3,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1100",
+            "1110",
+            "1101"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": true,
+      "exact_target_count": 2,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1001",
+          "full_bitstring": "100011111101",
+          "true_cost": 29519.415260399997
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111111",
+          "true_cost": 33223.5533
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        1,
+        2
+      ],
+      "selected_generators": [
+        "g2",
+        "g3"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 11,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 55,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 3,
+      "finite_value_count": 3,
+      "embedded_best_selected_bitstring": "0011",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g2_t0",
+          "g2_t1",
+          "g3_t0",
+          "g3_t1"
+        ],
+        "optimum_selected_bitstring": "0011",
+        "single_flip_cost_gaps": [
+          null,
+          4000.0,
+          null,
+          null
+        ],
+        "integer_weights": [
+          7,
+          7,
+          7,
+          7
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g2_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              7,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "7*g2_t0",
+              "7*g2_t1"
+            ]
+          },
+          {
+            "name": "L1_g3_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              7
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "7*(1-g3_t0)",
+              "7*(1-g3_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g2_t0",
+            "g2_t1",
+            "g3_t0",
+            "g3_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "0011",
+          "integer_weights": [
+            7,
+            7,
+            7,
+            7
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "0011"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 2,
+            "error_count": 2,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "0011",
+            "0111",
+            "1111"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "0011",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "0111",
+          "full_bitstring": "110111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1111",
+          "full_bitstring": "111111111100",
+          "true_cost": 24578.2152604
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        1,
+        3
+      ],
+      "selected_generators": [
+        "g2",
+        "g4"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 11,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 55,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 12,
+      "finite_value_count": 12,
+      "embedded_best_selected_bitstring": "0011",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g2_t0",
+          "g2_t1",
+          "g4_t0",
+          "g4_t1"
+        ],
+        "optimum_selected_bitstring": "0011",
+        "single_flip_cost_gaps": [
+          null,
+          4000.0,
+          72783.96740800004,
+          54951.54733159997
+        ],
+        "integer_weights": [
+          7,
+          1,
+          7,
+          6
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g2_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              1,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "7*g2_t0",
+              "1*g2_t1"
+            ]
+          },
+          {
+            "name": "L1_g4_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              6
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "7*(1-g4_t0)",
+              "6*(1-g4_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g2_t0",
+            "g2_t1",
+            "g4_t0",
+            "g4_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "0011",
+          "integer_weights": [
+            7,
+            1,
+            7,
+            6
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "0011"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 1,
+          "selected_row": {
+            "threshold": 1,
+            "marked_count": 2,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "0011",
+            "0111",
+            "1111"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "0011",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "0111",
+          "full_bitstring": "110111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1111",
+          "full_bitstring": "111111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "0110",
+          "full_bitstring": "110111101100",
+          "true_cost": 24897.827539314705
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1110",
+          "full_bitstring": "111111101100",
+          "true_cost": 24897.827539314705
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        1,
+        4
+      ],
+      "selected_generators": [
+        "g2",
+        "g5"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 11,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 55,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 12,
+      "finite_value_count": 12,
+      "embedded_best_selected_bitstring": "0011",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g2_t0",
+          "g2_t1",
+          "g5_t0",
+          "g5_t1"
+        ],
+        "optimum_selected_bitstring": "0011",
+        "single_flip_cost_gaps": [
+          null,
+          4000.0,
+          72783.96740800004,
+          54951.54733159997
+        ],
+        "integer_weights": [
+          7,
+          1,
+          7,
+          6
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g2_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              1,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "7*g2_t0",
+              "1*g2_t1"
+            ]
+          },
+          {
+            "name": "L1_g5_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              6
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "7*(1-g5_t0)",
+              "6*(1-g5_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g2_t0",
+            "g2_t1",
+            "g5_t0",
+            "g5_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "0011",
+          "integer_weights": [
+            7,
+            1,
+            7,
+            6
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "0011"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 1,
+          "selected_row": {
+            "threshold": 1,
+            "marked_count": 2,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "0011",
+            "0111",
+            "1111"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "0011",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "0111",
+          "full_bitstring": "110111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1111",
+          "full_bitstring": "111111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "0110",
+          "full_bitstring": "110111111000",
+          "true_cost": 24897.827539314705
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1110",
+          "full_bitstring": "111111111000",
+          "true_cost": 24897.82753931471
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        1,
+        5
+      ],
+      "selected_generators": [
+        "g2",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 9,
+          "operations": {
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 49,
+          "operations": {
+            "h": 40,
+            "x": 24,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 12,
+      "finite_value_count": 12,
+      "embedded_best_selected_bitstring": "0000",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g2_t0",
+          "g2_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "0000",
+        "single_flip_cost_gaps": [
+          null,
+          4000.0,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          5,
+          7,
+          7
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g2_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              5,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "7*g2_t0",
+              "5*g2_t1"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              7
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "7*g6_t0",
+              "7*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g2_t0",
+            "g2_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "0000",
+          "integer_weights": [
+            7,
+            5,
+            7,
+            7
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "0000"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 5,
+          "selected_row": {
+            "threshold": 5,
+            "marked_count": 2,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "0000",
+            "0100",
+            "1100"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "0000",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "0100",
+          "full_bitstring": "110111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1100",
+          "full_bitstring": "111111111100",
+          "true_cost": 24578.2152604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "0010",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "0001",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        2,
+        3
+      ],
+      "selected_generators": [
+        "g3",
+        "g4"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 16,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 72,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 4,
+      "finite_value_count": 4,
+      "embedded_best_selected_bitstring": "1111",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g3_t0",
+          "g3_t1",
+          "g4_t0",
+          "g4_t1"
+        ],
+        "optimum_selected_bitstring": "1111",
+        "single_flip_cost_gaps": [
+          null,
+          null,
+          72783.96740800004,
+          54951.54733159997
+        ],
+        "integer_weights": [
+          7,
+          7,
+          7,
+          6
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g3_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              7,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g3_t0)",
+              "7*(1-g3_t1)"
+            ]
+          },
+          {
+            "name": "L1_g4_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              6
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "7*(1-g4_t0)",
+              "6*(1-g4_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g3_t0",
+            "g3_t1",
+            "g4_t0",
+            "g4_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1111",
+          "integer_weights": [
+            7,
+            7,
+            7,
+            6
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 6,
+          "selected_row": {
+            "threshold": 6,
+            "marked_count": 2,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1111",
+            "1110",
+            "1101"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011101100",
+          "true_cost": 75529.76259199997
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011011100",
+          "true_cost": 93362.18266840004
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011001100",
+          "true_cost": 148313.73
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        2,
+        4
+      ],
+      "selected_generators": [
+        "g3",
+        "g5"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 16,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 72,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 4,
+      "finite_value_count": 4,
+      "embedded_best_selected_bitstring": "1111",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g3_t0",
+          "g3_t1",
+          "g5_t0",
+          "g5_t1"
+        ],
+        "optimum_selected_bitstring": "1111",
+        "single_flip_cost_gaps": [
+          null,
+          null,
+          72783.96740800004,
+          54951.54733159997
+        ],
+        "integer_weights": [
+          7,
+          7,
+          7,
+          6
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g3_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              7,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g3_t0)",
+              "7*(1-g3_t1)"
+            ]
+          },
+          {
+            "name": "L1_g5_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              6
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "7*(1-g5_t0)",
+              "6*(1-g5_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g3_t0",
+            "g3_t1",
+            "g5_t0",
+            "g5_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1111",
+          "integer_weights": [
+            7,
+            7,
+            7,
+            6
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 6,
+          "selected_row": {
+            "threshold": 6,
+            "marked_count": 2,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1111",
+            "1110",
+            "1101"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111000",
+          "true_cost": 75529.76259199997
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011110100",
+          "true_cost": 93362.18266840004
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011110000",
+          "true_cost": 148313.73
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        2,
+        5
+      ],
+      "selected_generators": [
+        "g3",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 4,
+      "finite_value_count": 4,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g3_t0",
+          "g3_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          null,
+          null,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          7,
+          7,
+          7
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g3_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              7,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g3_t0)",
+              "7*(1-g3_t1)"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              7
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "7*g6_t0",
+              "7*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g3_t0",
+            "g3_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            7,
+            7,
+            7
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1100"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 2,
+            "error_count": 2,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1100",
+            "1110",
+            "1101"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111111",
+          "true_cost": 33223.5533
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        3,
+        4
+      ],
+      "selected_generators": [
+        "g4",
+        "g5"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 28,
+          "depth": 13,
+          "operations": {
+            "x": 16,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 28,
+          "depth": 56,
+          "operations": {
+            "x": 72,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1111",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g4_t0",
+          "g4_t1",
+          "g5_t0",
+          "g5_t1"
+        ],
+        "optimum_selected_bitstring": "1111",
+        "single_flip_cost_gaps": [
+          72783.96740800004,
+          54951.54733159997,
+          72783.96740800004,
+          54951.54733159997
+        ],
+        "integer_weights": [
+          7,
+          6,
+          7,
+          6
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g4_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g4_t0)",
+              "6*(1-g4_t1)"
+            ]
+          },
+          {
+            "name": "L1_g5_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              7,
+              6
+            ],
+            "inverted_bit_indices": [
+              2,
+              3
+            ],
+            "terms": [
+              "7*(1-g5_t0)",
+              "6*(1-g5_t1)"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g4_t0",
+            "g4_t1",
+            "g5_t0",
+            "g5_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1111",
+          "integer_weights": [
+            7,
+            6,
+            7,
+            6
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1111"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 6,
+          "selected_row": {
+            "threshold": 6,
+            "marked_count": 4,
+            "false_positive_count": 1,
+            "false_negative_count": 0,
+            "error_count": 1,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1111",
+            "1110",
+            "1011"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111000",
+          "true_cost": 75529.76259199997
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1011",
+          "full_bitstring": "110011101100",
+          "true_cost": 75529.76259199997
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011110100",
+          "true_cost": 93362.18266840004
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "0111",
+          "full_bitstring": "110011011100",
+          "true_cost": 93362.18266840004
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        3,
+        5
+      ],
+      "selected_generators": [
+        "g4",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 21,
+          "depth": 13,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 21,
+          "depth": 56,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g4_t0",
+          "g4_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          72783.96740800004,
+          54951.54733159997,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          6,
+          1,
+          1
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g4_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g4_t0)",
+              "6*(1-g4_t1)"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "1*g6_t0",
+              "1*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g4_t0",
+            "g4_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            6,
+            1,
+            1
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1100"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 1,
+          "selected_row": {
+            "threshold": 1,
+            "marked_count": 3,
+            "false_positive_count": 1,
+            "false_negative_count": 1,
+            "error_count": 2,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1100",
+            "1110",
+            "0110"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "0110",
+          "full_bitstring": "110011011110",
+          "true_cost": 26915.7852604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1001",
+          "full_bitstring": "110011101101",
+          "true_cost": 26933.0859295
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        4,
+        5
+      ],
+      "selected_generators": [
+        "g5",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "top1_resource_estimate": {
+        "phase_oracle": {
+          "num_qubits": 21,
+          "depth": 13,
+          "operations": {
+            "x": 8,
+            "adder": 2,
+            "cmp": 2,
+            "h": 2,
+            "cmp_dg": 2,
+            "adder_dg": 2,
+            "cx": 1
+          }
+        },
+        "grover_circuit": {
+          "num_qubits": 21,
+          "depth": 56,
+          "operations": {
+            "x": 48,
+            "h": 40,
+            "adder": 6,
+            "cmp": 6,
+            "cmp_dg": 6,
+            "adder_dg": 6,
+            "cx": 3,
+            "mcx": 3
+          }
+        }
+      },
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g5_t0",
+          "g5_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          72783.96740800004,
+          54951.54733159997,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          6,
+          1,
+          1
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g5_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g5_t0)",
+              "6*(1-g5_t1)"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "1*g6_t0",
+              "1*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g5_t0",
+            "g5_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            6,
+            1,
+            1
+          ],
+          "piece_count": 2
+        }
+      },
+      "target_calibrations": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "selected_threshold": 0,
+          "selected_row": {
+            "threshold": 0,
+            "marked_count": 1,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "error_count": 0,
+            "exact_marked_set": true
+          },
+          "target_selected_bitstrings": [
+            "1100"
+          ]
+        },
+        {
+          "target_count_request": 3,
+          "actual_target_count": 3,
+          "selected_threshold": 1,
+          "selected_row": {
+            "threshold": 1,
+            "marked_count": 3,
+            "false_positive_count": 1,
+            "false_negative_count": 1,
+            "error_count": 2,
+            "exact_marked_set": false
+          },
+          "target_selected_bitstrings": [
+            "1100",
+            "1110",
+            "0110"
+          ]
+        }
+      ],
+      "all_requested_targets_exact": false,
+      "exact_target_count": 1,
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "0110",
+          "full_bitstring": "110011110110",
+          "true_cost": 26915.7852604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1001",
+          "full_bitstring": "110011111001",
+          "true_cost": 26933.0859295
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        }
+      ]
+    }
+  ],
+  "gate_level_cases": [
+    {
+      "selected_generator_indices": [
+        0,
+        5
+      ],
+      "selected_generators": [
+        "g1",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g1_t0",
+          "g1_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          109059.87446682357,
+          91227.45439042349,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          6,
+          1,
+          1
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g1_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g1_t0)",
+              "6*(1-g1_t1)"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "1*g6_t0",
+              "1*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g1_t0",
+            "g1_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            6,
+            1,
+            1
+          ],
+          "piece_count": 2
+        }
+      },
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1001",
+          "full_bitstring": "100011111101",
+          "true_cost": 29519.415260399997
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1111",
+          "full_bitstring": "110011111111",
+          "true_cost": 33223.5533
+        }
+      ],
+      "target_cases": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold_tau": 0,
+          "exact_marked_set": true,
+          "false_positive_count": 0,
+          "false_negative_count": 0,
+          "target_selected_bitstrings": [
+            "1100"
+          ],
+          "marked_selected_bitstrings": [
+            "1100"
+          ],
+          "marked_full_bitstrings": [
+            "110011111100"
+          ],
+          "marked_true_costs": [
+            20578.2152604
+          ],
+          "phase_oracle_check": {
+            "marked_count": 1,
+            "aux_zero_probability": 0.9999999999999996,
+            "max_phase_error": 4.440892098500626e-16,
+            "simulation_seconds": 11.24714189999986
+          },
+          "grover_result": {
+            "iterations": 3,
+            "marked_probability": 0.9613189697265546,
+            "unmarked_probability": 0.03868103027344538,
+            "aux_zero_probability": 0.999999999999992,
+            "argmax_selected_bitstring": "1100",
+            "argmax_full_bitstring": "110011111100",
+            "argmax_true_cost": 20578.2152604,
+            "simulation_seconds": 37.88697000000002,
+            "top_probability_rows": [
+              {
+                "selected_bitstring": "1100",
+                "probability": 0.9613189697265546,
+                "piece_values": [
+                  0,
+                  0
+                ],
+                "max_affine_value": 0,
+                "marked": true,
+                "embedded_full_bitstring": "110011111100",
+                "embedded_true_cost": 20578.2152604,
+                "embedded_true_rank": 1
+              },
+              {
+                "selected_bitstring": "1110",
+                "probability": 0.0025787353515624896,
+                "piece_values": [
+                  0,
+                  1
+                ],
+                "max_affine_value": 1,
+                "marked": false,
+                "embedded_full_bitstring": "110011111110",
+                "embedded_true_cost": 26853.5596684,
+                "embedded_true_rank": 2
+              },
+              {
+                "selected_bitstring": "0101",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  7,
+                  1
+                ],
+                "max_affine_value": 7,
+                "marked": false,
+                "embedded_full_bitstring": "010011111101",
+                "embedded_true_cost": 136008.08335882358,
+                "embedded_true_rank": 14
+              },
+              {
+                "selected_bitstring": "0010",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  13,
+                  1
+                ],
+                "max_affine_value": 13,
+                "marked": false,
+                "embedded_full_bitstring": "000011111110",
+                "embedded_true_cost": 128865.54411764706,
+                "embedded_true_rank": 12
+              },
+              {
+                "selected_bitstring": "0000",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  13,
+                  0
+                ],
+                "max_affine_value": 13,
+                "marked": false,
+                "embedded_full_bitstring": "000011111100",
+                "embedded_true_cost": 218865.54411764708,
+                "embedded_true_rank": 16
+              },
+              {
+                "selected_bitstring": "1101",
+                "probability": 0.002578735351562483,
+                "piece_values": [
+                  0,
+                  1
+                ],
+                "max_affine_value": 1,
+                "marked": false,
+                "embedded_full_bitstring": "110011111101",
+                "embedded_true_cost": 26948.208892000002,
+                "embedded_true_rank": 3
+              },
+              {
+                "selected_bitstring": "1011",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  2
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "100011111111",
+                "embedded_true_cost": 35794.7596684,
+                "embedded_true_rank": 6
+              },
+              {
+                "selected_bitstring": "1001",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  1
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "100011111101",
+                "embedded_true_cost": 29519.415260399997,
+                "embedded_true_rank": 4
+              },
+              {
+                "selected_bitstring": "1010",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  1
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "100011111110",
+                "embedded_true_cost": 118081.0140588235,
+                "embedded_true_rank": 11
+              },
+              {
+                "selected_bitstring": "1000",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  0
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "100011111100",
+                "embedded_true_cost": 111805.66965082349,
+                "embedded_true_rank": 10
+              }
+            ]
+          },
+          "resources": {
+            "phase_oracle": {
+              "num_qubits": 21,
+              "depth": 13,
+              "operations": {
+                "x": 8,
+                "adder": 2,
+                "cmp": 2,
+                "h": 2,
+                "cmp_dg": 2,
+                "adder_dg": 2,
+                "cx": 1
+              },
+              "decomposed_depth": 252,
+              "decomposed_operations": {
+                "cx": 207,
+                "t": 112,
+                "tdg": 84,
+                "u": 74,
+                "x": 60,
+                "h": 56,
+                "rccx": 32,
+                "ccx": 28
+              }
+            },
+            "grover_circuit": {
+              "num_qubits": 21,
+              "depth": 56,
+              "operations": {
+                "x": 48,
+                "h": 40,
+                "adder": 6,
+                "cmp": 6,
+                "cmp_dg": 6,
+                "adder_dg": 6,
+                "cx": 3,
+                "mcx": 3
+              },
+              "decomposed_depth": 309,
+              "decomposed_operations": {
+                "x": 192,
+                "cx": 159,
+                "u": 139,
+                "ccx": 84,
+                "mcx_vchain": 48,
+                "or": 36
+              }
+            }
+          },
+          "threshold_calibration": {
+            "selected_row": {
+              "threshold": 0,
+              "marked_count": 1,
+              "false_positive_count": 0,
+              "false_negative_count": 0,
+              "error_count": 0,
+              "exact_marked_set": true
+            },
+            "candidate_rows": [
+              {
+                "threshold": 0,
+                "marked_count": 1,
+                "false_positive_count": 0,
+                "false_negative_count": 0,
+                "error_count": 0,
+                "exact_marked_set": true
+              },
+              {
+                "threshold": 1,
+                "marked_count": 3,
+                "false_positive_count": 2,
+                "false_negative_count": 0,
+                "error_count": 2,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 2,
+                "marked_count": 4,
+                "false_positive_count": 3,
+                "false_negative_count": 0,
+                "error_count": 3,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 6,
+                "marked_count": 8,
+                "false_positive_count": 7,
+                "false_negative_count": 0,
+                "error_count": 7,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 7,
+                "marked_count": 12,
+                "false_positive_count": 11,
+                "false_negative_count": 0,
+                "error_count": 11,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 13,
+                "marked_count": 16,
+                "false_positive_count": 15,
+                "false_negative_count": 0,
+                "error_count": 15,
+                "exact_marked_set": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        3,
+        5
+      ],
+      "selected_generators": [
+        "g4",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g4_t0",
+          "g4_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          72783.96740800004,
+          54951.54733159997,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          6,
+          1,
+          1
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g4_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g4_t0)",
+              "6*(1-g4_t1)"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "1*g6_t0",
+              "1*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g4_t0",
+            "g4_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            6,
+            1,
+            1
+          ],
+          "piece_count": 2
+        }
+      },
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "0110",
+          "full_bitstring": "110011011110",
+          "true_cost": 26915.7852604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1001",
+          "full_bitstring": "110011101101",
+          "true_cost": 26933.0859295
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        }
+      ],
+      "target_cases": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold_tau": 0,
+          "exact_marked_set": true,
+          "false_positive_count": 0,
+          "false_negative_count": 0,
+          "target_selected_bitstrings": [
+            "1100"
+          ],
+          "marked_selected_bitstrings": [
+            "1100"
+          ],
+          "marked_full_bitstrings": [
+            "110011111100"
+          ],
+          "marked_true_costs": [
+            20578.2152604
+          ],
+          "phase_oracle_check": {
+            "marked_count": 1,
+            "aux_zero_probability": 0.9999999999999996,
+            "max_phase_error": 4.440892098500626e-16,
+            "simulation_seconds": 11.427446299999701
+          },
+          "grover_result": {
+            "iterations": 3,
+            "marked_probability": 0.9613189697265546,
+            "unmarked_probability": 0.03868103027344538,
+            "aux_zero_probability": 0.999999999999992,
+            "argmax_selected_bitstring": "1100",
+            "argmax_full_bitstring": "110011111100",
+            "argmax_true_cost": 20578.2152604,
+            "simulation_seconds": 37.310235199999624,
+            "top_probability_rows": [
+              {
+                "selected_bitstring": "1100",
+                "probability": 0.9613189697265546,
+                "piece_values": [
+                  0,
+                  0
+                ],
+                "max_affine_value": 0,
+                "marked": true,
+                "embedded_full_bitstring": "110011111100",
+                "embedded_true_cost": 20578.2152604,
+                "embedded_true_rank": 1
+              },
+              {
+                "selected_bitstring": "1110",
+                "probability": 0.0025787353515624896,
+                "piece_values": [
+                  0,
+                  1
+                ],
+                "max_affine_value": 1,
+                "marked": false,
+                "embedded_full_bitstring": "110011111110",
+                "embedded_true_cost": 26853.5596684,
+                "embedded_true_rank": 2
+              },
+              {
+                "selected_bitstring": "0101",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  7,
+                  1
+                ],
+                "max_affine_value": 7,
+                "marked": false,
+                "embedded_full_bitstring": "110011011101",
+                "embedded_true_cost": 99732.17630000005,
+                "embedded_true_rank": 15
+              },
+              {
+                "selected_bitstring": "0010",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  13,
+                  1
+                ],
+                "max_affine_value": 13,
+                "marked": false,
+                "embedded_full_bitstring": "110011001110",
+                "embedded_true_cost": 81867.33259199996,
+                "embedded_true_rank": 12
+              },
+              {
+                "selected_bitstring": "0000",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  13,
+                  0
+                ],
+                "max_affine_value": 13,
+                "marked": false,
+                "embedded_full_bitstring": "110011001100",
+                "embedded_true_cost": 148313.73,
+                "embedded_true_rank": 16
+              },
+              {
+                "selected_bitstring": "1101",
+                "probability": 0.002578735351562483,
+                "piece_values": [
+                  0,
+                  1
+                ],
+                "max_affine_value": 1,
+                "marked": false,
+                "embedded_full_bitstring": "110011111101",
+                "embedded_true_cost": 26948.208892000002,
+                "embedded_true_rank": 5
+              },
+              {
+                "selected_bitstring": "1011",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  2
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011101111",
+                "embedded_true_cost": 33208.4303375,
+                "embedded_true_rank": 6
+              },
+              {
+                "selected_bitstring": "1001",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  1
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011101101",
+                "embedded_true_cost": 26933.0859295,
+                "embedded_true_rank": 4
+              },
+              {
+                "selected_bitstring": "1010",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  1
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011101110",
+                "embedded_true_cost": 81805.10699999996,
+                "embedded_true_rank": 11
+              },
+              {
+                "selected_bitstring": "1000",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  0
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011101100",
+                "embedded_true_cost": 75529.76259199997,
+                "embedded_true_rank": 10
+              }
+            ]
+          },
+          "resources": {
+            "phase_oracle": {
+              "num_qubits": 21,
+              "depth": 13,
+              "operations": {
+                "x": 8,
+                "adder": 2,
+                "cmp": 2,
+                "h": 2,
+                "cmp_dg": 2,
+                "adder_dg": 2,
+                "cx": 1
+              },
+              "decomposed_depth": 252,
+              "decomposed_operations": {
+                "cx": 207,
+                "t": 112,
+                "tdg": 84,
+                "u": 74,
+                "x": 60,
+                "h": 56,
+                "rccx": 32,
+                "ccx": 28
+              }
+            },
+            "grover_circuit": {
+              "num_qubits": 21,
+              "depth": 56,
+              "operations": {
+                "x": 48,
+                "h": 40,
+                "adder": 6,
+                "cmp": 6,
+                "cmp_dg": 6,
+                "adder_dg": 6,
+                "cx": 3,
+                "mcx": 3
+              },
+              "decomposed_depth": 309,
+              "decomposed_operations": {
+                "x": 192,
+                "cx": 159,
+                "u": 139,
+                "ccx": 84,
+                "mcx_vchain": 48,
+                "or": 36
+              }
+            }
+          },
+          "threshold_calibration": {
+            "selected_row": {
+              "threshold": 0,
+              "marked_count": 1,
+              "false_positive_count": 0,
+              "false_negative_count": 0,
+              "error_count": 0,
+              "exact_marked_set": true
+            },
+            "candidate_rows": [
+              {
+                "threshold": 0,
+                "marked_count": 1,
+                "false_positive_count": 0,
+                "false_negative_count": 0,
+                "error_count": 0,
+                "exact_marked_set": true
+              },
+              {
+                "threshold": 1,
+                "marked_count": 3,
+                "false_positive_count": 2,
+                "false_negative_count": 0,
+                "error_count": 2,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 2,
+                "marked_count": 4,
+                "false_positive_count": 3,
+                "false_negative_count": 0,
+                "error_count": 3,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 6,
+                "marked_count": 8,
+                "false_positive_count": 7,
+                "false_negative_count": 0,
+                "error_count": 7,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 7,
+                "marked_count": 12,
+                "false_positive_count": 11,
+                "false_negative_count": 0,
+                "error_count": 11,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 13,
+                "marked_count": 16,
+                "false_positive_count": 15,
+                "false_negative_count": 0,
+                "error_count": 15,
+                "exact_marked_set": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "selected_generator_indices": [
+        4,
+        5
+      ],
+      "selected_generators": [
+        "g5",
+        "g6"
+      ],
+      "gate_level_x_bits": 4,
+      "piece_count": 2,
+      "subspace_size": 16,
+      "logic_feasible_count": 16,
+      "finite_value_count": 16,
+      "embedded_best_selected_bitstring": "1100",
+      "embedded_best_full_bitstring": "110011111100",
+      "embedded_best_true_cost": 20578.2152604,
+      "learned_model": {
+        "value_formula": "V_hat_int(x) = max_r L_r(x)",
+        "bit_labels": [
+          "g5_t0",
+          "g5_t1",
+          "g6_t0",
+          "g6_t1"
+        ],
+        "optimum_selected_bitstring": "1100",
+        "single_flip_cost_gaps": [
+          72783.96740800004,
+          54951.54733159997,
+          6275.344408000001,
+          6369.993631600002
+        ],
+        "integer_weights": [
+          7,
+          6,
+          1,
+          1
+        ],
+        "piece_groups": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "pieces": [
+          {
+            "name": "L0_g5_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              7,
+              6,
+              0,
+              0
+            ],
+            "inverted_bit_indices": [
+              0,
+              1
+            ],
+            "terms": [
+              "7*(1-g5_t0)",
+              "6*(1-g5_t1)"
+            ]
+          },
+          {
+            "name": "L1_g6_learned_mismatch",
+            "bias": 0,
+            "weights": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "inverted_bit_indices": [],
+            "terms": [
+              "1*g6_t0",
+              "1*g6_t1"
+            ]
+          }
+        ]
+      },
+      "oracle_and_circuit_explanation": {
+        "oracle_definition": {
+          "search_variable": "selected commitment bits x only; fixed load d is a condition, not a Grover variable",
+          "integer_surrogate": "V_hat_int(x) = max_r L_r(x)",
+          "threshold_oracle": "O_tau |x> = (-1)^[V_hat_int(x) <= tau] |x>",
+          "top1_threshold": "tau = 0 marks the learned selected-subspace optimum",
+          "low_cost_set_threshold": "tau = 1 marks the calibrated top-3 low-cost selected-subspace set in the default run"
+        },
+        "circuit_registers": {
+          "x": [
+            "g5_t0",
+            "g5_t1",
+            "g6_t0",
+            "g6_t1"
+          ],
+          "piece_value_registers": [
+            "v0 stores L0(x) before comparison",
+            "v1 stores L1(x) before comparison"
+          ],
+          "piece_flags": [
+            "flag0 stores [L0(x) <= tau]",
+            "flag1 stores [L1(x) <= tau]"
+          ],
+          "adder_ancillas": "Qiskit WeightedAdder carry/control qubits for each piece",
+          "comparator_ancillas": "Qiskit IntegerComparator ancillas for each piece"
+        },
+        "circuit_sequence": [
+          "Apply Hadamard gates on all x qubits to create the Grover uniform superposition.",
+          "For each learned affine piece L_r, temporarily flip inverted x inputs so (1-x_i) terms become addable x_i terms.",
+          "Use WeightedAdder to write the integer piece value L_r(x) into value register v_r.",
+          "Use IntegerComparator to write flag_r = [L_r(x) <= tau].",
+          "Apply a multi-controlled phase on all flag qubits, implementing max_r L_r(x) <= tau as AND_r flag_r.",
+          "Run inverse comparators and inverse adders, restoring all value and ancilla registers to zero.",
+          "Apply the standard Grover diffuser on x only."
+        ],
+        "reversibility": {
+          "compute_phase_uncompute": "The oracle is U_f^dagger Z_flags U_f, so it is unitary and leaves only a phase on x.",
+          "auxiliary_check": "The experiment reports aux_zero_probability to verify that non-x registers return to |0>."
+        },
+        "grover_loop": {
+          "iteration_choice": "The simulator uses the standard marked-count-based Grover iteration estimate for the current threshold.",
+          "readout": "Statevector probabilities are marginalized onto the x register; no measurement is used inside the oracle.",
+          "true_cost_validation": "The most amplified selected bitstring is embedded back into the full T=2 commitment and checked with the exact UC evaluator."
+        },
+        "learned_piece_summary": {
+          "optimum_selected_bitstring": "1100",
+          "integer_weights": [
+            7,
+            6,
+            1,
+            1
+          ],
+          "piece_count": 2
+        }
+      },
+      "embedded_true_order_preview": [
+        {
+          "rank": 1,
+          "selected_bitstring": "1100",
+          "full_bitstring": "110011111100",
+          "true_cost": 20578.2152604
+        },
+        {
+          "rank": 2,
+          "selected_bitstring": "1110",
+          "full_bitstring": "110011111110",
+          "true_cost": 26853.5596684
+        },
+        {
+          "rank": 3,
+          "selected_bitstring": "0110",
+          "full_bitstring": "110011110110",
+          "true_cost": 26915.7852604
+        },
+        {
+          "rank": 4,
+          "selected_bitstring": "1001",
+          "full_bitstring": "110011111001",
+          "true_cost": 26933.0859295
+        },
+        {
+          "rank": 5,
+          "selected_bitstring": "1101",
+          "full_bitstring": "110011111101",
+          "true_cost": 26948.208892000002
+        }
+      ],
+      "target_cases": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold_tau": 0,
+          "exact_marked_set": true,
+          "false_positive_count": 0,
+          "false_negative_count": 0,
+          "target_selected_bitstrings": [
+            "1100"
+          ],
+          "marked_selected_bitstrings": [
+            "1100"
+          ],
+          "marked_full_bitstrings": [
+            "110011111100"
+          ],
+          "marked_true_costs": [
+            20578.2152604
+          ],
+          "phase_oracle_check": {
+            "marked_count": 1,
+            "aux_zero_probability": 0.9999999999999996,
+            "max_phase_error": 4.440892098500626e-16,
+            "simulation_seconds": 10.709846300000208
+          },
+          "grover_result": {
+            "iterations": 3,
+            "marked_probability": 0.9613189697265546,
+            "unmarked_probability": 0.03868103027344538,
+            "aux_zero_probability": 0.999999999999992,
+            "argmax_selected_bitstring": "1100",
+            "argmax_full_bitstring": "110011111100",
+            "argmax_true_cost": 20578.2152604,
+            "simulation_seconds": 35.78269130000035,
+            "top_probability_rows": [
+              {
+                "selected_bitstring": "1100",
+                "probability": 0.9613189697265546,
+                "piece_values": [
+                  0,
+                  0
+                ],
+                "max_affine_value": 0,
+                "marked": true,
+                "embedded_full_bitstring": "110011111100",
+                "embedded_true_cost": 20578.2152604,
+                "embedded_true_rank": 1
+              },
+              {
+                "selected_bitstring": "1110",
+                "probability": 0.0025787353515624896,
+                "piece_values": [
+                  0,
+                  1
+                ],
+                "max_affine_value": 1,
+                "marked": false,
+                "embedded_full_bitstring": "110011111110",
+                "embedded_true_cost": 26853.5596684,
+                "embedded_true_rank": 2
+              },
+              {
+                "selected_bitstring": "0101",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  7,
+                  1
+                ],
+                "max_affine_value": 7,
+                "marked": false,
+                "embedded_full_bitstring": "110011110101",
+                "embedded_true_cost": 99732.17630000005,
+                "embedded_true_rank": 15
+              },
+              {
+                "selected_bitstring": "0010",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  13,
+                  1
+                ],
+                "max_affine_value": 13,
+                "marked": false,
+                "embedded_full_bitstring": "110011110010",
+                "embedded_true_cost": 81867.33259199996,
+                "embedded_true_rank": 12
+              },
+              {
+                "selected_bitstring": "0000",
+                "probability": 0.0025787353515624844,
+                "piece_values": [
+                  13,
+                  0
+                ],
+                "max_affine_value": 13,
+                "marked": false,
+                "embedded_full_bitstring": "110011110000",
+                "embedded_true_cost": 148313.73,
+                "embedded_true_rank": 16
+              },
+              {
+                "selected_bitstring": "1101",
+                "probability": 0.002578735351562483,
+                "piece_values": [
+                  0,
+                  1
+                ],
+                "max_affine_value": 1,
+                "marked": false,
+                "embedded_full_bitstring": "110011111101",
+                "embedded_true_cost": 26948.208892000002,
+                "embedded_true_rank": 5
+              },
+              {
+                "selected_bitstring": "1011",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  2
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011111011",
+                "embedded_true_cost": 33208.4303375,
+                "embedded_true_rank": 6
+              },
+              {
+                "selected_bitstring": "1001",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  1
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011111001",
+                "embedded_true_cost": 26933.0859295,
+                "embedded_true_rank": 4
+              },
+              {
+                "selected_bitstring": "1010",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  1
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011111010",
+                "embedded_true_cost": 81805.10699999996,
+                "embedded_true_rank": 11
+              },
+              {
+                "selected_bitstring": "1000",
+                "probability": 0.0025787353515624822,
+                "piece_values": [
+                  6,
+                  0
+                ],
+                "max_affine_value": 6,
+                "marked": false,
+                "embedded_full_bitstring": "110011111000",
+                "embedded_true_cost": 75529.76259199997,
+                "embedded_true_rank": 10
+              }
+            ]
+          },
+          "resources": {
+            "phase_oracle": {
+              "num_qubits": 21,
+              "depth": 13,
+              "operations": {
+                "x": 8,
+                "adder": 2,
+                "cmp": 2,
+                "h": 2,
+                "cmp_dg": 2,
+                "adder_dg": 2,
+                "cx": 1
+              },
+              "decomposed_depth": 252,
+              "decomposed_operations": {
+                "cx": 207,
+                "t": 112,
+                "tdg": 84,
+                "u": 74,
+                "x": 60,
+                "h": 56,
+                "rccx": 32,
+                "ccx": 28
+              }
+            },
+            "grover_circuit": {
+              "num_qubits": 21,
+              "depth": 56,
+              "operations": {
+                "x": 48,
+                "h": 40,
+                "adder": 6,
+                "cmp": 6,
+                "cmp_dg": 6,
+                "adder_dg": 6,
+                "cx": 3,
+                "mcx": 3
+              },
+              "decomposed_depth": 309,
+              "decomposed_operations": {
+                "x": 192,
+                "cx": 159,
+                "u": 139,
+                "ccx": 84,
+                "mcx_vchain": 48,
+                "or": 36
+              }
+            }
+          },
+          "threshold_calibration": {
+            "selected_row": {
+              "threshold": 0,
+              "marked_count": 1,
+              "false_positive_count": 0,
+              "false_negative_count": 0,
+              "error_count": 0,
+              "exact_marked_set": true
+            },
+            "candidate_rows": [
+              {
+                "threshold": 0,
+                "marked_count": 1,
+                "false_positive_count": 0,
+                "false_negative_count": 0,
+                "error_count": 0,
+                "exact_marked_set": true
+              },
+              {
+                "threshold": 1,
+                "marked_count": 3,
+                "false_positive_count": 2,
+                "false_negative_count": 0,
+                "error_count": 2,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 2,
+                "marked_count": 4,
+                "false_positive_count": 3,
+                "false_negative_count": 0,
+                "error_count": 3,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 6,
+                "marked_count": 8,
+                "false_positive_count": 7,
+                "false_negative_count": 0,
+                "error_count": 7,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 7,
+                "marked_count": 12,
+                "false_positive_count": 11,
+                "false_negative_count": 0,
+                "error_count": 11,
+                "exact_marked_set": false
+              },
+              {
+                "threshold": 13,
+                "marked_count": 16,
+                "false_positive_count": 15,
+                "false_negative_count": 0,
+                "error_count": 15,
+                "exact_marked_set": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "advisor_report_path": "reports\\stage1_case14_t2_batch_gate_level_small_subspaces_report.md"
+}

@@ -1,0 +1,343 @@
+{
+  "method": "ancilla-based VQC phase oracle O = U^dagger Z_a U",
+  "note": "The oracle is always unitary and self-inverse on x plus ancilla. It behaves like a Grover phase oracle only when the trained ancilla rotation angles are close to 0 for non-target states and pi for target states.",
+  "experiments": [
+    {
+      "instance": "aelmp_simple",
+      "source": "data\\aelmp_simple.json.gz",
+      "period": null,
+      "generators": [
+        "W",
+        "X",
+        "Y"
+      ],
+      "fixed_load_mw": [
+        365.0
+      ],
+      "num_bits": 3,
+      "num_commitments": 8,
+      "threshold": 45060.0,
+      "target_count": 1,
+      "optimum": {
+        "bitstring": "101",
+        "total_cost": 40525.0
+      },
+      "runner_up": {
+        "bitstring": "110",
+        "total_cost": 49595.0
+      },
+      "exact_grover": {
+        "iterations": 2,
+        "marked_probability": 0.9453124999999996,
+        "unmarked_probability": 0.05468750000000003
+      },
+      "order_rows": [
+        {
+          "x_order": 1,
+          "feature_count": 4,
+          "evaluation": {
+            "angle_mae": 0.5890486225480862,
+            "max_angle_error": 1.570796326794897,
+            "max_leakage_probability": 1.0,
+            "mean_leakage_probability": 0.3749999999999999,
+            "marked_accuracy": 0.875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 2,
+            "target_x_probability": 0.3630512714724776,
+            "non_target_x_probability": 0.636948728527522,
+            "zero_ancilla_probability": 0.19600243558256686,
+            "one_ancilla_probability": 0.8039975644174326,
+            "target_zero_ancilla_probability": 0.09765624999999993
+          }
+        },
+        {
+          "x_order": 2,
+          "feature_count": 7,
+          "evaluation": {
+            "angle_mae": 0.39269908169872414,
+            "max_angle_error": 0.3926990816987268,
+            "max_leakage_probability": 0.146446609406728,
+            "mean_leakage_probability": 0.14644660940672624,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 2,
+            "target_x_probability": 0.6479775429449539,
+            "non_target_x_probability": 0.35202245705504503,
+            "zero_ancilla_probability": 0.6874999999999998,
+            "one_ancilla_probability": 0.3124999999999992,
+            "target_zero_ancilla_probability": 0.5854775429449547
+          }
+        },
+        {
+          "x_order": 3,
+          "feature_count": 8,
+          "evaluation": {
+            "angle_mae": 1.942890293094024e-15,
+            "max_angle_error": 4.884981308350689e-15,
+            "max_leakage_probability": 2.4107582568118985e-29,
+            "mean_leakage_probability": 5.896886084888083e-30,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 0.0
+          },
+          "grover": {
+            "iterations": 2,
+            "target_x_probability": 0.9453124999999996,
+            "non_target_x_probability": 0.05468750000000003,
+            "zero_ancilla_probability": 0.9999999999999996,
+            "one_ancilla_probability": 1.456077815786207e-29,
+            "target_zero_ancilla_probability": 0.9453124999999996
+          }
+        }
+      ]
+    },
+    {
+      "instance": "case14_period0",
+      "source": "data\\case14.json.gz",
+      "period": 0,
+      "generators": [
+        "g1",
+        "g2",
+        "g3",
+        "g4",
+        "g5",
+        "g6"
+      ],
+      "fixed_load_mw": [
+        310.50480000000005
+      ],
+      "num_bits": 6,
+      "num_commitments": 64,
+      "threshold": 13863.956779176473,
+      "target_count": 1,
+      "optimum": {
+        "bitstring": "101110",
+        "total_cost": 12641.692592000003
+      },
+      "runner_up": {
+        "bitstring": "110110",
+        "total_cost": 15086.220966352943
+      },
+      "exact_grover": {
+        "iterations": 6,
+        "marked_probability": 0.996585680786799,
+        "unmarked_probability": 0.003414319213200956
+      },
+      "order_rows": [
+        {
+          "x_order": 1,
+          "feature_count": 7,
+          "evaluation": {
+            "angle_mae": 0.14572817484913586,
+            "max_angle_error": 2.7979809571034098,
+            "max_leakage_probability": 0.11349477331863148,
+            "mean_leakage_probability": 0.01661193915855859,
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.053997573341710806,
+            "non_target_x_probability": 0.9460024266582879,
+            "zero_ancilla_probability": 0.5671198125087109,
+            "one_ancilla_probability": 0.43288018749128776,
+            "target_zero_ancilla_probability": 0.014065694111364258
+          }
+        },
+        {
+          "x_order": 2,
+          "feature_count": 22,
+          "evaluation": {
+            "angle_mae": 0.1718058482431917,
+            "max_angle_error": 2.0616701789183027,
+            "max_leakage_probability": 0.7777851165098002,
+            "mean_leakage_probability": 0.044864085150792744,
+            "marked_accuracy": 0.984375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.3081808195724221,
+            "non_target_x_probability": 0.6918191804275768,
+            "zero_ancilla_probability": 0.14081722037685662,
+            "one_ancilla_probability": 0.8591827796231425,
+            "target_zero_ancilla_probability": 0.08238052749068318
+          }
+        },
+        {
+          "x_order": 3,
+          "feature_count": 42,
+          "evaluation": {
+            "angle_mae": 0.1564660403643349,
+            "max_angle_error": 1.0799224746714864,
+            "max_leakage_probability": 0.777785116509797,
+            "mean_leakage_probability": 0.04486408515079288,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.5297327022115197,
+            "non_target_x_probability": 0.47026729778848114,
+            "zero_ancilla_probability": 0.4250822226766125,
+            "one_ancilla_probability": 0.5749177773233882,
+            "target_zero_ancilla_probability": 0.3710187915085392
+          }
+        },
+        {
+          "x_order": 4,
+          "feature_count": 57,
+          "evaluation": {
+            "angle_mae": 0.10737865515199484,
+            "max_angle_error": 0.34361169648637757,
+            "max_leakage_probability": 0.11349477331862774,
+            "mean_leakage_probability": 0.0166119391585586,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 4.440892098500626e-16,
+            "self_inverse_error": 4.440892098500626e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.7631061299670218,
+            "non_target_x_probability": 0.236893870032977,
+            "zero_ancilla_probability": 0.7758472637775834,
+            "one_ancilla_probability": 0.22415273622241533,
+            "target_zero_ancilla_probability": 0.7378703967455964
+          }
+        },
+        {
+          "x_order": 5,
+          "feature_count": 63,
+          "evaluation": {
+            "angle_mae": 0.049087385212340524,
+            "max_angle_error": 0.04908738521235545,
+            "max_leakage_probability": 0.002407636663903015,
+            "mean_leakage_probability": 0.0024076366639015565,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 4.440892098500626e-16,
+            "self_inverse_error": 4.440892098500626e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.9558543512768313,
+            "non_target_x_probability": 0.04414564872316819,
+            "zero_ancilla_probability": 0.9622692894236995,
+            "one_ancilla_probability": 0.037730710576299994,
+            "target_zero_ancilla_probability": 0.9552268134709885
+          }
+        },
+        {
+          "x_order": 6,
+          "feature_count": 64,
+          "evaluation": {
+            "angle_mae": 7.500944310123714e-15,
+            "max_angle_error": 3.6415315207705135e-14,
+            "max_leakage_probability": 1.3339866347380677e-27,
+            "mean_leakage_probability": 1.1701218877419498e-28,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 0.0
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.996585680786799,
+            "non_target_x_probability": 0.003414319213200956,
+            "zero_ancilla_probability": 0.9999999999999998,
+            "one_ancilla_probability": 1.8942451651404905e-27,
+            "target_zero_ancilla_probability": 0.996585680786799
+          }
+        }
+      ]
+    }
+  ]
+}

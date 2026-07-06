@@ -1,0 +1,1733 @@
+{
+  "instance": "case14_T2",
+  "source": "data\\case14.json.gz",
+  "method": "case14 two-period ancilla VQC oracle with state-vector Grover simulation",
+  "horizon": 2,
+  "generators": [
+    "g1",
+    "g2",
+    "g3",
+    "g4",
+    "g5",
+    "g6"
+  ],
+  "fixed_load_mw": [
+    310.50480000000005,
+    291.96720999999997
+  ],
+  "bit_order": "generator-major flattening: g1_t0,g1_t1,g2_t0,g2_t1,...",
+  "num_bits": 12,
+  "num_commitments": 4096,
+  "logic_feasible_count": 768,
+  "finite_value_count": 768,
+  "value_evaluation_seconds": 1.089662899990799,
+  "optimum": {
+    "bitstring_generator_major": "110011111100",
+    "bitstring_time_major": "101110101110",
+    "schedule_table": [
+      {
+        "generator": "g1",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g2",
+        "t0": 0,
+        "t1": 0
+      },
+      {
+        "generator": "g3",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g4",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g5",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g6",
+        "t0": 0,
+        "t1": 0
+      }
+    ],
+    "time_slices": [
+      {
+        "time": "t0",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 0,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      },
+      {
+        "time": "t1",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 0,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      }
+    ],
+    "total_cost": 20578.2152604
+  },
+  "runner_up": {
+    "bitstring_generator_major": "110111111100",
+    "bitstring_time_major": "101110111110",
+    "schedule_table": [
+      {
+        "generator": "g1",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g2",
+        "t0": 0,
+        "t1": 1
+      },
+      {
+        "generator": "g3",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g4",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g5",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g6",
+        "t0": 0,
+        "t1": 0
+      }
+    ],
+    "time_slices": [
+      {
+        "time": "t0",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 0,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      },
+      {
+        "time": "t1",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 1,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g2",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      }
+    ],
+    "total_cost": 24578.2152604
+  },
+  "top_rows": [
+    {
+      "bitstring_generator_major": "110011111100",
+      "bitstring_time_major": "101110101110",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 0,
+          "t1": 0
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 20578.2152604
+    },
+    {
+      "bitstring_generator_major": "110111111100",
+      "bitstring_time_major": "101110111110",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 0,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 24578.2152604
+    },
+    {
+      "bitstring_generator_major": "111111111100",
+      "bitstring_time_major": "111110111110",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 24578.2152604
+    },
+    {
+      "bitstring_generator_major": "110111111000",
+      "bitstring_time_major": "101110111100",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 0,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 0
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 0,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4"
+          ]
+        }
+      ],
+      "total_cost": 24897.827539314705
+    },
+    {
+      "bitstring_generator_major": "110111101100",
+      "bitstring_time_major": "101110111010",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 0,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 0
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 0,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 0,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 24897.827539314705
+    },
+    {
+      "bitstring_generator_major": "111111101100",
+      "bitstring_time_major": "111110111010",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 0
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 0,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 24897.827539314705
+    },
+    {
+      "bitstring_generator_major": "111111111000",
+      "bitstring_time_major": "111110111100",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 0
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 0,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4"
+          ]
+        }
+      ],
+      "total_cost": 24897.82753931471
+    },
+    {
+      "bitstring_generator_major": "111111110100",
+      "bitstring_time_major": "111100111110",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 0,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 0,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 25040.477186047057
+    },
+    {
+      "bitstring_generator_major": "111111011100",
+      "bitstring_time_major": "111010111110",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 0,
+          "t1": 1
+        },
+        {
+          "generator": "g5",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 0,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g5"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 25040.47718604706
+    },
+    {
+      "bitstring_generator_major": "111111100100",
+      "bitstring_time_major": "111100111010",
+      "schedule_table": [
+        {
+          "generator": "g1",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g2",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g3",
+          "t0": 1,
+          "t1": 1
+        },
+        {
+          "generator": "g4",
+          "t0": 1,
+          "t1": 0
+        },
+        {
+          "generator": "g5",
+          "t0": 0,
+          "t1": 1
+        },
+        {
+          "generator": "g6",
+          "t0": 0,
+          "t1": 0
+        }
+      ],
+      "time_slices": [
+        {
+          "time": "t0",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 1,
+            "g5": 0,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g4"
+          ]
+        },
+        {
+          "time": "t1",
+          "status_by_generator": {
+            "g1": 1,
+            "g2": 1,
+            "g3": 1,
+            "g4": 0,
+            "g5": 1,
+            "g6": 0
+          },
+          "online_generators": [
+            "g1",
+            "g2",
+            "g3",
+            "g5"
+          ]
+        }
+      ],
+      "total_cost": 25360.089464961766
+    }
+  ],
+  "order_rows": [
+    {
+      "x_order": 1,
+      "feature_count": 13,
+      "target_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.0030114110144991635,
+            "max_angle_error": 3.1316217784685363,
+            "max_leakage_probability": 9.941505605788546e-05,
+            "mean_leakage_probability": 7.647509951448453e-06,
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 0.0
+          },
+          "grover": {
+            "iterations": 50,
+            "target_x_probability": 0.0002921939830149413,
+            "non_target_x_probability": 0.9997078060175013,
+            "zero_ancilla_probability": 0.9824554236369155,
+            "one_ancilla_probability": 0.017544576363600718,
+            "target_zero_ancilla_probability": 0.00024079496564575518
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.038756983343923385,
+            "max_angle_error": 3.0710295373470533,
+            "max_leakage_probability": 0.012830308607212283,
+            "mean_leakage_probability": 0.0011517866748155408,
+            "marked_accuracy": 0.99609375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 12,
+            "target_x_probability": 0.007264161120018082,
+            "non_target_x_probability": 0.9927358388800653,
+            "zero_ancilla_probability": 0.8625443578864613,
+            "one_ancilla_probability": 0.13745564211362205,
+            "target_zero_ancilla_probability": 0.0036208133232195567
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "evaluation": {
+            "angle_mae": 0.13834963737772,
+            "max_angle_error": 2.9644178725890002,
+            "max_leakage_probability": 0.14807737973776,
+            "mean_leakage_probability": 0.014518118047228743,
+            "marked_accuracy": 0.984130859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 65
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.04359535464877597,
+            "non_target_x_probability": 0.9564046453512769,
+            "zero_ancilla_probability": 0.6232190592634204,
+            "one_ancilla_probability": 0.3767809407366324,
+            "target_zero_ancilla_probability": 0.013661280461067977
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 2,
+      "feature_count": 79,
+      "target_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.005199655580811587,
+            "max_angle_error": 3.08100041246831,
+            "max_leakage_probability": 0.0036669287755259866,
+            "mean_leakage_probability": 4.6464796687007036e-05,
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 0.0,
+            "self_inverse_error": 0.0
+          },
+          "grover": {
+            "iterations": 50,
+            "target_x_probability": 0.002358676801023167,
+            "non_target_x_probability": 0.9976413231989267,
+            "zero_ancilla_probability": 0.889623817351863,
+            "one_ancilla_probability": 0.11037618264808705,
+            "target_zero_ancilla_probability": 0.00025891674626532985
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.052108907916603456,
+            "max_angle_error": 2.939107189588889,
+            "max_leakage_probability": 0.21713409460819424,
+            "mean_leakage_probability": 0.00416906615441431,
+            "marked_accuracy": 0.99609375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 12,
+            "target_x_probability": 0.05835671266830659,
+            "non_target_x_probability": 0.9416432873316586,
+            "zero_ancilla_probability": 0.524019645261457,
+            "one_ancilla_probability": 0.4759803547385084,
+            "target_zero_ancilla_probability": 0.007108169167593055
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "evaluation": {
+            "angle_mae": 0.1535167975165317,
+            "max_angle_error": 2.8355634864065977,
+            "max_leakage_probability": 0.9694662417660336,
+            "mean_leakage_probability": 0.03568419234393593,
+            "marked_accuracy": 0.984130859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 65
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.22938003512993912,
+            "non_target_x_probability": 0.7706199648700716,
+            "zero_ancilla_probability": 0.21808300312961773,
+            "one_ancilla_probability": 0.781916996870393,
+            "target_zero_ancilla_probability": 0.055276012755088165
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 3,
+      "feature_count": 299,
+      "target_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.008259752508988714,
+            "max_angle_error": 2.9122625258008896,
+            "max_leakage_probability": 0.051676764910660034,
+            "mean_leakage_probability": 0.0001753280808168014,
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 50,
+            "target_x_probability": 0.027990106918104555,
+            "non_target_x_probability": 0.9720098930819179,
+            "zero_ancilla_probability": 0.6232644165193673,
+            "one_ancilla_probability": 0.3767355834806553,
+            "target_zero_ancilla_probability": 0.0009691549825753377
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.06103865349920749,
+            "max_angle_error": 2.6906023019514174,
+            "max_leakage_probability": 0.9140225226288804,
+            "mean_leakage_probability": 0.009074561692280393,
+            "marked_accuracy": 0.99609375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 12,
+            "target_x_probability": 0.23563205747594168,
+            "non_target_x_probability": 0.76436794252398,
+            "zero_ancilla_probability": 0.20548393200784823,
+            "one_ancilla_probability": 0.7945160679920735,
+            "target_zero_ancilla_probability": 0.05392469286131944
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "evaluation": {
+            "angle_mae": 0.14134531909703024,
+            "max_angle_error": 2.6070003490116243,
+            "max_leakage_probability": 0.9999523505414263,
+            "mean_leakage_probability": 0.04357846868045025,
+            "marked_accuracy": 0.989501953125,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 43
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.44468832041108536,
+            "non_target_x_probability": 0.5553116795889554,
+            "zero_ancilla_probability": 0.27941328663083215,
+            "one_ancilla_probability": 0.7205867133692088,
+            "target_zero_ancilla_probability": 0.2341516578562916
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 4,
+      "feature_count": 794,
+      "target_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.010662215095484477,
+            "max_angle_error": 2.5326022807991952,
+            "max_leakage_probability": 0.32722933751800404,
+            "mean_leakage_probability": 0.0004519812322501258,
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 50,
+            "target_x_probability": 0.14825972356410355,
+            "non_target_x_probability": 0.8517402764356847,
+            "zero_ancilla_probability": 0.24447932254712276,
+            "one_ancilla_probability": 0.7555206774526653,
+            "target_zero_ancilla_probability": 0.01486226126784175
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.05944175553056971,
+            "max_angle_error": 2.2334760271615144,
+            "max_leakage_probability": 0.9993977281025882,
+            "mean_leakage_probability": 0.011875861395187273,
+            "marked_accuracy": 0.99755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 10
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 12,
+            "target_x_probability": 0.4416214990315564,
+            "non_target_x_probability": 0.5583785009684116,
+            "zero_ancilla_probability": 0.2551037293479484,
+            "one_ancilla_probability": 0.7448962706520197,
+            "target_zero_ancilla_probability": 0.22661912867270628
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "evaluation": {
+            "angle_mae": 0.12569953897606012,
+            "max_angle_error": 2.1153595064943183,
+            "max_leakage_probability": 0.9996023793091842,
+            "mean_leakage_probability": 0.0373073600782739,
+            "marked_accuracy": 0.996826171875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 13
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.5794212821047223,
+            "non_target_x_probability": 0.4205787178953086,
+            "zero_ancilla_probability": 0.4622853826277787,
+            "one_ancilla_probability": 0.5377146173722525,
+            "target_zero_ancilla_probability": 0.42086717062482004
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 5,
+      "feature_count": 1586,
+      "target_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.012918994447974426,
+            "max_angle_error": 1.9251458887964787,
+            "max_leakage_probability": 0.8796045944891945,
+            "mean_leakage_probability": 0.0007700473402598434,
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 50,
+            "target_x_probability": 0.3579046192674258,
+            "non_target_x_probability": 0.6420953807324761,
+            "zero_ancilla_probability": 0.13675516672398572,
+            "one_ancilla_probability": 0.8632448332759162,
+            "target_zero_ancilla_probability": 0.11723157007148258
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.05261973550319458,
+            "max_angle_error": 1.576932249946427,
+            "max_leakage_probability": 0.9999623509195726,
+            "mean_leakage_probability": 0.009872649222561791,
+            "marked_accuracy": 0.99951171875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 2
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 12,
+            "target_x_probability": 0.5898162045431256,
+            "non_target_x_probability": 0.41018379545663486,
+            "zero_ancilla_probability": 0.4852476440019024,
+            "one_ancilla_probability": 0.514752355997858,
+            "target_zero_ancilla_probability": 0.45191040297976376
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "evaluation": {
+            "angle_mae": 0.10372870965425246,
+            "max_angle_error": 1.5293788455219905,
+            "max_leakage_probability": 0.998285572895278,
+            "mean_leakage_probability": 0.02613737781510979,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.698045877523579,
+            "non_target_x_probability": 0.30195412247646153,
+            "zero_ancilla_probability": 0.636018511271637,
+            "one_ancilla_probability": 0.3639814887284035,
+            "target_zero_ancilla_probability": 0.5988778140270512
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 6,
+      "feature_count": 2510,
+      "target_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.012745972200903226,
+            "max_angle_error": 1.2164467647933108,
+            "max_leakage_probability": 0.8796045944891925,
+            "mean_leakage_probability": 0.0007700473402598428,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 50,
+            "target_x_probability": 0.5161820071557497,
+            "non_target_x_probability": 0.48381799284475546,
+            "zero_ancilla_probability": 0.39111535517272406,
+            "one_ancilla_probability": 0.6088846448277812,
+            "target_zero_ancilla_probability": 0.34634338699644324
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "evaluation": {
+            "angle_mae": 0.04056360524840753,
+            "max_angle_error": 0.9203884727313572,
+            "max_leakage_probability": 0.6333563787374228,
+            "mean_leakage_probability": 0.005630449662744873,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 12,
+            "target_x_probability": 0.7423686991455332,
+            "non_target_x_probability": 0.2576313008544572,
+            "zero_ancilla_probability": 0.7001326454272332,
+            "one_ancilla_probability": 0.29986735457275715,
+            "target_zero_ancilla_probability": 0.6791944524892726
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "evaluation": {
+            "angle_mae": 0.07757538584048596,
+            "max_angle_error": 1.04464091655004,
+            "max_leakage_probability": 0.7477826309128154,
+            "mean_leakage_probability": 0.014058180522111318,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "oracle_checks": {
+            "unitary": true,
+            "self_inverse": true,
+            "verified_by": "all U^dagger Z U ancilla blocks are real orthogonal involutions"
+          },
+          "oracle_errors": {
+            "unitarity_error": 2.220446049250313e-16,
+            "self_inverse_error": 2.220446049250313e-16
+          },
+          "grover": {
+            "iterations": 6,
+            "target_x_probability": 0.8188276641230705,
+            "non_target_x_probability": 0.1811723358769104,
+            "zero_ancilla_probability": 0.7975590232182463,
+            "one_ancilla_probability": 0.20244097678173448,
+            "target_zero_ancilla_probability": 0.7728870407463172
+          }
+        }
+      ]
+    }
+  ],
+  "full_order_reference": {
+    "x_order": 12,
+    "feature_count": 4096,
+    "reference_only": true,
+    "note": "Full Boolean monomial interpolation can represent any marking exactly, but the feature count is exponential and is used only as an upper bound.",
+    "target_results": [
+      {
+        "target_count_request": 1,
+        "actual_target_count": 1,
+        "threshold": 22578.2152604,
+        "exact_grover": {
+          "iterations": 50,
+          "marked_probability": 0.9999453461091142,
+          "unmarked_probability": 5.465389088576966e-05
+        },
+        "evaluation": {
+          "angle_mae": 0.0,
+          "max_angle_error": 0.0,
+          "max_leakage_probability": 0.0,
+          "mean_leakage_probability": 0.0,
+          "marked_accuracy": 1.0,
+          "correct_marked_set": true,
+          "false_positive_count": 0,
+          "false_negative_count": 0
+        },
+        "oracle_checks": {
+          "unitary": true,
+          "self_inverse": true,
+          "verified_by": "full Boolean monomial interpolation gives angles exactly in {0, pi}"
+        },
+        "oracle_errors": {
+          "unitarity_error": 0.0,
+          "self_inverse_error": 0.0
+        },
+        "grover": {
+          "iterations": 50,
+          "target_x_probability": 0.9999453461091142,
+          "non_target_x_probability": 5.465389088576966e-05,
+          "zero_ancilla_probability": 1.0,
+          "one_ancilla_probability": 0.0,
+          "target_zero_ancilla_probability": 0.9999453461091142
+        }
+      },
+      {
+        "target_count_request": 16,
+        "actual_target_count": 16,
+        "threshold": 26924.435594950002,
+        "exact_grover": {
+          "iterations": 12,
+          "marked_probability": 0.9999470421032736,
+          "unmarked_probability": 5.295789672643547e-05
+        },
+        "evaluation": {
+          "angle_mae": 0.0,
+          "max_angle_error": 0.0,
+          "max_leakage_probability": 0.0,
+          "mean_leakage_probability": 0.0,
+          "marked_accuracy": 1.0,
+          "correct_marked_set": true,
+          "false_positive_count": 0,
+          "false_negative_count": 0
+        },
+        "oracle_checks": {
+          "unitary": true,
+          "self_inverse": true,
+          "verified_by": "full Boolean monomial interpolation gives angles exactly in {0, pi}"
+        },
+        "oracle_errors": {
+          "unitarity_error": 0.0,
+          "self_inverse_error": 0.0
+        },
+        "grover": {
+          "iterations": 12,
+          "target_x_probability": 0.9999470421032736,
+          "non_target_x_probability": 5.295789672643547e-05,
+          "zero_ancilla_probability": 1.0,
+          "one_ancilla_probability": 0.0,
+          "target_zero_ancilla_probability": 0.9999470421032736
+        }
+      },
+      {
+        "target_count_request": 64,
+        "actual_target_count": 65,
+        "threshold": 31519.617186047057,
+        "exact_grover": {
+          "iterations": 6,
+          "marked_probability": 0.9949373686651505,
+          "unmarked_probability": 0.005062631334849521
+        },
+        "evaluation": {
+          "angle_mae": 0.0,
+          "max_angle_error": 0.0,
+          "max_leakage_probability": 0.0,
+          "mean_leakage_probability": 0.0,
+          "marked_accuracy": 1.0,
+          "correct_marked_set": true,
+          "false_positive_count": 0,
+          "false_negative_count": 0
+        },
+        "oracle_checks": {
+          "unitary": true,
+          "self_inverse": true,
+          "verified_by": "full Boolean monomial interpolation gives angles exactly in {0, pi}"
+        },
+        "oracle_errors": {
+          "unitarity_error": 0.0,
+          "self_inverse_error": 0.0
+        },
+        "grover": {
+          "iterations": 6,
+          "target_x_probability": 0.9949373686651505,
+          "non_target_x_probability": 0.005062631334849521,
+          "zero_ancilla_probability": 1.0,
+          "one_ancilla_probability": 0.0,
+          "target_zero_ancilla_probability": 0.9949373686651505
+        }
+      }
+    ]
+  }
+}

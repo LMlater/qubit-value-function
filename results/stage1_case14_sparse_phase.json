@@ -1,0 +1,851 @@
+{
+  "instance": "data\\case14.json.gz",
+  "method": "case14 fixed-threshold greedy sparse monomial phase selection",
+  "period": 0,
+  "fixed_load_mw": [
+    310.50480000000005
+  ],
+  "generators": [
+    "g1",
+    "g2",
+    "g3",
+    "g4",
+    "g5",
+    "g6"
+  ],
+  "num_bits": 6,
+  "num_commitments": 64,
+  "threshold": 13863.956779176473,
+  "optimum": {
+    "bitstring": "101110",
+    "total_cost": 12641.692592000003,
+    "target": true
+  },
+  "runner_up": {
+    "bitstring": "110110",
+    "total_cost": 15086.220966352943,
+    "target": false
+  },
+  "max_terms": 12,
+  "first_success": {
+    "term_count": 5,
+    "selected_names": [
+      "1",
+      "x0*x1*x2*x3*x4*x5",
+      "x0*x1*x2*x3*x4",
+      "x0*x2*x3*x4",
+      "x0*x2*x3*x4*x5"
+    ],
+    "target_probability": 0.996585680786799,
+    "self_inverse_error": 9.769962616701378e-15,
+    "max_phase_factor_error": 4.884981308350689e-15
+  },
+  "grover_rows": [
+    {
+      "term_count": 2,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5"
+      ],
+      "coefficients": [
+        0.04986655005698084,
+        -0.04986655005698083
+      ],
+      "evaluation": {
+        "marked_accuracy": 0.984375,
+        "correct_marked_set": false,
+        "target_count": 1,
+        "predicted_count": 0,
+        "false_positive_count": 0,
+        "false_negative_count": 1,
+        "max_phase_error": 3.091726103532812,
+        "max_phase_factor_error": 1.9993783640016323
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": false,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 1.1102230246251565e-16,
+        "self_inverse_error": 0.09969177132139431,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.015628467915755916,
+      "non_target_probability": 0.984371532084245,
+      "iterations": 6
+    },
+    {
+      "term_count": 3,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4"
+      ],
+      "coefficients": [
+        0.05067084925144824,
+        6.938893903907228e-18,
+        -0.05067084925144827
+      ],
+      "evaluation": {
+        "marked_accuracy": 0.984375,
+        "correct_marked_set": false,
+        "target_count": 1,
+        "predicted_count": 0,
+        "false_positive_count": 0,
+        "false_negative_count": 1,
+        "max_phase_error": 3.090921804338345,
+        "max_phase_factor_error": 1.999358150592861
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": false,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 0.10129833767742534,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.015631934264756137,
+      "non_target_probability": 0.9843680657352406,
+      "iterations": 6
+    },
+    {
+      "term_count": 4,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4"
+      ],
+      "coefficients": [
+        -1.040834085586084e-16,
+        5.551115123125783e-16,
+        -1.5707963267948966,
+        1.5707963267948981
+      ],
+      "evaluation": {
+        "marked_accuracy": 0.984375,
+        "correct_marked_set": false,
+        "target_count": 1,
+        "predicted_count": 2,
+        "false_positive_count": 1,
+        "false_negative_count": 0,
+        "max_phase_error": 1.5707963267948983,
+        "max_phase_factor_error": 1.4142135623730963
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": false,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 2.0,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.04080146700988899,
+      "non_target_probability": 0.9591985329901116,
+      "iterations": 6
+    },
+    {
+      "term_count": 5,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5"
+      ],
+      "coefficients": [
+        -3.469446951953613e-16,
+        3.141592653589795,
+        -3.141592653589795,
+        3.1415926535897984,
+        -3.141592653589793
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 4.884981308350689e-15,
+        "max_phase_factor_error": 4.884981308350689e-15
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 9.769962616701378e-15,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    },
+    {
+      "term_count": 6,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5",
+        "x0*x1*x2"
+      ],
+      "coefficients": [
+        -2.6367796834847463e-16,
+        3.1415926535897927,
+        -3.1415926535897936,
+        3.1415926535897936,
+        -3.1415926535897927,
+        4.440892098500626e-16
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 4.440892098500626e-16,
+        "max_phase_factor_error": 4.440892098500626e-16
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 8.881784197001252e-16,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    },
+    {
+      "term_count": 7,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5",
+        "x0*x1*x2",
+        "x1*x3*x4*x5"
+      ],
+      "coefficients": [
+        -7.63278329429795e-17,
+        3.141592653589793,
+        -3.141592653589794,
+        3.141592653589794,
+        -3.141592653589793,
+        0.0,
+        -8.881784197001252e-16
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 8.881784197001252e-16,
+        "max_phase_factor_error": 9.645062526431047e-16
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 1.9290125052862095e-15,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    },
+    {
+      "term_count": 8,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5",
+        "x0*x1*x2",
+        "x1*x3*x4*x5",
+        "x0*x2*x3"
+      ],
+      "coefficients": [
+        8.326672684688672e-17,
+        3.1415926535897913,
+        -3.1415926535897936,
+        3.141592653589795,
+        -3.1415926535897936,
+        0.0,
+        4.440892098500626e-16,
+        -2.220446049250313e-16
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 1.7763568394002505e-15,
+        "max_phase_factor_error": 1.7763568394002505e-15
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 3.3077843189710302e-15,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    },
+    {
+      "term_count": 9,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5",
+        "x0*x1*x2",
+        "x1*x3*x4*x5",
+        "x0*x2*x3",
+        "x0*x1*x2*x5"
+      ],
+      "coefficients": [
+        -8.326672684688672e-17,
+        3.1415926535897927,
+        -3.141592653589795,
+        3.1415926535897944,
+        -3.141592653589793,
+        1.1102230246251565e-15,
+        -3.3306690738754696e-16,
+        -2.220446049250313e-16,
+        -1.1102230246251565e-16
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 8.881784197001252e-16,
+        "max_phase_factor_error": 1.1102230246251565e-15
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 2.220446049250313e-15,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    },
+    {
+      "term_count": 10,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5",
+        "x0*x1*x2",
+        "x1*x3*x4*x5",
+        "x0*x2*x3",
+        "x0*x1*x2*x5",
+        "x0*x1*x2*x3"
+      ],
+      "coefficients": [
+        1.52655665885959e-16,
+        3.1415926535897944,
+        -3.1415926535897944,
+        3.1415926535897936,
+        -3.1415926535897936,
+        4.440892098500626e-16,
+        -1.1102230246251565e-16,
+        -6.661338147750939e-16,
+        3.3306690738754696e-16,
+        1.1102230246251565e-16
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 8.881784197001252e-16,
+        "max_phase_factor_error": 9.992007221626409e-16
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 1.9984014443252818e-15,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    },
+    {
+      "term_count": 11,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5",
+        "x0*x1*x2",
+        "x1*x3*x4*x5",
+        "x0*x2*x3",
+        "x0*x1*x2*x5",
+        "x0*x1*x2*x3",
+        "x4"
+      ],
+      "coefficients": [
+        -3.469446951953613e-16,
+        3.1415926535897887,
+        -3.1415926535897922,
+        3.1415926535897944,
+        -3.1415926535897922,
+        1.1102230246251565e-16,
+        6.661338147750939e-16,
+        -1.1102230246251565e-16,
+        7.771561172376096e-16,
+        1.6653345369377348e-16,
+        0.0
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 1.7763568394002505e-15,
+        "max_phase_factor_error": 1.942890293094024e-15
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 3.885780586188048e-15,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    },
+    {
+      "term_count": 12,
+      "selected_names": [
+        "1",
+        "x0*x1*x2*x3*x4*x5",
+        "x0*x1*x2*x3*x4",
+        "x0*x2*x3*x4",
+        "x0*x2*x3*x4*x5",
+        "x0*x1*x2",
+        "x1*x3*x4*x5",
+        "x0*x2*x3",
+        "x0*x1*x2*x5",
+        "x0*x1*x2*x3",
+        "x4",
+        "x2*x3*x4*x5"
+      ],
+      "coefficients": [
+        7.63278329429795e-17,
+        3.1415926535897936,
+        -3.1415926535897967,
+        3.1415926535897967,
+        -3.141592653589793,
+        7.771561172376096e-16,
+        -2.220446049250313e-16,
+        -1.7763568394002505e-15,
+        3.3306690738754696e-16,
+        1.3322676295501878e-15,
+        0.0,
+        0.0
+      ],
+      "evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_set": true,
+        "target_count": 1,
+        "predicted_count": 1,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_error": 1.7763568394002505e-15,
+        "max_phase_factor_error": 1.7763568394002505e-15
+      },
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": true,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 3.552713678800501e-15,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.996585680786799,
+      "non_target_probability": 0.003414319213200956,
+      "iterations": 6
+    }
+  ],
+  "rows": [
+    {
+      "bitstring": "101110",
+      "total_cost": 12641.692592000003,
+      "target": true
+    },
+    {
+      "bitstring": "110110",
+      "total_cost": 15086.220966352943,
+      "target": false
+    },
+    {
+      "bitstring": "111110",
+      "total_cost": 16641.692592,
+      "target": false
+    },
+    {
+      "bitstring": "100111",
+      "total_cost": 16979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "111010",
+      "total_cost": 17103.95451764706,
+      "target": false
+    },
+    {
+      "bitstring": "111100",
+      "total_cost": 17103.95451764706,
+      "target": false
+    },
+    {
+      "bitstring": "011110",
+      "total_cost": 18275.49451764706,
+      "target": false
+    },
+    {
+      "bitstring": "101111",
+      "total_cost": 18917.037000000004,
+      "target": false
+    },
+    {
+      "bitstring": "101011",
+      "total_cost": 18979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "101101",
+      "total_cost": 18979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "110111",
+      "total_cost": 20979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "110011",
+      "total_cost": 21194.680966352942,
+      "target": false
+    },
+    {
+      "bitstring": "110101",
+      "total_cost": 21194.680966352942,
+      "target": false
+    },
+    {
+      "bitstring": "010111",
+      "total_cost": 22287.310400000002,
+      "target": false
+    },
+    {
+      "bitstring": "111111",
+      "total_cost": 22917.037000000004,
+      "target": false
+    },
+    {
+      "bitstring": "111011",
+      "total_cost": 22979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "111101",
+      "total_cost": 22979.262592,
+      "target": false
+    },
+    {
+      "bitstring": "111001",
+      "total_cost": 23212.414517647063,
+      "target": false
+    },
+    {
+      "bitstring": "011111",
+      "total_cost": 23667.15655458824,
+      "target": false
+    },
+    {
+      "bitstring": "011011",
+      "total_cost": 24383.954517647064,
+      "target": false
+    },
+    {
+      "bitstring": "011101",
+      "total_cost": 24383.954517647064,
+      "target": false
+    },
+    {
+      "bitstring": "001111",
+      "total_cost": 29701.567058823577,
+      "target": false
+    },
+    {
+      "bitstring": "110010",
+      "total_cost": 49716.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "110100",
+      "total_cost": 49716.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "111000",
+      "total_cost": 51921.314117647096,
+      "target": false
+    },
+    {
+      "bitstring": "110001",
+      "total_cost": 55824.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100110",
+      "total_cost": 83425.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010110",
+      "total_cost": 84207.88000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101010",
+      "total_cost": 85425.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101100",
+      "total_cost": 85425.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "011010",
+      "total_cost": 86412.85411764708,
+      "target": false
+    },
+    {
+      "bitstring": "011100",
+      "total_cost": 86412.85411764708,
+      "target": false
+    },
+    {
+      "bitstring": "010011",
+      "total_cost": 90316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010101",
+      "total_cost": 90316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100011",
+      "total_cost": 91018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100101",
+      "total_cost": 91018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101001",
+      "total_cost": 91904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "011001",
+      "total_cost": 92521.31411764708,
+      "target": false
+    },
+    {
+      "bitstring": "001110",
+      "total_cost": 119701.56705882358,
+      "target": false
+    },
+    {
+      "bitstring": "000111",
+      "total_cost": 124025.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001011",
+      "total_cost": 126025.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001101",
+      "total_cost": 126025.66000000005,
+      "target": false
+    },
+    {
+      "bitstring": "110000",
+      "total_cost": 145824.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010010",
+      "total_cost": 180316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010100",
+      "total_cost": 180316.34000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100010",
+      "total_cost": 181018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100100",
+      "total_cost": 181018.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "101000",
+      "total_cost": 181904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "011000",
+      "total_cost": 182521.31411764707,
+      "target": false
+    },
+    {
+      "bitstring": "010001",
+      "total_cost": 186424.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100001",
+      "total_cost": 189904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000110",
+      "total_cost": 214025.66000000003,
+      "target": false
+    },
+    {
+      "bitstring": "001010",
+      "total_cost": 216025.66000000003,
+      "target": false
+    },
+    {
+      "bitstring": "001100",
+      "total_cost": 216025.66000000003,
+      "target": false
+    },
+    {
+      "bitstring": "000011",
+      "total_cost": 221618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000101",
+      "total_cost": 221618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001001",
+      "total_cost": 222504.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "010000",
+      "total_cost": 276424.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "100000",
+      "total_cost": 279904.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000010",
+      "total_cost": 311618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000100",
+      "total_cost": 311618.55000000005,
+      "target": false
+    },
+    {
+      "bitstring": "001000",
+      "total_cost": 312504.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000001",
+      "total_cost": 320504.80000000005,
+      "target": false
+    },
+    {
+      "bitstring": "000000",
+      "total_cost": 410504.80000000005,
+      "target": false
+    }
+  ]
+}

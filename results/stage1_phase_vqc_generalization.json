@@ -1,0 +1,214 @@
+{
+  "instance": "data\\aelmp_simple.json.gz",
+  "method": "threshold generalization for diagonal phase VQC",
+  "note": "The model is trained on a few thresholds and evaluated on unseen thresholds. This checks whether tau-conditioning generalizes beyond direct interpolation points.",
+  "fixed_load_mw": [
+    365.0
+  ],
+  "generators": [
+    "W",
+    "X",
+    "Y"
+  ],
+  "train_thresholds": [
+    60000.0,
+    150000.0,
+    250000.0
+  ],
+  "test_thresholds": [
+    45060.0,
+    90000.0,
+    120000.0,
+    200000.0
+  ],
+  "train_evaluation": {
+    "marked_accuracy": 1.0,
+    "correct_marked_sets": true,
+    "max_phase_error": 9.325873406851315e-15,
+    "max_phase_factor_error": 9.325873406851315e-15,
+    "threshold_summaries": [
+      {
+        "threshold": 60000.0,
+        "target_count": 2,
+        "predicted_count": 2,
+        "accuracy": 1.0,
+        "correct_marked_set": true,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_factor_error": 4.884981308350689e-15
+      },
+      {
+        "threshold": 150000.0,
+        "target_count": 5,
+        "predicted_count": 5,
+        "accuracy": 1.0,
+        "correct_marked_set": true,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_factor_error": 3.1086244689504383e-15
+      },
+      {
+        "threshold": 250000.0,
+        "target_count": 6,
+        "predicted_count": 6,
+        "accuracy": 1.0,
+        "correct_marked_set": true,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_factor_error": 9.325873406851315e-15
+      }
+    ]
+  },
+  "test_evaluation": {
+    "marked_accuracy": 0.9375,
+    "correct_marked_sets": false,
+    "max_phase_error": 3.1415926535897913,
+    "max_phase_factor_error": 2.0,
+    "threshold_summaries": [
+      {
+        "threshold": 45060.0,
+        "target_count": 1,
+        "predicted_count": 2,
+        "accuracy": 0.875,
+        "correct_marked_set": false,
+        "false_positive_count": 1,
+        "false_negative_count": 0,
+        "max_phase_factor_error": 2.0
+      },
+      {
+        "threshold": 90000.0,
+        "target_count": 3,
+        "predicted_count": 2,
+        "accuracy": 0.875,
+        "correct_marked_set": false,
+        "false_positive_count": 0,
+        "false_negative_count": 1,
+        "max_phase_factor_error": 1.5438333018326398
+      },
+      {
+        "threshold": 120000.0,
+        "target_count": 5,
+        "predicted_count": 5,
+        "accuracy": 1.0,
+        "correct_marked_set": true,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_factor_error": 0.7012751103855072
+      },
+      {
+        "threshold": 200000.0,
+        "target_count": 5,
+        "predicted_count": 5,
+        "accuracy": 1.0,
+        "correct_marked_set": true,
+        "false_positive_count": 0,
+        "false_negative_count": 0,
+        "max_phase_factor_error": 1.0938963162448536
+      }
+    ]
+  },
+  "grover_on_test_thresholds": [
+    {
+      "threshold": 45060.0,
+      "target_count": 1,
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": false,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 1.447939145209218,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.14905957342449877,
+      "non_target_probability": 0.8509404265755007,
+      "iterations": 2
+    },
+    {
+      "threshold": 90000.0,
+      "target_count": 3,
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": false,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 1.1102230246251565e-16,
+        "self_inverse_error": 1.9629029865048366,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.6051046734704105,
+      "non_target_probability": 0.39489532652958903,
+      "iterations": 1
+    },
+    {
+      "threshold": 120000.0,
+      "target_count": 5,
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": false,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 1.3135040480954665,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.24701705069846128,
+      "non_target_probability": 0.7529829493015383,
+      "iterations": 1
+    },
+    {
+      "threshold": 200000.0,
+      "target_count": 5,
+      "oracle_checks": {
+        "unitary": true,
+        "self_inverse": false,
+        "real_diagonal": true
+      },
+      "oracle_errors": {
+        "unitarity_error": 0.0,
+        "self_inverse_error": 1.831546653310115,
+        "diagonal_error": 0.0
+      },
+      "target_probability": 0.13129198398403696,
+      "non_target_probability": 0.8687080160159627,
+      "iterations": 1
+    }
+  ],
+  "rows": [
+    {
+      "bitstring": "000",
+      "total_cost": 365000.0
+    },
+    {
+      "bitstring": "001",
+      "total_cost": 253100.0
+    },
+    {
+      "bitstring": "010",
+      "total_cost": 226360.0
+    },
+    {
+      "bitstring": "011",
+      "total_cost": 114460.0
+    },
+    {
+      "bitstring": "100",
+      "total_cost": 118270.0
+    },
+    {
+      "bitstring": "101",
+      "total_cost": 40525.0
+    },
+    {
+      "bitstring": "110",
+      "total_cost": 49595.0
+    },
+    {
+      "bitstring": "111",
+      "total_cost": 61795.0
+    }
+  ]
+}

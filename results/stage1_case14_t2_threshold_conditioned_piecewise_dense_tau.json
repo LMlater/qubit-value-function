@@ -1,0 +1,2675 @@
+{
+  "instance": "case14_T2",
+  "source": "data\\case14.json.gz",
+  "method": "threshold-conditioned ancilla VQC: one U_theta(x,tau) fitted to multiple value-function sublevel sets",
+  "horizon": 2,
+  "generators": [
+    "g1",
+    "g2",
+    "g3",
+    "g4",
+    "g5",
+    "g6"
+  ],
+  "fixed_load_mw": [
+    310.50480000000005,
+    291.96720999999997
+  ],
+  "num_bits": 12,
+  "num_commitments": 4096,
+  "logic_feasible_count": 768,
+  "finite_value_count": 768,
+  "value_domain_count": 768,
+  "value_evaluation_seconds": 1.0938412000004973,
+  "train_target_counts": [
+    1,
+    4,
+    16,
+    32,
+    64
+  ],
+  "holdout_target_counts": [
+    8,
+    48
+  ],
+  "train_thresholds": [
+    22578.2152604,
+    24897.827539314705,
+    26924.435594950002,
+    30915.7852604,
+    31519.617186047057
+  ],
+  "tau_degree": 4,
+  "tau_basis": "piecewise_linear",
+  "training_weights": {
+    "method": "uniform",
+    "boundary_weight": 0.0,
+    "boundary_bandwidth": 8.0
+  },
+  "oracle_decomposition": {
+    "feasibility_oracle": "exact Boolean feasibility register",
+    "value_oracle": "x- and tau-conditioned R_y angle model on the value ancilla",
+    "target_condition": "logic_feasible(x) and U_theta(x,tau) rotates value ancilla to |1>"
+  },
+  "optimum": {
+    "bitstring_generator_major": "110011111100",
+    "bitstring_time_major": "101110101110",
+    "schedule_table": [
+      {
+        "generator": "g1",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g2",
+        "t0": 0,
+        "t1": 0
+      },
+      {
+        "generator": "g3",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g4",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g5",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g6",
+        "t0": 0,
+        "t1": 0
+      }
+    ],
+    "time_slices": [
+      {
+        "time": "t0",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 0,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      },
+      {
+        "time": "t1",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 0,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      }
+    ],
+    "total_cost": 20578.2152604
+  },
+  "runner_up": {
+    "bitstring_generator_major": "110111111100",
+    "bitstring_time_major": "101110111110",
+    "schedule_table": [
+      {
+        "generator": "g1",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g2",
+        "t0": 0,
+        "t1": 1
+      },
+      {
+        "generator": "g3",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g4",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g5",
+        "t0": 1,
+        "t1": 1
+      },
+      {
+        "generator": "g6",
+        "t0": 0,
+        "t1": 0
+      }
+    ],
+    "time_slices": [
+      {
+        "time": "t0",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 0,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      },
+      {
+        "time": "t1",
+        "status_by_generator": {
+          "g1": 1,
+          "g2": 1,
+          "g3": 1,
+          "g4": 1,
+          "g5": 1,
+          "g6": 0
+        },
+        "online_generators": [
+          "g1",
+          "g2",
+          "g3",
+          "g4",
+          "g5"
+        ]
+      }
+    ],
+    "total_cost": 24578.2152604
+  },
+  "order_rows": [
+    {
+      "x_order": 1,
+      "x_feature_count": 13,
+      "tau_degree": 4,
+      "parameter_count": 65,
+      "training_domain_count": 768,
+      "value_function_coherence": {
+        "thresholds": [
+          22578.2152604,
+          24897.827539314705,
+          25040.477186047057,
+          26924.435594950002,
+          30915.7852604,
+          31235.397539314705,
+          31519.617186047057
+        ],
+        "target_count_requests": [
+          1,
+          4,
+          8,
+          16,
+          32,
+          48,
+          64
+        ],
+        "predicted_adjacent_violation_count": 0,
+        "predicted_violating_state_count": 0,
+        "exact_adjacent_violation_count": 0
+      },
+      "training_family_evaluation": {
+        "marked_accuracy": 0.96875,
+        "correct_marked_sets": false,
+        "max_leakage_probability": 0.9989294616193019,
+        "mean_leakage_probability": 0.061944468415535116,
+        "threshold_summaries": [
+          {
+            "threshold": 22578.2152604,
+            "target_count": 1,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.0020233431767261462,
+            "mean_leakage_probability": 0.00018403209813891932
+          },
+          {
+            "threshold": 24897.827539314705,
+            "target_count": 6,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9921875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6,
+            "max_leakage_probability": 0.04289512214823502,
+            "mean_leakage_probability": 0.004631973161135447
+          },
+          {
+            "threshold": 26924.435594950002,
+            "target_count": 16,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9791666666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16,
+            "max_leakage_probability": 0.21209590429107775,
+            "mean_leakage_probability": 0.02360650264975311
+          },
+          {
+            "threshold": 30915.7852604,
+            "target_count": 32,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9583333333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 32,
+            "max_leakage_probability": 0.6135381315171866,
+            "mean_leakage_probability": 0.0739787406646455
+          },
+          {
+            "threshold": 31519.617186047057,
+            "target_count": 65,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9153645833333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 65,
+            "max_leakage_probability": 0.9989294616193019,
+            "mean_leakage_probability": 0.20732109350400263
+          }
+        ]
+      },
+      "train_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.014636733351075619,
+            "max_angle_error": 3.096595883811814,
+            "max_leakage_probability": 0.0020233431767261462,
+            "mean_leakage_probability": 0.00018403209813891932,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.0020233431767261462,
+            "mean_leakage_probability": 3.4506018401047373e-05,
+            "mean_feasible_leakage_probability": 0.00018403209813891932,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 50,
+            "target_x_probability": 0.0012436884878685764,
+            "non_target_x_probability": 0.9987563115115388,
+            "feasible_x_probability": 0.2507897783903785,
+            "infeasible_x_probability": 0.7492102216096215,
+            "zero_feasibility_probability": 0.9999999999994071,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.9236021903912162,
+            "one_value_ancilla_probability": 0.07639780960819106,
+            "clean_ancilla_probability": 0.9236021903912162,
+            "dirty_ancilla_probability": 0.07639780960878384,
+            "target_clean_probability": 0.00024695964084175986,
+            "target_dirty_probability": 0.0009967288470268166
+          }
+        },
+        {
+          "target_count_request": 4,
+          "actual_target_count": 6,
+          "threshold": 24897.827539314705,
+          "exact_grover": {
+            "iterations": 20,
+            "marked_probability": 0.999998539284254,
+            "unmarked_probability": 1.4607157460266862e-06
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.07639011270783318,
+            "max_angle_error": 2.9656961899122383,
+            "max_leakage_probability": 0.04289512214823502,
+            "mean_leakage_probability": 0.004631973161135447,
+            "marked_accuracy": 0.9921875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99853515625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6,
+            "max_leakage_probability": 0.04289512214823502,
+            "mean_leakage_probability": 0.0008684949677128964,
+            "mean_feasible_leakage_probability": 0.004631973161135447,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 20,
+            "target_x_probability": 0.015990454106089326,
+            "non_target_x_probability": 0.9840095458938625,
+            "feasible_x_probability": 0.42000977086498603,
+            "infeasible_x_probability": 0.579990229135014,
+            "zero_feasibility_probability": 0.9999999999999518,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7266981738422398,
+            "one_value_ancilla_probability": 0.2733018261577119,
+            "clean_ancilla_probability": 0.7266981738422398,
+            "dirty_ancilla_probability": 0.2733018261577602,
+            "target_clean_probability": 0.0019056515639829935,
+            "target_dirty_probability": 0.014084802542106336
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.17504425212872846,
+            "max_angle_error": 2.8716120349219194,
+            "max_leakage_probability": 0.21209590429107775,
+            "mean_leakage_probability": 0.02360650264975311,
+            "marked_accuracy": 0.9791666666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99609375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16,
+            "max_leakage_probability": 0.21209590429107775,
+            "mean_leakage_probability": 0.004426219246828708,
+            "mean_feasible_leakage_probability": 0.02360650264975311,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 12,
+            "target_x_probability": 0.04717464291267383,
+            "non_target_x_probability": 0.9528253570875915,
+            "feasible_x_probability": 0.5739116921504097,
+            "infeasible_x_probability": 0.4260883078495903,
+            "zero_feasibility_probability": 1.0000000000002651,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.5589152169975187,
+            "one_value_ancilla_probability": 0.44108478300274656,
+            "clean_ancilla_probability": 0.5589152169975188,
+            "dirty_ancilla_probability": 0.4410847830024812,
+            "target_clean_probability": 0.007075210822409923,
+            "target_dirty_probability": 0.0400994320902639
+          }
+        },
+        {
+          "target_count_request": 32,
+          "actual_target_count": 32,
+          "threshold": 30915.7852604,
+          "exact_grover": {
+            "iterations": 8,
+            "marked_probability": 0.9956198656943223,
+            "unmarked_probability": 0.004380134305677741
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.3091610446251188,
+            "max_angle_error": 2.724349879284898,
+            "max_leakage_probability": 0.6135381315171866,
+            "mean_leakage_probability": 0.0739787406646455,
+            "marked_accuracy": 0.9583333333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 32
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.9921875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 32,
+            "max_leakage_probability": 0.6135381315171866,
+            "mean_leakage_probability": 0.013871013874621032,
+            "mean_feasible_leakage_probability": 0.0739787406646455,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 8,
+            "target_x_probability": 0.10998298523175556,
+            "non_target_x_probability": 0.8900170147682633,
+            "feasible_x_probability": 0.6968377821646483,
+            "infeasible_x_probability": 0.3031622178353517,
+            "zero_feasibility_probability": 1.0000000000000189,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.4518683464954286,
+            "one_value_ancilla_probability": 0.5481316535045901,
+            "clean_ancilla_probability": 0.4518683464954286,
+            "dirty_ancilla_probability": 0.5481316535045714,
+            "target_clean_probability": 0.023748284166987148,
+            "target_dirty_probability": 0.08623470106476841
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.5127756889282173,
+            "max_angle_error": 2.6343563397289382,
+            "max_leakage_probability": 0.9989294616193019,
+            "mean_leakage_probability": 0.20732109350400263,
+            "marked_accuracy": 0.9153645833333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 65
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.984130859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 65,
+            "max_leakage_probability": 0.9989294616193019,
+            "mean_leakage_probability": 0.03887270503200049,
+            "mean_feasible_leakage_probability": 0.20732109350400263,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 6,
+            "target_x_probability": 0.1913682635376922,
+            "non_target_x_probability": 0.8086317364627209,
+            "feasible_x_probability": 0.8840681793442196,
+            "infeasible_x_probability": 0.11593182065578045,
+            "zero_feasibility_probability": 1.0000000000004134,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.2858417865178925,
+            "one_value_ancilla_probability": 0.7141582134825206,
+            "clean_ancilla_probability": 0.2858417865178925,
+            "dirty_ancilla_probability": 0.7141582134821075,
+            "target_clean_probability": 0.06641658117835984,
+            "target_dirty_probability": 0.12495168235933236
+          }
+        }
+      ],
+      "holdout_results": [
+        {
+          "target_count_request": 8,
+          "actual_target_count": 8,
+          "threshold": 25040.477186047057,
+          "exact_grover": {
+            "iterations": 17,
+            "marked_probability": 0.9994480261540108,
+            "unmarked_probability": 0.000551973845989151
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.08795549884302285,
+            "max_angle_error": 2.975614932836242,
+            "max_leakage_probability": 0.04866975205041686,
+            "mean_leakage_probability": 0.005393704243400739,
+            "marked_accuracy": 0.9895833333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 8
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.998046875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 8,
+            "max_leakage_probability": 0.04866975205041686,
+            "mean_leakage_probability": 0.0010113195456376385,
+            "mean_feasible_leakage_probability": 0.005393704243400739,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 17,
+            "target_x_probability": 0.017247768634692493,
+            "non_target_x_probability": 0.9827522313652055,
+            "feasible_x_probability": 0.38614756511166753,
+            "infeasible_x_probability": 0.6138524348883325,
+            "zero_feasibility_probability": 0.999999999999898,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7680121209561024,
+            "one_value_ancilla_probability": 0.2319878790437957,
+            "clean_ancilla_probability": 0.7680121209561024,
+            "dirty_ancilla_probability": 0.23198787904389762,
+            "target_clean_probability": 0.002556480469962455,
+            "target_dirty_probability": 0.014691288164730035
+          }
+        },
+        {
+          "target_count_request": 48,
+          "actual_target_count": 51,
+          "threshold": 31235.397539314705,
+          "exact_grover": {
+            "iterations": 7,
+            "marked_probability": 0.9887071254487527,
+            "unmarked_probability": 0.011292874551247278
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.4248366153082361,
+            "max_angle_error": 2.6767156965870234,
+            "max_leakage_probability": 0.8930932676887609,
+            "mean_leakage_probability": 0.13704831315314636,
+            "marked_accuracy": 0.93359375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 51
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.987548828125,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 51,
+            "max_leakage_probability": 0.8930932676887609,
+            "mean_leakage_probability": 0.025696558716214943,
+            "mean_feasible_leakage_probability": 0.13704831315314636,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 7,
+            "target_x_probability": 0.17243611074266868,
+            "non_target_x_probability": 0.8275638892569287,
+            "feasible_x_probability": 0.822771138193704,
+            "infeasible_x_probability": 0.17722886180629605,
+            "zero_feasibility_probability": 0.9999999999995973,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.33228323461591286,
+            "one_value_ancilla_probability": 0.6677167653836846,
+            "clean_ancilla_probability": 0.3322832346159128,
+            "dirty_ancilla_probability": 0.6677167653840872,
+            "target_clean_probability": 0.0466211596505541,
+            "target_dirty_probability": 0.12581495109211463
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 2,
+      "x_feature_count": 79,
+      "tau_degree": 4,
+      "parameter_count": 395,
+      "training_domain_count": 768,
+      "value_function_coherence": {
+        "thresholds": [
+          22578.2152604,
+          24897.827539314705,
+          25040.477186047057,
+          26924.435594950002,
+          30915.7852604,
+          31235.397539314705,
+          31519.617186047057
+        ],
+        "target_count_requests": [
+          1,
+          4,
+          8,
+          16,
+          32,
+          48,
+          64
+        ],
+        "predicted_adjacent_violation_count": 0,
+        "predicted_violating_state_count": 0,
+        "exact_adjacent_violation_count": 0
+      },
+      "training_family_evaluation": {
+        "marked_accuracy": 0.9802083333333333,
+        "correct_marked_sets": false,
+        "max_leakage_probability": 0.9999832669587004,
+        "mean_leakage_probability": 0.07435942489458135,
+        "threshold_summaries": [
+          {
+            "threshold": 22578.2152604,
+            "target_count": 1,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.049769423882319544,
+            "mean_leakage_probability": 0.0009168409055589187
+          },
+          {
+            "threshold": 24897.827539314705,
+            "target_count": 6,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9921875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6,
+            "max_leakage_probability": 0.5122706142614554,
+            "mean_leakage_probability": 0.015466751608049051
+          },
+          {
+            "threshold": 26924.435594950002,
+            "target_count": 16,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9791666666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16,
+            "max_leakage_probability": 0.9991803004701113,
+            "mean_leakage_probability": 0.05300204470486028
+          },
+          {
+            "threshold": 30915.7852604,
+            "target_count": 32,
+            "predicted_count": 10,
+            "marked_accuracy": 0.9713541666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 22,
+            "max_leakage_probability": 0.9967238895097222,
+            "mean_leakage_probability": 0.10626407013308015
+          },
+          {
+            "threshold": 31519.617186047057,
+            "target_count": 65,
+            "predicted_count": 40,
+            "marked_accuracy": 0.9596354166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 3,
+            "false_negative_count": 28,
+            "max_leakage_probability": 0.9999832669587004,
+            "mean_leakage_probability": 0.1961474171213583
+          }
+        ]
+      },
+      "train_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.023638217835543655,
+            "max_angle_error": 2.916608804699896,
+            "max_leakage_probability": 0.049769423882319544,
+            "mean_leakage_probability": 0.0009168409055589187,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.049769423882319544,
+            "mean_leakage_probability": 0.0001719076697922973,
+            "mean_feasible_leakage_probability": 0.0009168409055589187,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 50,
+            "target_x_probability": 0.026322191037705604,
+            "non_target_x_probability": 0.9736778089631344,
+            "feasible_x_probability": 0.49058429723652686,
+            "infeasible_x_probability": 0.5094157027634731,
+            "zero_feasibility_probability": 1.0000000000008398,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.6342116318047086,
+            "one_value_ancilla_probability": 0.36578836819613125,
+            "clean_ancilla_probability": 0.6342116318047086,
+            "dirty_ancilla_probability": 0.36578836819529137,
+            "target_clean_probability": 0.0009228072139873439,
+            "target_dirty_probability": 0.02539938382371826
+          }
+        },
+        {
+          "target_count_request": 4,
+          "actual_target_count": 6,
+          "threshold": 24897.827539314705,
+          "exact_grover": {
+            "iterations": 20,
+            "marked_probability": 0.999998539284254,
+            "unmarked_probability": 1.4607157460266862e-06
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.09753561176306187,
+            "max_angle_error": 2.564815877344792,
+            "max_leakage_probability": 0.5122706142614554,
+            "mean_leakage_probability": 0.015466751608049051,
+            "marked_accuracy": 0.9921875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99853515625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6,
+            "max_leakage_probability": 0.5122706142614554,
+            "mean_leakage_probability": 0.002900015926509197,
+            "mean_feasible_leakage_probability": 0.015466751608049051,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 20,
+            "target_x_probability": 0.1619249756235933,
+            "non_target_x_probability": 0.838075024375497,
+            "feasible_x_probability": 0.8377096627619458,
+            "infeasible_x_probability": 0.1622903372380542,
+            "zero_feasibility_probability": 0.9999999999990903,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.2510634198585764,
+            "one_value_ancilla_probability": 0.7489365801405139,
+            "clean_ancilla_probability": 0.2510634198585764,
+            "dirty_ancilla_probability": 0.7489365801414236,
+            "target_clean_probability": 0.022533668724097823,
+            "target_dirty_probability": 0.13939130689949544
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.18682607679123905,
+            "max_angle_error": 2.568906492779155,
+            "max_leakage_probability": 0.9991803004701113,
+            "mean_leakage_probability": 0.05300204470486028,
+            "marked_accuracy": 0.9791666666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99609375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 16,
+            "max_leakage_probability": 0.9991803004701113,
+            "mean_leakage_probability": 0.009937883382161302,
+            "mean_feasible_leakage_probability": 0.05300204470486028,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 12,
+            "target_x_probability": 0.2716010648882239,
+            "non_target_x_probability": 0.728398935111511,
+            "feasible_x_probability": 0.9401919410705949,
+            "infeasible_x_probability": 0.059808058929405106,
+            "zero_feasibility_probability": 0.999999999999735,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.20693587047035422,
+            "one_value_ancilla_probability": 0.7930641295293807,
+            "clean_ancilla_probability": 0.20693587047035422,
+            "dirty_ancilla_probability": 0.7930641295296458,
+            "target_clean_probability": 0.08178479717815916,
+            "target_dirty_probability": 0.1898162677100647
+          }
+        },
+        {
+          "target_count_request": 32,
+          "actual_target_count": 32,
+          "threshold": 30915.7852604,
+          "exact_grover": {
+            "iterations": 8,
+            "marked_probability": 0.9956198656943223,
+            "unmarked_probability": 0.004380134305677741
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.28003671494401206,
+            "max_angle_error": 2.5280003384355387,
+            "max_leakage_probability": 0.9967238895097222,
+            "mean_leakage_probability": 0.10626407013308015,
+            "marked_accuracy": 0.9713541666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 22
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99462890625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 22,
+            "max_leakage_probability": 0.9967238895097222,
+            "mean_leakage_probability": 0.019924513149952527,
+            "mean_feasible_leakage_probability": 0.10626407013308015,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 8,
+            "target_x_probability": 0.3842892093428667,
+            "non_target_x_probability": 0.6157107906571602,
+            "feasible_x_probability": 0.96237392426529,
+            "infeasible_x_probability": 0.037626075734709996,
+            "zero_feasibility_probability": 1.0000000000000269,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.32535752713243404,
+            "one_value_ancilla_probability": 0.6746424728675927,
+            "clean_ancilla_probability": 0.32535752713243404,
+            "dirty_ancilla_probability": 0.674642472867566,
+            "target_clean_probability": 0.19852614849067862,
+            "target_dirty_probability": 0.18576306085218813
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.41595380433729595,
+            "max_angle_error": 2.5525440310417045,
+            "max_leakage_probability": 0.9999832669587004,
+            "mean_leakage_probability": 0.1961474171213583,
+            "marked_accuracy": 0.9596354166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 3,
+            "false_negative_count": 28
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.992431640625,
+            "correct_marked_set": false,
+            "false_positive_count": 3,
+            "false_negative_count": 28,
+            "max_leakage_probability": 0.9999832669587004,
+            "mean_leakage_probability": 0.03677764071025469,
+            "mean_feasible_leakage_probability": 0.1961474171213583,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 6,
+            "target_x_probability": 0.4775174338763403,
+            "non_target_x_probability": 0.5224825661235785,
+            "feasible_x_probability": 0.9940664694935104,
+            "infeasible_x_probability": 0.005933530506489593,
+            "zero_feasibility_probability": 0.9999999999999187,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.3891849680777488,
+            "one_value_ancilla_probability": 0.6108150319221699,
+            "clean_ancilla_probability": 0.38918496807774877,
+            "dirty_ancilla_probability": 0.6108150319222512,
+            "target_clean_probability": 0.3225429360182008,
+            "target_dirty_probability": 0.1549744978581395
+          }
+        }
+      ],
+      "holdout_results": [
+        {
+          "target_count_request": 8,
+          "actual_target_count": 8,
+          "threshold": 25040.477186047057,
+          "exact_grover": {
+            "iterations": 17,
+            "marked_probability": 0.9994480261540108,
+            "unmarked_probability": 0.000551973845989151
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.10626276583148586,
+            "max_angle_error": 2.7178664326897004,
+            "max_leakage_probability": 0.5352770547247211,
+            "mean_leakage_probability": 0.016945064675260753,
+            "marked_accuracy": 0.9895833333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 8
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.998046875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 8,
+            "max_leakage_probability": 0.5352770547247211,
+            "mean_leakage_probability": 0.003177199626611391,
+            "mean_feasible_leakage_probability": 0.016945064675260753,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 17,
+            "target_x_probability": 0.16188135106383322,
+            "non_target_x_probability": 0.8381186489365224,
+            "feasible_x_probability": 0.754654043259263,
+            "infeasible_x_probability": 0.245345956740737,
+            "zero_feasibility_probability": 1.0000000000003557,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.3556442476799463,
+            "one_value_ancilla_probability": 0.6443557523204094,
+            "clean_ancilla_probability": 0.35564424767994635,
+            "dirty_ancilla_probability": 0.6443557523200536,
+            "target_clean_probability": 0.024607515705924277,
+            "target_dirty_probability": 0.13727383535790896
+          }
+        },
+        {
+          "target_count_request": 48,
+          "actual_target_count": 51,
+          "threshold": 31235.397539314705,
+          "exact_grover": {
+            "iterations": 7,
+            "marked_probability": 0.9887071254487527,
+            "unmarked_probability": 0.011292874551247278
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.35693886742548714,
+            "max_angle_error": 2.551919725327974,
+            "max_leakage_probability": 0.9998685625154424,
+            "mean_leakage_probability": 0.1502285587413899,
+            "marked_accuracy": 0.9596354166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 31
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.992431640625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 31,
+            "max_leakage_probability": 0.9998685625154424,
+            "mean_leakage_probability": 0.028167854764010604,
+            "mean_feasible_leakage_probability": 0.1502285587413899,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 7,
+            "target_x_probability": 0.4571505808569764,
+            "non_target_x_probability": 0.5428494191429998,
+            "feasible_x_probability": 0.9874194789652292,
+            "infeasible_x_probability": 0.012580521034770809,
+            "zero_feasibility_probability": 0.9999999999999762,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.35105133728705656,
+            "one_value_ancilla_probability": 0.6489486627129197,
+            "clean_ancilla_probability": 0.35105133728705656,
+            "dirty_ancilla_probability": 0.6489486627129435,
+            "target_clean_probability": 0.26942576700524196,
+            "target_dirty_probability": 0.18772481385173445
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 3,
+      "x_feature_count": 299,
+      "tau_degree": 4,
+      "parameter_count": 1495,
+      "training_domain_count": 768,
+      "value_function_coherence": {
+        "thresholds": [
+          22578.2152604,
+          24897.827539314705,
+          25040.477186047057,
+          26924.435594950002,
+          30915.7852604,
+          31235.397539314705,
+          31519.617186047057
+        ],
+        "target_count_requests": [
+          1,
+          4,
+          8,
+          16,
+          32,
+          48,
+          64
+        ],
+        "predicted_adjacent_violation_count": 1,
+        "predicted_violating_state_count": 1,
+        "exact_adjacent_violation_count": 0
+      },
+      "training_family_evaluation": {
+        "marked_accuracy": 0.9890625,
+        "correct_marked_sets": false,
+        "max_leakage_probability": 1.0,
+        "mean_leakage_probability": 0.06831449920556838,
+        "threshold_summaries": [
+          {
+            "threshold": 22578.2152604,
+            "target_count": 1,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.3984461327961157,
+            "mean_leakage_probability": 0.002665892795565139
+          },
+          {
+            "threshold": 24897.827539314705,
+            "target_count": 6,
+            "predicted_count": 2,
+            "marked_accuracy": 0.9947916666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 4,
+            "max_leakage_probability": 1.0,
+            "mean_leakage_probability": 0.024769803025845027
+          },
+          {
+            "threshold": 26924.435594950002,
+            "target_count": 16,
+            "predicted_count": 7,
+            "marked_accuracy": 0.98828125,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 9,
+            "max_leakage_probability": 0.9993977281025862,
+            "mean_leakage_probability": 0.05824320459814739
+          },
+          {
+            "threshold": 30915.7852604,
+            "target_count": 32,
+            "predicted_count": 14,
+            "marked_accuracy": 0.9765625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 18,
+            "max_leakage_probability": 0.9975923633360989,
+            "mean_leakage_probability": 0.09597581106423285
+          },
+          {
+            "threshold": 31519.617186047057,
+            "target_count": 65,
+            "predicted_count": 55,
+            "marked_accuracy": 0.9869791666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 10,
+            "max_leakage_probability": 0.9933216660424405,
+            "mean_leakage_probability": 0.15991778454405148
+          }
+        ]
+      },
+      "train_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.029816751564528177,
+            "max_angle_error": 2.4584598760513905,
+            "max_leakage_probability": 0.3984461327961157,
+            "mean_leakage_probability": 0.002665892795565139,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.3984461327961157,
+            "mean_leakage_probability": 0.0004998548991684635,
+            "mean_feasible_leakage_probability": 0.002665892795565139,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 50,
+            "target_x_probability": 0.17478915407218487,
+            "non_target_x_probability": 0.8252108459281753,
+            "feasible_x_probability": 0.8618467308945367,
+            "infeasible_x_probability": 0.13815326910546333,
+            "zero_feasibility_probability": 1.00000000000036,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.20660653093874354,
+            "one_value_ancilla_probability": 0.7933934690616165,
+            "clean_ancilla_probability": 0.20660653093874354,
+            "dirty_ancilla_probability": 0.7933934690612565,
+            "target_clean_probability": 0.02124206261879875,
+            "target_dirty_probability": 0.15354709145338613
+          }
+        },
+        {
+          "target_count_request": 4,
+          "actual_target_count": 6,
+          "threshold": 24897.827539314705,
+          "exact_grover": {
+            "iterations": 20,
+            "marked_probability": 0.999998539284254,
+            "unmarked_probability": 1.4607157460266862e-06
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.09504289298274902,
+            "max_angle_error": 1.9512235621905407,
+            "max_leakage_probability": 1.0,
+            "mean_leakage_probability": 0.024769803025845027,
+            "marked_accuracy": 0.9947916666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 4
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.9990234375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 4,
+            "max_leakage_probability": 1.0,
+            "mean_leakage_probability": 0.004644338067345943,
+            "mean_feasible_leakage_probability": 0.024769803025845027,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 20,
+            "target_x_probability": 0.42090951481802963,
+            "non_target_x_probability": 0.5790904851823665,
+            "feasible_x_probability": 0.9998364791137836,
+            "infeasible_x_probability": 0.00016352088621640615,
+            "zero_feasibility_probability": 1.0000000000003961,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.22478169230986617,
+            "one_value_ancilla_probability": 0.7752183076905299,
+            "clean_ancilla_probability": 0.22478169230986622,
+            "dirty_ancilla_probability": 0.7752183076901338,
+            "target_clean_probability": 0.19415565790747008,
+            "target_dirty_probability": 0.2267538569105596
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.17102820520488848,
+            "max_angle_error": 2.086213871524474,
+            "max_leakage_probability": 0.9993977281025862,
+            "mean_leakage_probability": 0.05824320459814739,
+            "marked_accuracy": 0.98828125,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 9
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.997802734375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 9,
+            "max_leakage_probability": 0.9993977281025862,
+            "mean_leakage_probability": 0.010920600862152637,
+            "mean_feasible_leakage_probability": 0.05824320459814739,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 12,
+            "target_x_probability": 0.4965482980326656,
+            "non_target_x_probability": 0.503451701967388,
+            "feasible_x_probability": 0.9979529831830185,
+            "infeasible_x_probability": 0.002047016816981495,
+            "zero_feasibility_probability": 1.0000000000000535,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.3534842979778366,
+            "one_value_ancilla_probability": 0.646515702022217,
+            "clean_ancilla_probability": 0.35348429797783654,
+            "dirty_ancilla_probability": 0.6465157020221635,
+            "target_clean_probability": 0.31299671457000555,
+            "target_dirty_probability": 0.18355158346266004
+          }
+        },
+        {
+          "target_count_request": 32,
+          "actual_target_count": 32,
+          "threshold": 30915.7852604,
+          "exact_grover": {
+            "iterations": 8,
+            "marked_probability": 0.9956198656943223,
+            "unmarked_probability": 0.004380134305677741
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.24179372169047442,
+            "max_angle_error": 2.21711356542405,
+            "max_leakage_probability": 0.9975923633360989,
+            "mean_leakage_probability": 0.09597581106423285,
+            "marked_accuracy": 0.9765625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 18
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99560546875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 18,
+            "max_leakage_probability": 0.9975923633360989,
+            "mean_leakage_probability": 0.01799546457454366,
+            "mean_feasible_leakage_probability": 0.09597581106423285,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 8,
+            "target_x_probability": 0.5569614766234382,
+            "non_target_x_probability": 0.4430385233764411,
+            "feasible_x_probability": 0.9937518506217311,
+            "infeasible_x_probability": 0.006248149378268897,
+            "zero_feasibility_probability": 0.9999999999998794,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.4415900540560203,
+            "one_value_ancilla_probability": 0.5584099459438591,
+            "clean_ancilla_probability": 0.4415900540560203,
+            "dirty_ancilla_probability": 0.5584099459439797,
+            "target_clean_probability": 0.3828517656861652,
+            "target_dirty_probability": 0.1741097109372729
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.34448521332392906,
+            "max_angle_error": 2.012582793705975,
+            "max_leakage_probability": 0.9933216660424405,
+            "mean_leakage_probability": 0.15991778454405148,
+            "marked_accuracy": 0.9869791666666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 10
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 10,
+            "max_leakage_probability": 0.9933216660424405,
+            "mean_leakage_probability": 0.029984584602009656,
+            "mean_feasible_leakage_probability": 0.15991778454405148,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 6,
+            "target_x_probability": 0.6343578732324443,
+            "non_target_x_probability": 0.36564212676786717,
+            "feasible_x_probability": 0.9909202503426093,
+            "infeasible_x_probability": 0.009079749657390668,
+            "zero_feasibility_probability": 1.0000000000003115,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.5279735688538542,
+            "one_value_ancilla_probability": 0.4720264311464574,
+            "clean_ancilla_probability": 0.527973568853854,
+            "dirty_ancilla_probability": 0.47202643114614595,
+            "target_clean_probability": 0.49499492020361874,
+            "target_dirty_probability": 0.13936295302882545
+          }
+        }
+      ],
+      "holdout_results": [
+        {
+          "target_count_request": 8,
+          "actual_target_count": 8,
+          "threshold": 25040.477186047057,
+          "exact_grover": {
+            "iterations": 17,
+            "marked_probability": 0.9994480261540108,
+            "unmarked_probability": 0.000551973845989151
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.10157234410539116,
+            "max_angle_error": 2.5456237050428134,
+            "max_leakage_probability": 0.9910531221151373,
+            "mean_leakage_probability": 0.02579432281511163,
+            "marked_accuracy": 0.9921875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99853515625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 6,
+            "max_leakage_probability": 0.9910531221151373,
+            "mean_leakage_probability": 0.004836435527833431,
+            "mean_feasible_leakage_probability": 0.02579432281511163,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 17,
+            "target_x_probability": 0.4380980839246843,
+            "non_target_x_probability": 0.5619019160756044,
+            "feasible_x_probability": 0.9715475420211059,
+            "infeasible_x_probability": 0.028452457978894063,
+            "zero_feasibility_probability": 1.0000000000002889,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.27173714436988144,
+            "one_value_ancilla_probability": 0.7282628556304073,
+            "clean_ancilla_probability": 0.27173714436988144,
+            "dirty_ancilla_probability": 0.7282628556301185,
+            "target_clean_probability": 0.201748796622067,
+            "target_dirty_probability": 0.2363492873026173
+          }
+        },
+        {
+          "target_count_request": 48,
+          "actual_target_count": 51,
+          "threshold": 31235.397539314705,
+          "exact_grover": {
+            "iterations": 7,
+            "marked_probability": 0.9887071254487527,
+            "unmarked_probability": 0.011292874551247278
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.30502731233890984,
+            "max_angle_error": 2.2175213871992705,
+            "max_leakage_probability": 0.9999657159637212,
+            "mean_leakage_probability": 0.1316380103227247,
+            "marked_accuracy": 0.96875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 24
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.994140625,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 24,
+            "max_leakage_probability": 0.9999657159637212,
+            "mean_leakage_probability": 0.02468212693551088,
+            "mean_feasible_leakage_probability": 0.1316380103227247,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 7,
+            "target_x_probability": 0.5942862236245973,
+            "non_target_x_probability": 0.40571377637568873,
+            "feasible_x_probability": 0.9955660475928492,
+            "infeasible_x_probability": 0.004433952407150832,
+            "zero_feasibility_probability": 1.000000000000286,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.45841004929181006,
+            "one_value_ancilla_probability": 0.541589950708476,
+            "clean_ancilla_probability": 0.4584100492918101,
+            "dirty_ancilla_probability": 0.5415899507081898,
+            "target_clean_probability": 0.4081971665831016,
+            "target_dirty_probability": 0.18608905704149575
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 4,
+      "x_feature_count": 794,
+      "tau_degree": 4,
+      "parameter_count": 3970,
+      "training_domain_count": 768,
+      "value_function_coherence": {
+        "thresholds": [
+          22578.2152604,
+          24897.827539314705,
+          25040.477186047057,
+          26924.435594950002,
+          30915.7852604,
+          31235.397539314705,
+          31519.617186047057
+        ],
+        "target_count_requests": [
+          1,
+          4,
+          8,
+          16,
+          32,
+          48,
+          64
+        ],
+        "predicted_adjacent_violation_count": 1,
+        "predicted_violating_state_count": 1,
+        "exact_adjacent_violation_count": 0
+      },
+      "training_family_evaluation": {
+        "marked_accuracy": 0.9994791666666667,
+        "correct_marked_sets": false,
+        "max_leakage_probability": 0.9983276196545886,
+        "mean_leakage_probability": 0.05011532045821916,
+        "threshold_summaries": [
+          {
+            "threshold": 22578.2152604,
+            "target_count": 1,
+            "predicted_count": 0,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.9796415850786951,
+            "mean_leakage_probability": 0.004334014406011031
+          },
+          {
+            "threshold": 24897.827539314705,
+            "target_count": 6,
+            "predicted_count": 6,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.9309529257524015,
+            "mean_leakage_probability": 0.018821645611750565
+          },
+          {
+            "threshold": 26924.435594950002,
+            "target_count": 16,
+            "predicted_count": 16,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.9554319124605871,
+            "mean_leakage_probability": 0.042172614853403435
+          },
+          {
+            "threshold": 30915.7852604,
+            "target_count": 32,
+            "predicted_count": 31,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.9919230029635393,
+            "mean_leakage_probability": 0.07955293199595265
+          },
+          {
+            "threshold": 31519.617186047057,
+            "target_count": 65,
+            "predicted_count": 65,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.9983276196545886,
+            "mean_leakage_probability": 0.10569539542397814
+          }
+        ]
+      },
+      "train_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.02923085612471481,
+            "max_angle_error": 1.7139678669975627,
+            "max_leakage_probability": 0.9796415850786951,
+            "mean_leakage_probability": 0.004334014406011031,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.9796415850786951,
+            "mean_leakage_probability": 0.0008126277011270682,
+            "mean_feasible_leakage_probability": 0.004334014406011031,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 50,
+            "target_x_probability": 0.4133810263226606,
+            "non_target_x_probability": 0.586618973675184,
+            "feasible_x_probability": 0.9991457085231845,
+            "infeasible_x_probability": 0.000854291476815483,
+            "zero_feasibility_probability": 0.9999999999978448,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.19483669976892645,
+            "one_value_ancilla_probability": 0.8051633002289186,
+            "clean_ancilla_probability": 0.19483669976892642,
+            "dirty_ancilla_probability": 0.8051633002310736,
+            "target_clean_probability": 0.17695108937073886,
+            "target_dirty_probability": 0.23642993695192174
+          }
+        },
+        {
+          "target_count_request": 4,
+          "actual_target_count": 6,
+          "threshold": 24897.827539314705,
+          "exact_grover": {
+            "iterations": 20,
+            "marked_probability": 0.999998539284254,
+            "unmarked_probability": 1.4607157460266862e-06
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.08574313445619038,
+            "max_angle_error": 1.3049063235614136,
+            "max_leakage_probability": 0.9309529257524015,
+            "mean_leakage_probability": 0.018821645611750565,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.9309529257524015,
+            "mean_leakage_probability": 0.003529058552203231,
+            "mean_feasible_leakage_probability": 0.018821645611750565,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 20,
+            "target_x_probability": 0.6024741411421038,
+            "non_target_x_probability": 0.39752585885797503,
+            "feasible_x_probability": 0.9715795232215755,
+            "infeasible_x_probability": 0.02842047677842452,
+            "zero_feasibility_probability": 1.000000000000079,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.529377192981918,
+            "one_value_ancilla_probability": 0.4706228070181608,
+            "clean_ancilla_probability": 0.529377192981918,
+            "dirty_ancilla_probability": 0.470622807018082,
+            "target_clean_probability": 0.48306687368285395,
+            "target_dirty_probability": 0.1194072674592499
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.13945376732090928,
+            "max_angle_error": 1.3580843242080858,
+            "max_leakage_probability": 0.9554319124605871,
+            "mean_leakage_probability": 0.042172614853403435,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.9554319124605871,
+            "mean_leakage_probability": 0.007907365285013145,
+            "mean_feasible_leakage_probability": 0.042172614853403435,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 12,
+            "target_x_probability": 0.6581525184889538,
+            "non_target_x_probability": 0.3418474815113181,
+            "feasible_x_probability": 0.9842514117949661,
+            "infeasible_x_probability": 0.015748588205033887,
+            "zero_feasibility_probability": 1.0000000000002718,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.5766412854574976,
+            "one_value_ancilla_probability": 0.4233587145427743,
+            "clean_ancilla_probability": 0.5766412854574978,
+            "dirty_ancilla_probability": 0.4233587145425022,
+            "target_clean_probability": 0.5454649641552802,
+            "target_dirty_probability": 0.11268755433367361
+          }
+        },
+        {
+          "target_count_request": 32,
+          "actual_target_count": 32,
+          "threshold": 30915.7852604,
+          "exact_grover": {
+            "iterations": 8,
+            "marked_probability": 0.9956198656943223,
+            "unmarked_probability": 0.004380134305677741
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.2104536419824213,
+            "max_angle_error": 1.8244144837253389,
+            "max_leakage_probability": 0.9919230029635393,
+            "mean_leakage_probability": 0.07955293199595265,
+            "marked_accuracy": 0.9986979166666666,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.999755859375,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 1,
+            "max_leakage_probability": 0.9919230029635393,
+            "mean_leakage_probability": 0.014916174749241121,
+            "mean_feasible_leakage_probability": 0.07955293199595265,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 8,
+            "target_x_probability": 0.6838264170374626,
+            "non_target_x_probability": 0.31617358296240267,
+            "feasible_x_probability": 0.9996816401924804,
+            "infeasible_x_probability": 0.000318359807519597,
+            "zero_feasibility_probability": 0.9999999999998653,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.5729844019627881,
+            "one_value_ancilla_probability": 0.4270155980370772,
+            "clean_ancilla_probability": 0.5729844019627881,
+            "dirty_ancilla_probability": 0.4270155980372119,
+            "target_clean_probability": 0.5529479980680743,
+            "target_dirty_probability": 0.13087841896938823
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.2665078566064098,
+            "max_angle_error": 1.5298901724512612,
+            "max_leakage_probability": 0.9983276196545886,
+            "mean_leakage_probability": 0.10569539542397814,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.9983276196545886,
+            "mean_leakage_probability": 0.0198178866419959,
+            "mean_feasible_leakage_probability": 0.10569539542397814,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 6,
+            "target_x_probability": 0.7595666342169625,
+            "non_target_x_probability": 0.2404333657832088,
+            "feasible_x_probability": 0.9814702313853639,
+            "infeasible_x_probability": 0.018529768614636066,
+            "zero_feasibility_probability": 1.0000000000001714,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7027710211171023,
+            "one_value_ancilla_probability": 0.297228978883069,
+            "clean_ancilla_probability": 0.7027710211171023,
+            "dirty_ancilla_probability": 0.2972289788828977,
+            "target_clean_probability": 0.6747522816756718,
+            "target_dirty_probability": 0.08481435254129066
+          }
+        }
+      ],
+      "holdout_results": [
+        {
+          "target_count_request": 8,
+          "actual_target_count": 8,
+          "threshold": 25040.477186047057,
+          "exact_grover": {
+            "iterations": 17,
+            "marked_probability": 0.9994480261540108,
+            "unmarked_probability": 0.000551973845989151
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.08918406755075835,
+            "max_angle_error": 2.6211213576257903,
+            "max_leakage_probability": 0.9249990741323457,
+            "mean_leakage_probability": 0.019234023596279026,
+            "marked_accuracy": 0.9973958333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 2
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99951171875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 2,
+            "max_leakage_probability": 0.9249990741323457,
+            "mean_leakage_probability": 0.003606379424302318,
+            "mean_feasible_leakage_probability": 0.019234023596279026,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 17,
+            "target_x_probability": 0.6441306607608894,
+            "non_target_x_probability": 0.3558693392388813,
+            "feasible_x_probability": 0.9978136758516856,
+            "infeasible_x_probability": 0.0021863241483144336,
+            "zero_feasibility_probability": 0.9999999999997707,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.5262461994944778,
+            "one_value_ancilla_probability": 0.4737538005052929,
+            "clean_ancilla_probability": 0.5262461994944778,
+            "dirty_ancilla_probability": 0.4737538005055222,
+            "target_clean_probability": 0.5059554570943161,
+            "target_dirty_probability": 0.1381752036665732
+          }
+        },
+        {
+          "target_count_request": 48,
+          "actual_target_count": 51,
+          "threshold": 31235.397539314705,
+          "exact_grover": {
+            "iterations": 7,
+            "marked_probability": 0.9887071254487527,
+            "unmarked_probability": 0.011292874551247278
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.2646997532947007,
+            "max_angle_error": 2.01355782699739,
+            "max_leakage_probability": 0.999936796712409,
+            "mean_leakage_probability": 0.11233657055046631,
+            "marked_accuracy": 0.9817708333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 4,
+            "false_negative_count": 10
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99658203125,
+            "correct_marked_set": false,
+            "false_positive_count": 4,
+            "false_negative_count": 10,
+            "max_leakage_probability": 0.999936796712409,
+            "mean_leakage_probability": 0.021063106978212433,
+            "mean_feasible_leakage_probability": 0.11233657055046631,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 7,
+            "target_x_probability": 0.6612579587636861,
+            "non_target_x_probability": 0.33874204123639806,
+            "feasible_x_probability": 0.9884724155490334,
+            "infeasible_x_probability": 0.011527584450966577,
+            "zero_feasibility_probability": 1.000000000000084,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.5702831028061532,
+            "one_value_ancilla_probability": 0.42971689719393075,
+            "clean_ancilla_probability": 0.5702831028061534,
+            "dirty_ancilla_probability": 0.42971689719384665,
+            "target_clean_probability": 0.5035296655670921,
+            "target_dirty_probability": 0.15772829319659398
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 5,
+      "x_feature_count": 1586,
+      "tau_degree": 4,
+      "parameter_count": 7930,
+      "training_domain_count": 768,
+      "value_function_coherence": {
+        "thresholds": [
+          22578.2152604,
+          24897.827539314705,
+          25040.477186047057,
+          26924.435594950002,
+          30915.7852604,
+          31235.397539314705,
+          31519.617186047057
+        ],
+        "target_count_requests": [
+          1,
+          4,
+          8,
+          16,
+          32,
+          48,
+          64
+        ],
+        "predicted_adjacent_violation_count": 0,
+        "predicted_violating_state_count": 0,
+        "exact_adjacent_violation_count": 0
+      },
+      "training_family_evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_sets": true,
+        "max_leakage_probability": 0.6761250239604274,
+        "mean_leakage_probability": 0.024725002611119977,
+        "threshold_summaries": [
+          {
+            "threshold": 22578.2152604,
+            "target_count": 1,
+            "predicted_count": 1,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.6254540047053991,
+            "mean_leakage_probability": 0.0033907139509338022
+          },
+          {
+            "threshold": 24897.827539314705,
+            "target_count": 6,
+            "predicted_count": 6,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.4632177182002157,
+            "mean_leakage_probability": 0.008873914184451522
+          },
+          {
+            "threshold": 26924.435594950002,
+            "target_count": 16,
+            "predicted_count": 16,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.4591394629332209,
+            "mean_leakage_probability": 0.020220811795381582
+          },
+          {
+            "threshold": 30915.7852604,
+            "target_count": 32,
+            "predicted_count": 32,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.6451423386272169,
+            "mean_leakage_probability": 0.044120186046985733
+          },
+          {
+            "threshold": 31519.617186047057,
+            "target_count": 65,
+            "predicted_count": 65,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.6761250239604274,
+            "mean_leakage_probability": 0.04701938707784723
+          }
+        ]
+      },
+      "train_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.02990197271941772,
+            "max_angle_error": 0.912207241862526,
+            "max_leakage_probability": 0.6254540047053991,
+            "mean_leakage_probability": 0.0033907139509338022,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.6254540047053991,
+            "mean_leakage_probability": 0.0006357588658000879,
+            "mean_feasible_leakage_probability": 0.0033907139509338022,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 50,
+            "target_x_probability": 0.5811378394597971,
+            "non_target_x_probability": 0.4188621605402804,
+            "feasible_x_probability": 0.9557196601567415,
+            "infeasible_x_probability": 0.04428033984325852,
+            "zero_feasibility_probability": 1.0000000000000777,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.5261739119169829,
+            "one_value_ancilla_probability": 0.47382608808309457,
+            "clean_ancilla_probability": 0.5261739119169829,
+            "dirty_ancilla_probability": 0.47382608808301707,
+            "target_clean_probability": 0.46742169206402784,
+            "target_dirty_probability": 0.1137161473957693
+          }
+        },
+        {
+          "target_count_request": 4,
+          "actual_target_count": 6,
+          "threshold": 24897.827539314705,
+          "exact_grover": {
+            "iterations": 20,
+            "marked_probability": 0.999998539284254,
+            "unmarked_probability": 1.4607157460266862e-06
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.06046440938916392,
+            "max_angle_error": 0.7485826244882423,
+            "max_leakage_probability": 0.4632177182002157,
+            "mean_leakage_probability": 0.008873914184451522,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.4632177182002157,
+            "mean_leakage_probability": 0.0016638589095846605,
+            "mean_feasible_leakage_probability": 0.008873914184451522,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 20,
+            "target_x_probability": 0.7866049387984106,
+            "non_target_x_probability": 0.21339506120243787,
+            "feasible_x_probability": 0.9864194740752312,
+            "infeasible_x_probability": 0.013580525924768772,
+            "zero_feasibility_probability": 1.0000000000008487,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7593778386684359,
+            "one_value_ancilla_probability": 0.24062216133241263,
+            "clean_ancilla_probability": 0.7593778386684359,
+            "dirty_ancilla_probability": 0.2406221613315641,
+            "target_clean_probability": 0.7403062030032135,
+            "target_dirty_probability": 0.04629873579519728
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.10015616227570183,
+            "max_angle_error": 0.7444920090538867,
+            "max_leakage_probability": 0.4591394629332209,
+            "mean_leakage_probability": 0.020220811795381582,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.4591394629332209,
+            "mean_leakage_probability": 0.0037914022116340472,
+            "mean_feasible_leakage_probability": 0.020220811795381582,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 12,
+            "target_x_probability": 0.8171377419511109,
+            "non_target_x_probability": 0.18286225804841066,
+            "feasible_x_probability": 0.9916444733429646,
+            "infeasible_x_probability": 0.008355526657035428,
+            "zero_feasibility_probability": 0.9999999999995216,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7867433584718602,
+            "one_value_ancilla_probability": 0.21325664152766138,
+            "clean_ancilla_probability": 0.7867433584718602,
+            "dirty_ancilla_probability": 0.21325664152813983,
+            "target_clean_probability": 0.7743285285906691,
+            "target_dirty_probability": 0.042809213360441745
+          }
+        },
+        {
+          "target_count_request": 32,
+          "actual_target_count": 32,
+          "threshold": 30915.7852604,
+          "exact_grover": {
+            "iterations": 8,
+            "marked_probability": 0.9956198656943223,
+            "unmarked_probability": 0.004380134305677741
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.1571051990259542,
+            "max_angle_error": 0.9326603190344551,
+            "max_leakage_probability": 0.6451423386272169,
+            "mean_leakage_probability": 0.044120186046985733,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.6451423386272169,
+            "mean_leakage_probability": 0.008272534883809825,
+            "mean_feasible_leakage_probability": 0.044120186046985733,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 8,
+            "target_x_probability": 0.8165890411482566,
+            "non_target_x_probability": 0.18341095885189124,
+            "feasible_x_probability": 0.9993998129953711,
+            "infeasible_x_probability": 0.0006001870046289381,
+            "zero_feasibility_probability": 1.0000000000001479,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7644654011404265,
+            "one_value_ancilla_probability": 0.23553459885972142,
+            "clean_ancilla_probability": 0.7644654011404265,
+            "dirty_ancilla_probability": 0.2355345988595735,
+            "target_clean_probability": 0.7580559273073063,
+            "target_dirty_probability": 0.05853311384095039
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.16863136022381894,
+            "max_angle_error": 0.9653852425091611,
+            "max_leakage_probability": 0.6761250239604274,
+            "mean_leakage_probability": 0.04701938707784723,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.6761250239604274,
+            "mean_leakage_probability": 0.008816135077096358,
+            "mean_feasible_leakage_probability": 0.04701938707784723,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 6,
+            "target_x_probability": 0.8816336267846442,
+            "non_target_x_probability": 0.11836637321563906,
+            "feasible_x_probability": 0.9864362263926971,
+            "infeasible_x_probability": 0.013563773607302876,
+            "zero_feasibility_probability": 1.0000000000002836,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.8662456148518293,
+            "one_value_ancilla_probability": 0.13375438514845395,
+            "clean_ancilla_probability": 0.8662456148518294,
+            "dirty_ancilla_probability": 0.13375438514817062,
+            "target_clean_probability": 0.8498260163463802,
+            "target_dirty_probability": 0.03180761043826408
+          }
+        }
+      ],
+      "holdout_results": [
+        {
+          "target_count_request": 8,
+          "actual_target_count": 8,
+          "threshold": 25040.477186047057,
+          "exact_grover": {
+            "iterations": 17,
+            "marked_probability": 0.9994480261540108,
+            "unmarked_probability": 0.000551973845989151
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.06629000977692169,
+            "max_angle_error": 2.8045834608481686,
+            "max_leakage_probability": 0.45174242733465825,
+            "mean_leakage_probability": 0.009357331932750991,
+            "marked_accuracy": 0.9973958333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 2
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99951171875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 2,
+            "max_leakage_probability": 0.45174242733465825,
+            "mean_leakage_probability": 0.0017544997373908104,
+            "mean_feasible_leakage_probability": 0.009357331932750991,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 17,
+            "target_x_probability": 0.7939203208108261,
+            "non_target_x_probability": 0.20607967918992276,
+            "feasible_x_probability": 0.9907938468522125,
+            "infeasible_x_probability": 0.0092061531477875,
+            "zero_feasibility_probability": 1.0000000000007487,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7549399073622894,
+            "one_value_ancilla_probability": 0.24506009263845935,
+            "clean_ancilla_probability": 0.7549399073622896,
+            "dirty_ancilla_probability": 0.24506009263771045,
+            "target_clean_probability": 0.7373448784109331,
+            "target_dirty_probability": 0.05657544239989298
+          }
+        },
+        {
+          "target_count_request": 48,
+          "actual_target_count": 51,
+          "threshold": 31235.397539314705,
+          "exact_grover": {
+            "iterations": 7,
+            "marked_probability": 0.9887071254487527,
+            "unmarked_probability": 0.011292874551247278
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.20808928418101572,
+            "max_angle_error": 1.8943819675607996,
+            "max_leakage_probability": 0.9998941894692432,
+            "mean_leakage_probability": 0.07824433567086242,
+            "marked_accuracy": 0.9778645833333334,
+            "correct_marked_set": false,
+            "false_positive_count": 9,
+            "false_negative_count": 8
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.995849609375,
+            "correct_marked_set": false,
+            "false_positive_count": 9,
+            "false_negative_count": 8,
+            "max_leakage_probability": 0.9998941894692432,
+            "mean_leakage_probability": 0.014670812938286704,
+            "mean_feasible_leakage_probability": 0.07824433567086242,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 7,
+            "target_x_probability": 0.7329779175312584,
+            "non_target_x_probability": 0.2670220824690117,
+            "feasible_x_probability": 0.9849228483504502,
+            "infeasible_x_probability": 0.015077151649549814,
+            "zero_feasibility_probability": 1.00000000000027,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7057117436083566,
+            "one_value_ancilla_probability": 0.29428825639191314,
+            "clean_ancilla_probability": 0.7057117436083566,
+            "dirty_ancilla_probability": 0.29428825639164335,
+            "target_clean_probability": 0.6182153461621697,
+            "target_dirty_probability": 0.11476257136908863
+          }
+        }
+      ]
+    },
+    {
+      "x_order": 6,
+      "x_feature_count": 2510,
+      "tau_degree": 4,
+      "parameter_count": 12550,
+      "training_domain_count": 768,
+      "value_function_coherence": {
+        "thresholds": [
+          22578.2152604,
+          24897.827539314705,
+          25040.477186047057,
+          26924.435594950002,
+          30915.7852604,
+          31235.397539314705,
+          31519.617186047057
+        ],
+        "target_count_requests": [
+          1,
+          4,
+          8,
+          16,
+          32,
+          48,
+          64
+        ],
+        "predicted_adjacent_violation_count": 0,
+        "predicted_violating_state_count": 0,
+        "exact_adjacent_violation_count": 0
+      },
+      "training_family_evaluation": {
+        "marked_accuracy": 1.0,
+        "correct_marked_sets": true,
+        "max_leakage_probability": 0.34704848995157683,
+        "mean_leakage_probability": 0.009028565694534758,
+        "threshold_summaries": [
+          {
+            "threshold": 22578.2152604,
+            "target_count": 1,
+            "predicted_count": 1,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.11091267812375444,
+            "mean_leakage_probability": 0.0013759534347120193
+          },
+          {
+            "threshold": 24897.827539314705,
+            "target_count": 6,
+            "predicted_count": 6,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.10582678618671457,
+            "mean_leakage_probability": 0.0030820028502947395
+          },
+          {
+            "threshold": 26924.435594950002,
+            "target_count": 16,
+            "predicted_count": 16,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.1350679636507762,
+            "mean_leakage_probability": 0.006715200369292118
+          },
+          {
+            "threshold": 30915.7852604,
+            "target_count": 32,
+            "predicted_count": 32,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.34704848995157683,
+            "mean_leakage_probability": 0.017681594876392776
+          },
+          {
+            "threshold": 31519.617186047057,
+            "target_count": 65,
+            "predicted_count": 65,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.22221488349028953,
+            "mean_leakage_probability": 0.01628807694198214
+          }
+        ]
+      },
+      "train_results": [
+        {
+          "target_count_request": 1,
+          "actual_target_count": 1,
+          "threshold": 22578.2152604,
+          "exact_grover": {
+            "iterations": 50,
+            "marked_probability": 0.9999453461091142,
+            "unmarked_probability": 5.465389088576966e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.02303101710700343,
+            "max_angle_error": 0.33952108105210677,
+            "max_leakage_probability": 0.11091267812375444,
+            "mean_leakage_probability": 0.0013759534347120193,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.11091267812375444,
+            "mean_leakage_probability": 0.0002579912690085037,
+            "mean_feasible_leakage_probability": 0.0013759534347120193,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 50,
+            "target_x_probability": 0.7820206931511329,
+            "non_target_x_probability": 0.21797930684939892,
+            "feasible_x_probability": 0.978239006856171,
+            "infeasible_x_probability": 0.021760993143828955,
+            "zero_feasibility_probability": 1.0000000000005318,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7860919529215686,
+            "one_value_ancilla_probability": 0.21390804707896316,
+            "clean_ancilla_probability": 0.7860919529215686,
+            "dirty_ancilla_probability": 0.21390804707843136,
+            "target_clean_probability": 0.7595710772837376,
+            "target_dirty_probability": 0.022449615867395245
+          }
+        },
+        {
+          "target_count_request": 4,
+          "actual_target_count": 6,
+          "threshold": 24897.827539314705,
+          "exact_grover": {
+            "iterations": 20,
+            "marked_probability": 0.999998539284254,
+            "unmarked_probability": 1.4607157460266862e-06
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.03822168796481704,
+            "max_angle_error": 0.3313398501833271,
+            "max_leakage_probability": 0.10582678618671457,
+            "mean_leakage_probability": 0.0030820028502947395,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.10582678618671457,
+            "mean_leakage_probability": 0.0005778755344302637,
+            "mean_feasible_leakage_probability": 0.0030820028502947395,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 20,
+            "target_x_probability": 0.9167191815195564,
+            "non_target_x_probability": 0.08328081847986565,
+            "feasible_x_probability": 0.9975145506317192,
+            "infeasible_x_probability": 0.0024854493682807677,
+            "zero_feasibility_probability": 0.999999999999422,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.9079723298163968,
+            "one_value_ancilla_probability": 0.09202767018302556,
+            "clean_ancilla_probability": 0.9079723298163968,
+            "dirty_ancilla_probability": 0.09202767018360325,
+            "target_clean_probability": 0.9048307054839806,
+            "target_dirty_probability": 0.011888476035575968
+          }
+        },
+        {
+          "target_count_request": 16,
+          "actual_target_count": 16,
+          "threshold": 26924.435594950002,
+          "exact_grover": {
+            "iterations": 12,
+            "marked_probability": 0.9999470421032736,
+            "unmarked_probability": 5.295789672643547e-05
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.061242052427463445,
+            "max_angle_error": 0.37633661996082957,
+            "max_leakage_probability": 0.1350679636507762,
+            "mean_leakage_probability": 0.006715200369292118,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.1350679636507762,
+            "mean_leakage_probability": 0.0012591000692422718,
+            "mean_feasible_leakage_probability": 0.006715200369292118,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 12,
+            "target_x_probability": 0.9323575575216537,
+            "non_target_x_probability": 0.06764244247881265,
+            "feasible_x_probability": 0.9988181740730152,
+            "infeasible_x_probability": 0.001181825926984792,
+            "zero_feasibility_probability": 1.0000000000004663,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.9235835093323207,
+            "one_value_ancilla_probability": 0.07641649066814558,
+            "clean_ancilla_probability": 0.9235835093323207,
+            "dirty_ancilla_probability": 0.0764164906676793,
+            "target_clean_probability": 0.9220039117650012,
+            "target_dirty_probability": 0.01035364575665254
+          }
+        },
+        {
+          "target_count_request": 32,
+          "actual_target_count": 32,
+          "threshold": 30915.7852604,
+          "exact_grover": {
+            "iterations": 8,
+            "marked_probability": 0.9956198656943223,
+            "unmarked_probability": 0.004380134305677741
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.10036921516290653,
+            "max_angle_error": 0.6299547768915494,
+            "max_leakage_probability": 0.34704848995157683,
+            "mean_leakage_probability": 0.017681594876392776,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.34704848995157683,
+            "mean_leakage_probability": 0.0033152990393236458,
+            "mean_feasible_leakage_probability": 0.017681594876392776,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 8,
+            "target_x_probability": 0.9195630522943598,
+            "non_target_x_probability": 0.08043694770551486,
+            "feasible_x_probability": 0.99962841927473,
+            "infeasible_x_probability": 0.0003715807252699932,
+            "zero_feasibility_probability": 0.9999999999998745,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.9004830814284662,
+            "one_value_ancilla_probability": 0.09951691857140835,
+            "clean_ancilla_probability": 0.9004830814284662,
+            "dirty_ancilla_probability": 0.09951691857153377,
+            "target_clean_probability": 0.8985760807014032,
+            "target_dirty_probability": 0.020986971592956483
+          }
+        },
+        {
+          "target_count_request": 64,
+          "actual_target_count": 65,
+          "threshold": 31519.617186047057,
+          "exact_grover": {
+            "iterations": 6,
+            "marked_probability": 0.9949373686651505,
+            "unmarked_probability": 0.005062631334849521
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.09668340021423623,
+            "max_angle_error": 0.4908738521235141,
+            "max_leakage_probability": 0.22221488349028953,
+            "mean_leakage_probability": 0.01628807694198214,
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 1.0,
+            "correct_marked_set": true,
+            "false_positive_count": 0,
+            "false_negative_count": 0,
+            "max_leakage_probability": 0.22221488349028953,
+            "mean_leakage_probability": 0.003054014426621651,
+            "mean_feasible_leakage_probability": 0.01628807694198214,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 6,
+            "target_x_probability": 0.9535439077272503,
+            "non_target_x_probability": 0.046456092272856894,
+            "feasible_x_probability": 0.9926367887249233,
+            "infeasible_x_probability": 0.007363211275076664,
+            "zero_feasibility_probability": 1.0000000000001072,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.9522817514801517,
+            "one_value_ancilla_probability": 0.04771824851995536,
+            "clean_ancilla_probability": 0.9522817514801519,
+            "dirty_ancilla_probability": 0.04771824851984807,
+            "target_clean_probability": 0.9438313843810031,
+            "target_dirty_probability": 0.00971252334624717
+          }
+        }
+      ],
+      "holdout_results": [
+        {
+          "target_count_request": 8,
+          "actual_target_count": 8,
+          "threshold": 25040.477186047057,
+          "exact_grover": {
+            "iterations": 17,
+            "marked_probability": 0.9994480261540108,
+            "unmarked_probability": 0.000551973845989151
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.04565640650437861,
+            "max_angle_error": 2.904267382197252,
+            "max_leakage_probability": 0.12821379469729044,
+            "mean_leakage_probability": 0.0036693903773077755,
+            "marked_accuracy": 0.9973958333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 2
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.99951171875,
+            "correct_marked_set": false,
+            "false_positive_count": 0,
+            "false_negative_count": 2,
+            "max_leakage_probability": 0.12821379469729044,
+            "mean_leakage_probability": 0.0006880106957452079,
+            "mean_feasible_leakage_probability": 0.0036693903773077755,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 17,
+            "target_x_probability": 0.8836011004286393,
+            "non_target_x_probability": 0.11639889957111998,
+            "feasible_x_probability": 0.9766356104064657,
+            "infeasible_x_probability": 0.023364389593534263,
+            "zero_feasibility_probability": 0.9999999999997594,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.8974169853395327,
+            "one_value_ancilla_probability": 0.10258301466022651,
+            "clean_ancilla_probability": 0.8974169853395327,
+            "dirty_ancilla_probability": 0.10258301466046726,
+            "target_clean_probability": 0.8668173678773128,
+            "target_dirty_probability": 0.01678373255132637
+          }
+        },
+        {
+          "target_count_request": 48,
+          "actual_target_count": 51,
+          "threshold": 31235.397539314705,
+          "exact_grover": {
+            "iterations": 7,
+            "marked_probability": 0.9887071254487527,
+            "unmarked_probability": 0.011292874551247278
+          },
+          "feasible_domain_evaluation": {
+            "angle_mae": 0.15862136862646536,
+            "max_angle_error": 1.7802950377222375,
+            "max_leakage_probability": 0.9999782239901919,
+            "mean_leakage_probability": 0.0574538862928346,
+            "marked_accuracy": 0.9739583333333334,
+            "correct_marked_set": false,
+            "false_positive_count": 14,
+            "false_negative_count": 6
+          },
+          "combined_oracle_evaluation": {
+            "marked_accuracy": 0.9951171875,
+            "correct_marked_set": false,
+            "false_positive_count": 14,
+            "false_negative_count": 6,
+            "max_leakage_probability": 0.9999782239901919,
+            "mean_leakage_probability": 0.010772603679906487,
+            "mean_feasible_leakage_probability": 0.0574538862928346,
+            "infeasible_leakage_probability": 0.0
+          },
+          "explicit_grover": {
+            "iterations": 7,
+            "target_x_probability": 0.79098541312809,
+            "non_target_x_probability": 0.2090145868718592,
+            "feasible_x_probability": 0.9892856748433743,
+            "infeasible_x_probability": 0.010714325156625737,
+            "zero_feasibility_probability": 0.9999999999999489,
+            "one_feasibility_probability": 0.0,
+            "zero_value_ancilla_probability": 0.7785984548166833,
+            "one_value_ancilla_probability": 0.22140154518326566,
+            "clean_ancilla_probability": 0.7785984548166832,
+            "dirty_ancilla_probability": 0.22140154518331678,
+            "target_clean_probability": 0.6910066090713314,
+            "target_dirty_probability": 0.09997880405675841
+          }
+        }
+      ]
+    }
+  ]
+}
