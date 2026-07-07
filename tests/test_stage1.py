@@ -1,5 +1,8 @@
 ﻿from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import numpy as np
 
 from qubit_value_function.commitment import all_commitments, commitment_to_bitstring
@@ -871,6 +874,61 @@ def test_max_affine_adaptive_calibrated_oracle_reports_diagnostics() -> None:
     assert "calibrated_prediction_threshold" in diagnostics
     assert "calibration_margin" in diagnostics
     assert result["true_improving_labels"].tolist() == [False, True, True, False]
+
+
+def test_max_affine_adaptive_fixed_point_oracle_uses_register_comparison() -> None:
+    from experiments.stage1_case14_t2_max_affine_adaptive_grover_search import (
+        max_affine_threshold_oracle_labels,
+    )
+
+    values = np.array([5.0, 1.0, 4.0, 10.0])
+    predictions = np.array([0.27, 0.24, 0.26, 1.0])
+    value_domain = np.ones(4, dtype=bool)
+    result = max_affine_threshold_oracle_labels(
+        predictions=predictions,
+        value_domain=value_domain,
+        tau_true=5.0,
+        values=values,
+        use_calibrated_threshold=True,
+        tie_tolerance=1e-9,
+        oracle_mode="fixed_point_register",
+        register_bits=2,
+    )
+
+    diagnostics = result["oracle_diagnostics"]
+    assert diagnostics["oracle_mode"] == "fixed_point_register"
+    assert diagnostics["register_bits"] == 2
+    assert diagnostics["tau_register"] == 0
+    assert result["marked"].tolist() == [True, True, True, False]
+    assert diagnostics["false_positive_count"] == 1
+
+
+def test_max_affine_adaptive_summary_separates_oracle_modes_and_is_strict_json() -> None:
+    from experiments.stage1_case14_t2_max_affine_adaptive_grover_search import (
+        sanitize_for_strict_json,
+        write_strict_json,
+    )
+
+    summary = {
+        "floating_comparator_oracle": {"calibration_margin": np.float64(1.25)},
+        "fixed_point_register_oracle": {"tau_register": np.int64(3)},
+        "not_finite": float("inf"),
+    }
+    cleaned = sanitize_for_strict_json(summary)
+    path = Path("results/test_strict_json_summary.json")
+
+    try:
+        write_strict_json(path, summary)
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+
+        assert cleaned["not_finite"] is None
+        assert set(loaded) >= {
+            "floating_comparator_oracle",
+            "fixed_point_register_oracle",
+        }
+        assert "Infinity" not in path.read_text(encoding="utf-8")
+    finally:
+        path.unlink(missing_ok=True)
 def test_tie_tolerant_threshold_keeps_nearly_equal_costs_together() -> None:
     values = np.array([1.0, 2.0, 2.0 + 1e-12, 3.0])
     strict = tie_tolerant_threshold_case_for_top_count(values, 2, 0.0)

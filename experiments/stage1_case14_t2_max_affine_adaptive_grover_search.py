@@ -37,6 +37,7 @@ from qubit_value_function.max_affine import (  # noqa: E402
 )
 from qubit_value_function.structured_features import structured_commitment_features  # noqa: E402
 from qubit_value_function.uc_loader import load_uc_instance  # noqa: E402
+from qubit_value_function.value_surrogate import quantize_values  # noqa: E402
 
 
 def max_affine_threshold_oracle_labels(
@@ -47,6 +48,8 @@ def max_affine_threshold_oracle_labels(
     values: np.ndarray,
     use_calibrated_threshold: bool,
     tie_tolerance: float = 1e-6,
+    oracle_mode: str = "floating_comparator",
+    register_bits: int | None = None,
 ) -> dict[str, object]:
     """Build labels for the incumbent-dependent max-affine threshold oracle.
 
@@ -63,6 +66,10 @@ def max_affine_threshold_oracle_labels(
         raise ValueError("predictions, values, and value_domain must have the same shape")
     if tie_tolerance < 0.0:
         raise ValueError("tie_tolerance must be nonnegative")
+    if oracle_mode not in {"floating_comparator", "fixed_point_register"}:
+        raise ValueError("oracle_mode must be 'floating_comparator' or 'fixed_point_register'")
+    if oracle_mode == "fixed_point_register" and (register_bits is None or register_bits <= 0):
+        raise ValueError("fixed_point_register oracle requires positive register_bits")
 
     true_improving = (
         value_domain
@@ -84,6 +91,8 @@ def max_affine_threshold_oracle_labels(
                 "calibrated_prediction_threshold": None,
                 "calibration_margin": None,
                 "tau_true": float(tau_true),
+                "oracle_mode": oracle_mode,
+                "register_bits": None if register_bits is None else int(register_bits),
             },
         }
 
@@ -99,7 +108,51 @@ def max_affine_threshold_oracle_labels(
     else:
         prediction_threshold = float(tau_true)
 
-    marked = value_domain & np.isfinite(predictions) & (predictions <= prediction_threshold)
+    register_metadata: dict[str, object] = {}
+    if oracle_mode == "fixed_point_register":
+        feasible_predictions = predictions[value_domain & np.isfinite(predictions)]
+        if feasible_predictions.size == 0:
+            raise ValueError("fixed-point comparator requires finite feasible predictions")
+        value_min = float(np.min(feasible_predictions))
+        value_max = float(np.max(feasible_predictions))
+        if value_max <= value_min:
+            marked = value_domain & np.isfinite(predictions) & (predictions <= prediction_threshold)
+            register_metadata = {
+                "register_bits": int(register_bits),
+                "register_value_min": value_min,
+                "register_value_max": value_max,
+                "prediction_register_min": 0,
+                "prediction_register_max": 0,
+                "tau_register": 0,
+                "degenerate_register_range": True,
+            }
+        else:
+            prediction_register = quantize_values(
+                predictions,
+                value_min=value_min,
+                value_max=value_max,
+                bits=int(register_bits),
+            )
+            tau_register = int(
+                quantize_values(
+                    np.array([prediction_threshold], dtype=float),
+                    value_min=value_min,
+                    value_max=value_max,
+                    bits=int(register_bits),
+                )[0]
+            )
+            marked = value_domain & np.isfinite(predictions) & (prediction_register <= tau_register)
+            register_metadata = {
+                "register_bits": int(register_bits),
+                "register_value_min": value_min,
+                "register_value_max": value_max,
+                "prediction_register_min": int(prediction_register[value_domain].min()),
+                "prediction_register_max": int(prediction_register[value_domain].max()),
+                "tau_register": tau_register,
+                "degenerate_register_range": False,
+            }
+    else:
+        marked = value_domain & np.isfinite(predictions) & (predictions <= prediction_threshold)
     evaluation = comparator_evaluation(marked, true_improving)
     return {
         "marked": marked,
@@ -116,6 +169,8 @@ def max_affine_threshold_oracle_labels(
             "calibration_margin": _finite_or_none(calibration_margin),
             "tau_true": float(tau_true),
             "prediction_threshold_used": float(prediction_threshold),
+            "oracle_mode": oracle_mode,
+            **register_metadata,
         },
     }
 
@@ -247,6 +302,8 @@ def run_adaptive_minimum_search(
     use_calibrated_threshold: bool,
     stop_after_no_improvement: int,
     tie_tolerance: float,
+    register_bits: int = 20,
+    active_oracle_mode: str = "fixed_point_register",
 ) -> dict[str, object]:
     """Run the outer incumbent-update loop around BBHT threshold search."""
 
@@ -257,6 +314,8 @@ def run_adaptive_minimum_search(
         raise ValueError("values, predictions, and value_domain must have matching shape")
     if not value_domain[int(initial_index)] or not np.isfinite(values[int(initial_index)]):
         raise ValueError("initial_index must be finite and inside value_domain")
+    if active_oracle_mode not in {"floating_comparator", "fixed_point_register"}:
+        raise ValueError("active_oracle_mode must be 'floating_comparator' or 'fixed_point_register'")
 
     finite_domain_indices = np.flatnonzero(value_domain & np.isfinite(values))
     exact_optimum_index = int(
@@ -269,15 +328,31 @@ def run_adaptive_minimum_search(
 
     for round_idx in range(int(max_rounds)):
         incumbent_value = float(values[incumbent])
-        oracle = max_affine_threshold_oracle_labels(
+        floating_oracle = max_affine_threshold_oracle_labels(
             predictions=predictions,
             value_domain=value_domain,
             tau_true=incumbent_value,
             values=values,
             use_calibrated_threshold=use_calibrated_threshold,
             tie_tolerance=tie_tolerance,
+            oracle_mode="floating_comparator",
         )
-        true_improving_labels = np.asarray(oracle["true_improving_labels"], dtype=bool)
+        fixed_point_oracle = max_affine_threshold_oracle_labels(
+            predictions=predictions,
+            value_domain=value_domain,
+            tau_true=incumbent_value,
+            values=values,
+            use_calibrated_threshold=use_calibrated_threshold,
+            tie_tolerance=tie_tolerance,
+            oracle_mode="fixed_point_register",
+            register_bits=register_bits,
+        )
+        oracle = (
+            fixed_point_oracle
+            if active_oracle_mode == "fixed_point_register"
+            else floating_oracle
+        )
+        true_improving_labels = np.asarray(floating_oracle["true_improving_labels"], dtype=bool)
         if not np.any(true_improving_labels):
             stop_reason = "no_true_improving_state"
             break
@@ -308,6 +383,9 @@ def run_adaptive_minimum_search(
                 "true_improving_count": int(true_improving_labels.sum()),
                 "oracle_marked_count": int(np.asarray(oracle["marked"], dtype=bool).sum()),
                 "oracle_diagnostics": oracle["oracle_diagnostics"],
+                "active_oracle_mode": active_oracle_mode,
+                "floating_comparator_oracle": floating_oracle["oracle_diagnostics"],
+                "fixed_point_register_oracle": fixed_point_oracle["oracle_diagnostics"],
                 "bbht_trials": bbht["trials"],
                 "bbht_trial_count": int(bbht["trial_count"]),
                 "oracle_diffuser_iterations": int(bbht["oracle_diffuser_iterations"]),
@@ -463,6 +541,8 @@ def run(
         use_calibrated_threshold=use_calibrated_threshold,
         stop_after_no_improvement=stop_after_no_improvement,
         tie_tolerance=tie_tolerance,
+        register_bits=register_bits,
+        active_oracle_mode="fixed_point_register",
     )
 
     final_index = int(adaptive["final_incumbent_index"])
@@ -490,6 +570,27 @@ def run(
         "initial_random_samples": int(initial_random_samples),
         "use_calibrated_threshold": bool(use_calibrated_threshold),
         "tie_tolerance": float(tie_tolerance),
+        "active_oracle_mode": "fixed_point_register",
+        "floating_comparator_oracle": {
+            "oracle_mode": "floating_comparator",
+            "threshold_source": (
+                "calibrated_prediction_threshold"
+                if use_calibrated_threshold
+                else "incumbent_true_cost"
+            ),
+            "comparison": "mark feasible x when max-affine prediction <= prediction threshold",
+        },
+        "fixed_point_register_oracle": {
+            "oracle_mode": "fixed_point_register",
+            "register_bits": int(register_bits),
+            "threshold_source": (
+                "calibrated_prediction_threshold quantized into tau_register"
+                if use_calibrated_threshold
+                else "incumbent true cost quantized into tau_register"
+            ),
+            "comparison": "mark feasible x when prediction_register <= tau_register",
+            "active_for_bbht": True,
+        },
         "feature_family": {
             "same_time_interaction_order": int(same_time_order),
             "adjacent_time_interaction_order": int(adjacent_time_order),
@@ -555,8 +656,7 @@ def run(
         "rounds": adaptive["rounds"],
         "stop_reason": adaptive["stop_reason"],
     }
-    results_path.parent.mkdir(parents=True, exist_ok=True)
-    results_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    write_strict_json(results_path, summary)
     return summary
 
 
@@ -594,6 +694,36 @@ def parse_bool(raw: str | bool) -> bool:
     if lowered in {"0", "false", "no", "n", "off"}:
         return False
     raise argparse.ArgumentTypeError("expected true or false")
+
+
+def sanitize_for_strict_json(value):
+    if isinstance(value, dict):
+        return {
+            str(key): sanitize_for_strict_json(item)
+            for key, item in value.items()
+        }
+    if isinstance(value, (list, tuple)):
+        return [sanitize_for_strict_json(item) for item in value]
+    if isinstance(value, np.ndarray):
+        return sanitize_for_strict_json(value.tolist())
+    if isinstance(value, np.bool_):
+        return bool(value)
+    if isinstance(value, np.integer):
+        return int(value)
+    if isinstance(value, np.floating):
+        return _finite_or_none(float(value))
+    if isinstance(value, float):
+        return _finite_or_none(value)
+    return value
+
+
+def write_strict_json(path: Path, payload: dict[str, object]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    cleaned = sanitize_for_strict_json(payload)
+    path.write_text(
+        json.dumps(cleaned, indent=2, allow_nan=False),
+        encoding="utf-8",
+    )
 
 
 def _finite_or_none(value: float | None) -> float | None:
@@ -680,7 +810,7 @@ def main() -> None:
         "stop_reason": summary["stop_reason"],
         "incumbent_cost_trajectory": summary["incumbent_cost_trajectory"],
     }
-    print(json.dumps(compact, indent=2))
+    print(json.dumps(sanitize_for_strict_json(compact), indent=2, allow_nan=False))
 
 
 if __name__ == "__main__":
