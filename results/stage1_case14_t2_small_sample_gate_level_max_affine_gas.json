@@ -41,10 +41,15 @@
   "train_best_bitstring": "1100",
   "train_best_true_cost": 24578.2152604,
   "exclude_hidden_optimum_from_training": false,
+  "exclude_hidden_optimum_from_initial": false,
   "training_contains_hidden_optimum": true,
   "hidden_best_index": 3,
   "hidden_best_bitstring": "1100",
   "hidden_best_true_cost": 24578.2152604,
+  "initial_index": 13,
+  "initial_bitstring": "1011",
+  "initial_true_cost": 39794.7596684,
+  "initial_matches_hidden_optimum": false,
   "final_bitstring": "1100",
   "final_true_cost": 24578.2152604,
   "found_hidden_exact_optimum": true,
@@ -110,7 +115,7 @@
       "seed": 7,
       "probe_marked_count_at_best_tau": 1
     },
-    "register_allocation": [
+    "reference_register_allocation_at_tau0": [
       {
         "piece_index": 0,
         "weights": [
@@ -165,6 +170,48 @@
         },
         "threshold_before": 39794.7596684,
         "tau_int": 3,
+        "register_allocation": [
+          {
+            "piece_index": 0,
+            "weights": [
+              1,
+              0,
+              2,
+              0
+            ],
+            "bias": 0,
+            "inverted_bit_indices": [
+              0
+            ],
+            "max_weighted_sum": 3,
+            "value_register_bits": 2,
+            "compare_value": 4,
+            "flag_qubits": 1,
+            "carry_qubits": 1,
+            "control_qubits": 0,
+            "comparator_ancillas": 1
+          },
+          {
+            "piece_index": 1,
+            "weights": [
+              0,
+              2,
+              0,
+              2
+            ],
+            "bias": 0,
+            "inverted_bit_indices": [
+              1
+            ],
+            "max_weighted_sum": 4,
+            "value_register_bits": 3,
+            "compare_value": 4,
+            "flag_qubits": 1,
+            "carry_qubits": 2,
+            "control_qubits": 1,
+            "comparator_ancillas": 2
+          }
+        ],
         "calibration": {
           "tau_int": 3,
           "train_marked_count": 5,
@@ -329,6 +376,48 @@
         },
         "threshold_before": 27956.61606872647,
         "tau_int": 0,
+        "register_allocation": [
+          {
+            "piece_index": 0,
+            "weights": [
+              1,
+              0,
+              2,
+              0
+            ],
+            "bias": 0,
+            "inverted_bit_indices": [
+              0
+            ],
+            "max_weighted_sum": 3,
+            "value_register_bits": 2,
+            "compare_value": 1,
+            "flag_qubits": 1,
+            "carry_qubits": 1,
+            "control_qubits": 0,
+            "comparator_ancillas": 1
+          },
+          {
+            "piece_index": 1,
+            "weights": [
+              0,
+              2,
+              0,
+              2
+            ],
+            "bias": 0,
+            "inverted_bit_indices": [
+              1
+            ],
+            "max_weighted_sum": 4,
+            "value_register_bits": 3,
+            "compare_value": 1,
+            "flag_qubits": 1,
+            "carry_qubits": 2,
+            "control_qubits": 1,
+            "comparator_ancillas": 2
+          }
+        ],
         "calibration": {
           "tau_int": 0,
           "train_marked_count": 1,
@@ -1701,6 +1790,48 @@
         },
         "threshold_before": 24578.2152604,
         "tau_int": 0,
+        "register_allocation": [
+          {
+            "piece_index": 0,
+            "weights": [
+              1,
+              0,
+              2,
+              0
+            ],
+            "bias": 0,
+            "inverted_bit_indices": [
+              0
+            ],
+            "max_weighted_sum": 3,
+            "value_register_bits": 2,
+            "compare_value": 1,
+            "flag_qubits": 1,
+            "carry_qubits": 1,
+            "control_qubits": 0,
+            "comparator_ancillas": 1
+          },
+          {
+            "piece_index": 1,
+            "weights": [
+              0,
+              2,
+              0,
+              2
+            ],
+            "bias": 0,
+            "inverted_bit_indices": [
+              1
+            ],
+            "max_weighted_sum": 4,
+            "value_register_bits": 3,
+            "compare_value": 1,
+            "flag_qubits": 1,
+            "carry_qubits": 2,
+            "control_qubits": 1,
+            "comparator_ancillas": 2
+          }
+        ],
         "calibration": {
           "tau_int": 0,
           "train_marked_count": 1,

@@ -25,9 +25,13 @@ RUN_FIELDS = [
     "seed",
     "train_sample_count",
     "exclude_hidden_optimum_from_training",
+    "exclude_hidden_optimum_from_initial",
     "training_contains_hidden_optimum",
+    "initial_matches_hidden_optimum",
     "hidden_best_bitstring",
     "hidden_best_true_cost",
+    "initial_bitstring",
+    "initial_true_cost",
     "final_bitstring",
     "final_true_cost",
     "found_hidden_exact_optimum",
@@ -68,7 +72,7 @@ def parse_train_sample_counts(raw: str) -> list[int]:
 
 
 def build_grouped_summary(runs: Iterable[dict[str, object]]) -> list[dict[str, object]]:
-    groups: dict[tuple[tuple[int, ...], int, int, bool], list[dict[str, object]]] = {}
+    groups: dict[tuple[tuple[int, ...], int, int, bool, bool], list[dict[str, object]]] = {}
     for row in runs:
         selected = tuple(int(index) for index in row["selected_generators"])
         key = (
@@ -76,32 +80,51 @@ def build_grouped_summary(runs: Iterable[dict[str, object]]) -> list[dict[str, o
             int(row["num_search_qubits"]),
             int(row["train_sample_count"]),
             bool(row["exclude_hidden_optimum_from_training"]),
+            bool(row.get("exclude_hidden_optimum_from_initial", False)),
         )
         groups.setdefault(key, []).append(row)
 
     summary = []
     for key, rows in sorted(groups.items(), key=lambda item: (item[0][0], item[0][1], item[0][2], item[0][3])):
-        selected, num_qubits, train_sample_count, exclude_hidden = key
+        selected, num_qubits, train_sample_count, exclude_hidden_training, exclude_hidden_initial = key
         ok_rows = [row for row in rows if row.get("status") == "ok"]
         hidden_not_in_training = [
             row for row in ok_rows if row.get("training_contains_hidden_optimum") is False
         ]
+        hidden_not_in_training_and_not_initial = [
+            row
+            for row in hidden_not_in_training
+            if row.get("initial_matches_hidden_optimum") is False
+        ]
+        num_success = int(sum(bool(row.get("found_hidden_exact_optimum")) for row in ok_rows))
         summary.append(
             {
                 "selected_generators": list(selected),
                 "num_search_qubits": int(num_qubits),
                 "train_sample_count": int(train_sample_count),
-                "exclude_hidden_optimum_from_training": bool(exclude_hidden),
+                "exclude_hidden_optimum_from_training": bool(exclude_hidden_training),
+                "exclude_hidden_optimum_from_initial": bool(exclude_hidden_initial),
                 "num_runs": int(len(rows)),
-                "num_success": int(sum(bool(row.get("found_hidden_exact_optimum")) for row in ok_rows)),
-                "success_rate": _rate(
-                    sum(bool(row.get("found_hidden_exact_optimum")) for row in ok_rows),
-                    len(rows),
-                ),
+                "num_ok_runs": int(len(ok_rows)),
+                "num_error_runs": int(len(rows) - len(ok_rows)),
+                "num_success": num_success,
+                "success_rate": _rate(num_success, len(ok_rows)),
+                "success_rate_over_ok_runs": _rate(num_success, len(ok_rows)),
+                "success_rate_over_attempted_runs": _rate(num_success, len(rows)),
                 "num_runs_hidden_not_in_training": int(len(hidden_not_in_training)),
                 "success_rate_when_hidden_optimum_not_in_training": _rate(
                     sum(bool(row.get("found_hidden_exact_optimum")) for row in hidden_not_in_training),
                     len(hidden_not_in_training),
+                ),
+                "num_runs_hidden_not_in_training_and_not_initial": int(
+                    len(hidden_not_in_training_and_not_initial)
+                ),
+                "success_rate_when_hidden_optimum_not_in_training_and_not_initial": _rate(
+                    sum(
+                        bool(row.get("found_hidden_exact_optimum"))
+                        for row in hidden_not_in_training_and_not_initial
+                    ),
+                    len(hidden_not_in_training_and_not_initial),
                 ),
                 "training_contains_hidden_optimum_rate": _rate(
                     sum(bool(row.get("training_contains_hidden_optimum")) for row in ok_rows),
@@ -132,6 +155,7 @@ def run_sweep(
     max_trials_per_threshold: int,
     max_candidates_per_shotbatch: int,
     exclude_hidden_optimum_from_training: bool,
+    exclude_hidden_optimum_from_initial: bool,
     output_json: Path,
     output_csv: Path,
 ) -> dict[str, object]:
@@ -151,6 +175,7 @@ def run_sweep(
                     seed=seed,
                     train_sample_count=train_sample_count,
                     exclude_hidden_optimum_from_training=exclude_hidden_optimum_from_training,
+                    exclude_hidden_optimum_from_initial=exclude_hidden_optimum_from_initial,
                 )
                 if train_sample_count > max_train_samples:
                     runs.append(
@@ -183,6 +208,7 @@ def run_sweep(
                         draw_circuit=False,
                         max_candidates_per_shotbatch=max_candidates_per_shotbatch,
                         exclude_hidden_optimum_from_training=exclude_hidden_optimum_from_training,
+                        exclude_hidden_optimum_from_initial=exclude_hidden_optimum_from_initial,
                     )
                     runs.append({**base_row, **_summary_to_run_row(summary), "status": "ok", "error": None})
                 except Exception as exc:  # noqa: BLE001 - sweep should keep running after one failed config.
@@ -215,6 +241,7 @@ def _base_run_row(
     seed: int,
     train_sample_count: int,
     exclude_hidden_optimum_from_training: bool,
+    exclude_hidden_optimum_from_initial: bool,
 ) -> dict[str, object]:
     return {
         "config": ",".join(str(index) for index in config),
@@ -224,9 +251,13 @@ def _base_run_row(
         "seed": int(seed),
         "train_sample_count": int(train_sample_count),
         "exclude_hidden_optimum_from_training": bool(exclude_hidden_optimum_from_training),
+        "exclude_hidden_optimum_from_initial": bool(exclude_hidden_optimum_from_initial),
         "training_contains_hidden_optimum": None,
+        "initial_matches_hidden_optimum": None,
         "hidden_best_bitstring": None,
         "hidden_best_true_cost": None,
+        "initial_bitstring": None,
+        "initial_true_cost": None,
         "final_bitstring": None,
         "final_true_cost": None,
         "found_hidden_exact_optimum": None,
@@ -243,8 +274,11 @@ def _base_run_row(
 def _summary_to_run_row(summary: dict[str, object]) -> dict[str, object]:
     return {
         "training_contains_hidden_optimum": bool(summary["training_contains_hidden_optimum"]),
+        "initial_matches_hidden_optimum": bool(summary["initial_matches_hidden_optimum"]),
         "hidden_best_bitstring": summary["hidden_best_bitstring"],
         "hidden_best_true_cost": summary["hidden_best_true_cost"],
+        "initial_bitstring": summary["initial_bitstring"],
+        "initial_true_cost": summary["initial_true_cost"],
         "final_bitstring": summary["final_bitstring"],
         "final_true_cost": summary["final_true_cost"],
         "found_hidden_exact_optimum": bool(summary["found_hidden_exact_optimum"]),
@@ -301,6 +335,7 @@ def main() -> None:
     parser.add_argument("--max-trials-per-threshold", type=int, default=12)
     parser.add_argument("--max-candidates-per-shotbatch", type=int, default=1)
     parser.add_argument("--exclude-hidden-optimum-from-training", action="store_true")
+    parser.add_argument("--exclude-hidden-optimum-from-initial", action="store_true")
     parser.add_argument(
         "--output-json",
         type=Path,
@@ -326,6 +361,7 @@ def main() -> None:
         max_trials_per_threshold=args.max_trials_per_threshold,
         max_candidates_per_shotbatch=args.max_candidates_per_shotbatch,
         exclude_hidden_optimum_from_training=args.exclude_hidden_optimum_from_training,
+        exclude_hidden_optimum_from_initial=args.exclude_hidden_optimum_from_initial,
         output_json=args.output_json,
         output_csv=args.output_csv,
     )

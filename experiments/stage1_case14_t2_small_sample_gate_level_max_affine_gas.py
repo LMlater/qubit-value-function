@@ -398,6 +398,9 @@ def adaptive_gate_level_search(
                 "incumbent_before": _incumbent_row(before, before_value, len(learned.bit_labels)),
                 "threshold_before": _finite_or_none(before_value),
                 "tau_int": tau_int,
+                "register_allocation": max_affine_register_allocation(
+                    max_affine_spec_from_learned(learned, tau_int=tau_int)
+                ),
                 "calibration": calibration,
                 "trials": round_trials,
                 "threshold_after": _finite_or_none(incumbent_value),
@@ -440,6 +443,7 @@ def run(
     draw_circuit: bool,
     max_candidates_per_shotbatch: int,
     exclude_hidden_optimum_from_training: bool = False,
+    exclude_hidden_optimum_from_initial: bool = False,
 ) -> dict[str, object]:
     source = load_uc_instance(instance_path)
     instance = leading_time_window_instance(source, 2)
@@ -472,14 +476,15 @@ def run(
         max_weight=max_weight,
         seed=seed,
     )
-    if initial_index == "best_of_train":
-        incumbent_index = int(train_indices[int(np.nanargmin(train_values))])
-    elif initial_index == "random":
-        incumbent_index = int(rng.integers(0, dimension))
-    elif str(initial_index).isdigit():
-        incumbent_index = int(initial_index)
-    else:
-        raise ValueError("initial-index must be random, best_of_train, or an integer")
+    incumbent_index = _choose_initial_index(
+        initial_index,
+        dimension=dimension,
+        rng=rng,
+        train_indices=train_indices,
+        train_values=train_values,
+        hidden_best_index=hidden_best,
+        exclude_hidden_optimum_from_initial=exclude_hidden_optimum_from_initial,
+    )
 
     search_start_calls = evaluator.call_count
     adaptive = adaptive_gate_level_search(
@@ -498,6 +503,9 @@ def run(
     final_index = int(adaptive["final_incumbent"]["index"])
     final_bitstring = bitstring_from_index(final_index, _num_search_bits(selected_generator_indices, 2))
     final_true_cost = adaptive["final_incumbent"]["true_cost"]
+    initial_true_cost = evaluator.cache.get(int(incumbent_index))
+    if initial_true_cost is None:
+        initial_true_cost = evaluator.evaluate(int(incumbent_index))
 
     qasm_paths = []
     if save_qasm:
@@ -527,10 +535,15 @@ def run(
         "train_best_bitstring": train_best_bitstring,
         "train_best_true_cost": _finite_or_none(train_best_true_cost),
         "exclude_hidden_optimum_from_training": bool(exclude_hidden_optimum_from_training),
+        "exclude_hidden_optimum_from_initial": bool(exclude_hidden_optimum_from_initial),
         "training_contains_hidden_optimum": training_contains_hidden_optimum,
         "hidden_best_index": int(hidden_best),
         "hidden_best_bitstring": hidden_best_bitstring,
         "hidden_best_true_cost": _finite_or_none(float(hidden_values[hidden_best])),
+        "initial_index": int(incumbent_index),
+        "initial_bitstring": bitstring_from_index(incumbent_index, _num_search_bits(selected_generator_indices, 2)),
+        "initial_true_cost": _finite_or_none(float(initial_true_cost)),
+        "initial_matches_hidden_optimum": bool(int(incumbent_index) == int(hidden_best)),
         "final_bitstring": final_bitstring,
         "final_true_cost": _finite_or_none(float(final_true_cost)) if final_true_cost is not None else None,
         "found_hidden_exact_optimum": bool(final_index == hidden_best),
@@ -550,7 +563,9 @@ def run(
         "learned_max_affine_oracle": {
             "integer_pieces": _pieces_to_dict(learned.pieces),
             "training_diagnostics": learned.diagnostics,
-            "register_allocation": max_affine_register_allocation(max_affine_spec_from_learned(learned, tau_int=0)),
+            "reference_register_allocation_at_tau0": max_affine_register_allocation(
+                max_affine_spec_from_learned(learned, tau_int=0)
+            ),
         },
         "adaptive_search": adaptive,
         "hidden_reference_not_used_by_algorithm": {
@@ -584,6 +599,30 @@ def _choose_train_indices(
             f"({int(candidates.size)})"
         )
     return np.asarray(rng.choice(candidates, size=sample_count, replace=False), dtype=int)
+
+
+def _choose_initial_index(
+    initial_index: str,
+    *,
+    dimension: int,
+    rng: np.random.Generator,
+    train_indices: np.ndarray,
+    train_values: np.ndarray,
+    hidden_best_index: int,
+    exclude_hidden_optimum_from_initial: bool,
+) -> int:
+    if initial_index == "best_of_train":
+        return int(train_indices[int(np.nanargmin(train_values))])
+    if initial_index == "random":
+        candidates = np.arange(int(dimension), dtype=int)
+        if exclude_hidden_optimum_from_initial:
+            candidates = candidates[candidates != int(hidden_best_index)]
+        if candidates.size <= 0:
+            raise ValueError("no available random initial candidates after excluding hidden optimum")
+        return int(rng.choice(candidates))
+    if str(initial_index).isdigit():
+        return int(initial_index)
+    raise ValueError("initial-index must be random, best_of_train, or an integer")
 
 
 def _rank_correlation_weights(
@@ -759,6 +798,7 @@ def main() -> None:
     parser.add_argument("--draw-circuit", type=parse_bool, default=False)
     parser.add_argument("--max-candidates-per-shotbatch", type=int, default=3)
     parser.add_argument("--exclude-hidden-optimum-from-training", action="store_true")
+    parser.add_argument("--exclude-hidden-optimum-from-initial", action="store_true")
     args = parser.parse_args()
 
     summary = run(
@@ -779,13 +819,16 @@ def main() -> None:
         draw_circuit=args.draw_circuit,
         max_candidates_per_shotbatch=args.max_candidates_per_shotbatch,
         exclude_hidden_optimum_from_training=args.exclude_hidden_optimum_from_training,
+        exclude_hidden_optimum_from_initial=args.exclude_hidden_optimum_from_initial,
     )
     compact = {
         "selected_generators": summary["selected_generators"],
         "train_sample_count": summary["train_sample_count"],
         "seed": summary["seed"],
         "exclude_hidden_optimum_from_training": summary["exclude_hidden_optimum_from_training"],
+        "exclude_hidden_optimum_from_initial": summary["exclude_hidden_optimum_from_initial"],
         "training_contains_hidden_optimum": summary["training_contains_hidden_optimum"],
+        "initial_matches_hidden_optimum": summary["initial_matches_hidden_optimum"],
         "final_incumbent": summary["adaptive_search"]["final_incumbent"],
         "hidden_exact_optimum": summary["hidden_reference_not_used_by_algorithm"],
         "matched_hidden_optimum": summary["hidden_reference_not_used_by_algorithm"]["whether_final_incumbent_matches_reference"],

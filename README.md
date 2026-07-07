@@ -50,9 +50,10 @@ For diagnostic sweeps, the main experiment also supports:
 
 ```powershell
 --exclude-hidden-optimum-from-training
+--exclude-hidden-optimum-from-initial
 ```
 
-That option first computes the hidden subspace optimum for evaluation, then excludes that index from the training sample pool. It is a diagnostic stress test, not an algorithmic assumption.
+These options first compute the hidden subspace optimum for evaluation, then exclude that index from the training sample pool and/or the random initial incumbent. They are diagnostic stress tests, not algorithmic assumptions.
 
 The JSON summary records both algorithmic ED/LP calls and hidden-reference ED/LP calls. Algorithmic calls include only training samples plus measured candidates checked by ED/LP.
 
@@ -85,9 +86,10 @@ Run the hidden-optimum-exclusion smoke sweep by adding:
 
 ```powershell
 --exclude-hidden-optimum-from-training
+--exclude-hidden-optimum-from-initial
 ```
 
-The sweep output contains individual run rows plus grouped summaries by selected generators, search-qubit count, train sample count, and exclusion mode. The key diagnostic metric is `success_rate_when_hidden_optimum_not_in_training`.
+The sweep output contains individual run rows plus grouped summaries by selected generators, search-qubit count, train sample count, and exclusion mode. `success_rate` and `success_rate_over_ok_runs` use successful executions as the denominator; `success_rate_over_attempted_runs` includes error rows in the denominator. The key diagnostic metrics are `success_rate_when_hidden_optimum_not_in_training` and `success_rate_when_hidden_optimum_not_in_training_and_not_initial`.
 
 ## Current Structure
 
