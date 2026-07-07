@@ -11,6 +11,8 @@ This repository is now focused on a compact quantum-potential validation path fo
 
 The current experiment does **not** use full-enumeration training. A hidden exact reference may be computed for reporting quality, but it is kept under `hidden_reference_not_used_by_algorithm` and is not used to train the oracle, calibrate thresholds, update incumbents, or stop the search.
 
+This is still an integer value-register comparator prototype. It should not be described as a complete QFT-style signed fixed-point encoding, nor as a full 12-bit case14 T=2 global optimum verification. The experiment evaluates whether shot-based gate-level GAS can recover the hidden optimum inside a selected-generator subspace under limited ED/LP supervision.
+
 The default demonstration is a 4-qubit selected-subregister case:
 
 ```text
@@ -44,11 +46,48 @@ The result is written to:
 results/stage1_case14_t2_small_sample_gate_level_max_affine_gas.json
 ```
 
+For diagnostic sweeps, the main experiment also supports:
+
+```powershell
+--exclude-hidden-optimum-from-training
+```
+
+That option first computes the hidden subspace optimum for evaluation, then excludes that index from the training sample pool. It is a diagnostic stress test, not an algorithmic assumption.
+
+The JSON summary records both algorithmic ED/LP calls and hidden-reference ED/LP calls. Algorithmic calls include only training samples plus measured candidates checked by ED/LP.
+
 If `--save-qasm true` is enabled, a reference QASM/text circuit dump is written to:
 
 ```text
 results/stage1_case14_t2_small_sample_gate_level_max_affine_gas.qasm
 ```
+
+## Sweep Experiments
+
+Run a smoke sweep:
+
+```powershell
+python experiments/stage1_case14_t2_small_sample_gate_level_gas_sweep.py `
+  --backend qasm `
+  --shots 1000 `
+  --seed-start 0 `
+  --seed-count 3 `
+  --configs "0,5;0,1;0,1,5" `
+  --train-sample-counts "4,8,12" `
+  --max-rounds 8 `
+  --max-trials-per-threshold 8 `
+  --max-candidates-per-shotbatch 1 `
+  --output-json results/stage1_case14_t2_small_sample_gate_level_gas_sweep_smoke.json `
+  --output-csv results/stage1_case14_t2_small_sample_gate_level_gas_sweep_smoke.csv
+```
+
+Run the hidden-optimum-exclusion smoke sweep by adding:
+
+```powershell
+--exclude-hidden-optimum-from-training
+```
+
+The sweep output contains individual run rows plus grouped summaries by selected generators, search-qubit count, train sample count, and exclusion mode. The key diagnostic metric is `success_rate_when_hidden_optimum_not_in_training`.
 
 ## Current Structure
 
@@ -69,6 +108,7 @@ Current experiments:
 ```text
 experiments/
   stage1_case14_t2_small_sample_gate_level_max_affine_gas.py
+  stage1_case14_t2_small_sample_gate_level_gas_sweep.py
   stage1_case14_t2_gate_level_grover_oracle.py
   stage1_case14_t2_gate_level_max_affine_oracle.py
   stage1_case14_t2_learned_small_max_affine_gate_level_oracle.py
@@ -104,4 +144,6 @@ The tests cover:
 - small-sample integer max-affine learning,
 - qasm shot execution and bitstring mapping,
 - adaptive search incumbent updates only after true ED/LP improvement,
-- hidden reference accounting outside algorithmic ED/LP calls.
+- hidden reference accounting outside algorithmic ED/LP calls,
+- hidden-optimum exclusion from training samples,
+- sweep config parsing and grouped success-rate metrics.

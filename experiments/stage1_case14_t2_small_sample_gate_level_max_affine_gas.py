@@ -38,6 +38,7 @@ from qubit_value_function.gate_level_oracle import (  # noqa: E402
     build_max_affine_grover_circuit,
     build_max_affine_phase_oracle_circuit,
     circuit_resource_summary,
+    max_affine_register_allocation,
 )
 from qubit_value_function.uc_loader import load_uc_instance  # noqa: E402
 
@@ -438,17 +439,30 @@ def run(
     save_qasm: bool,
     draw_circuit: bool,
     max_candidates_per_shotbatch: int,
+    exclude_hidden_optimum_from_training: bool = False,
 ) -> dict[str, object]:
     source = load_uc_instance(instance_path)
     instance = leading_time_window_instance(source, 2)
     base_commitment = np.ones((len(instance.generators), instance.time_horizon), dtype=int)
     embedded_commitments = embedded_selected_commitments(base_commitment, selected_generator_indices)
+    hidden_values, hidden_calls = _hidden_reference(instance, embedded_commitments)
+    hidden_best = int(np.nanargmin(hidden_values))
+    hidden_best_bitstring = bitstring_from_index(hidden_best, _num_search_bits(selected_generator_indices, 2))
     evaluator = EmbeddedEDEvaluator(instance, embedded_commitments)
     rng = np.random.default_rng(seed)
     dimension = int(embedded_commitments.shape[0])
-    train_indices = _choose_train_indices(dimension, train_sample_count, rng)
+    train_indices = _choose_train_indices(
+        dimension,
+        train_sample_count,
+        rng,
+        excluded_index=hidden_best if exclude_hidden_optimum_from_training else None,
+    )
     train_values = np.array([evaluator.evaluate(index) for index in train_indices], dtype=float)
     train_bitstrings = [bitstring_from_index(index, _num_search_bits(selected_generator_indices, 2)) for index in train_indices]
+    train_best_row = int(np.nanargmin(train_values))
+    train_best_bitstring = train_bitstrings[train_best_row]
+    train_best_true_cost = float(train_values[train_best_row])
+    training_contains_hidden_optimum = bool(int(hidden_best) in {int(index) for index in train_indices})
 
     learned = learn_small_sample_integer_max_affine_pieces(
         train_bitstrings=train_bitstrings,
@@ -481,9 +495,9 @@ def run(
         max_candidates_per_shotbatch=max_candidates_per_shotbatch,
     )
     search_calls = evaluator.call_count - search_start_calls
-    hidden_values, hidden_calls = _hidden_reference(instance, embedded_commitments)
-    hidden_best = int(np.nanargmin(hidden_values))
     final_index = int(adaptive["final_incumbent"]["index"])
+    final_bitstring = bitstring_from_index(final_index, _num_search_bits(selected_generator_indices, 2))
+    final_true_cost = adaptive["final_incumbent"]["true_cost"]
 
     qasm_paths = []
     if save_qasm:
@@ -496,13 +510,37 @@ def run(
         "not_full_enumeration_training": True,
         "uses_gate_level_circuits": True,
         "uses_statevector_amplitude_update": False,
+        "notes": [
+            "This is a small-sample gate-level max-affine GAS experiment.",
+            "The hidden full subspace enumeration is used only for evaluation.",
+            "Algorithmic ED/LP calls include only training samples and measured candidates.",
+            "The experiment evaluates whether shot-based gate-level GAS can recover the hidden subspace optimum under limited ED/LP supervision.",
+        ],
         "backend": backend,
         "shots": int(shots),
+        "seed": int(seed),
         "selected_generators": [int(index) for index in selected_generator_indices],
         "num_search_qubits": _num_search_bits(selected_generator_indices, 2),
         "train_sample_count": int(len(train_indices)),
         "train_indices": [int(index) for index in train_indices],
         "train_bitstrings": train_bitstrings,
+        "train_best_bitstring": train_best_bitstring,
+        "train_best_true_cost": _finite_or_none(train_best_true_cost),
+        "exclude_hidden_optimum_from_training": bool(exclude_hidden_optimum_from_training),
+        "training_contains_hidden_optimum": training_contains_hidden_optimum,
+        "hidden_best_index": int(hidden_best),
+        "hidden_best_bitstring": hidden_best_bitstring,
+        "hidden_best_true_cost": _finite_or_none(float(hidden_values[hidden_best])),
+        "final_bitstring": final_bitstring,
+        "final_true_cost": _finite_or_none(float(final_true_cost)) if final_true_cost is not None else None,
+        "found_hidden_exact_optimum": bool(final_index == hidden_best),
+        "algorithmic_ed_lp_calls": int(len(train_indices) + search_calls),
+        "hidden_reference_ed_lp_calls": int(hidden_calls),
+        "circuit_executions": int(adaptive["total_quantum_circuit_executions"]),
+        "total_shots": int(adaptive["total_shots"]),
+        "max_qubits": int(adaptive["max_qubits"]),
+        "max_circuit_depth": int(adaptive["max_depth"]),
+        "max_transpiled_depth": int(adaptive["max_transpiled_depth"]),
         "ed_calls": {
             "training": int(len(train_indices)),
             "search_verification": int(search_calls),
@@ -512,10 +550,11 @@ def run(
         "learned_max_affine_oracle": {
             "integer_pieces": _pieces_to_dict(learned.pieces),
             "training_diagnostics": learned.diagnostics,
+            "register_allocation": max_affine_register_allocation(max_affine_spec_from_learned(learned, tau_int=0)),
         },
         "adaptive_search": adaptive,
         "hidden_reference_not_used_by_algorithm": {
-            "exact_best_bitstring": bitstring_from_index(hidden_best, _num_search_bits(selected_generator_indices, 2)),
+            "exact_best_bitstring": hidden_best_bitstring,
             "exact_best_true_cost": _finite_or_none(float(hidden_values[hidden_best])),
             "whether_final_incumbent_matches_reference": bool(final_index == hidden_best),
         },
@@ -525,9 +564,26 @@ def run(
     return summary
 
 
-def _choose_train_indices(dimension: int, sample_count: int, rng: np.random.Generator) -> np.ndarray:
-    sample_count = min(max(int(sample_count), 1), int(dimension))
-    return np.asarray(rng.choice(np.arange(dimension), size=sample_count, replace=False), dtype=int)
+def _choose_train_indices(
+    dimension: int,
+    sample_count: int,
+    rng: np.random.Generator,
+    *,
+    excluded_index: int | None = None,
+) -> np.ndarray:
+    if dimension <= 0:
+        raise ValueError("dimension must be positive")
+    sample_count = max(int(sample_count), 1)
+    candidates = np.arange(dimension, dtype=int)
+    if excluded_index is not None:
+        excluded_index = int(excluded_index)
+        candidates = candidates[candidates != excluded_index]
+    if sample_count > candidates.size:
+        raise ValueError(
+            f"train_sample_count={sample_count} exceeds available training candidates "
+            f"({int(candidates.size)})"
+        )
+    return np.asarray(rng.choice(candidates, size=sample_count, replace=False), dtype=int)
 
 
 def _rank_correlation_weights(
@@ -702,6 +758,7 @@ def main() -> None:
     parser.add_argument("--save-qasm", type=parse_bool, default=True)
     parser.add_argument("--draw-circuit", type=parse_bool, default=False)
     parser.add_argument("--max-candidates-per-shotbatch", type=int, default=3)
+    parser.add_argument("--exclude-hidden-optimum-from-training", action="store_true")
     args = parser.parse_args()
 
     summary = run(
@@ -721,9 +778,14 @@ def main() -> None:
         save_qasm=args.save_qasm,
         draw_circuit=args.draw_circuit,
         max_candidates_per_shotbatch=args.max_candidates_per_shotbatch,
+        exclude_hidden_optimum_from_training=args.exclude_hidden_optimum_from_training,
     )
     compact = {
+        "selected_generators": summary["selected_generators"],
         "train_sample_count": summary["train_sample_count"],
+        "seed": summary["seed"],
+        "exclude_hidden_optimum_from_training": summary["exclude_hidden_optimum_from_training"],
+        "training_contains_hidden_optimum": summary["training_contains_hidden_optimum"],
         "final_incumbent": summary["adaptive_search"]["final_incumbent"],
         "hidden_exact_optimum": summary["hidden_reference_not_used_by_algorithm"],
         "matched_hidden_optimum": summary["hidden_reference_not_used_by_algorithm"]["whether_final_incumbent_matches_reference"],

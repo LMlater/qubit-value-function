@@ -25,6 +25,11 @@ from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import 
     measured_bitstring_to_index,
     run as run_small_sample_gas,
 )
+from experiments.stage1_case14_t2_small_sample_gate_level_gas_sweep import (
+    build_grouped_summary,
+    parse_configs,
+    parse_train_sample_counts,
+)
 from qubit_value_function.commitment import all_commitments, commitment_to_bitstring
 from qubit_value_function.ed import FixedCommitmentEvaluator
 from qubit_value_function.experiment_utils import (
@@ -328,3 +333,106 @@ def test_small_sample_gate_level_hidden_reference_is_not_algorithmic_ed_calls() 
         )
     finally:
         path.unlink(missing_ok=True)
+
+
+def test_small_sample_gate_level_run_can_exclude_hidden_optimum_from_training() -> None:
+    path = Path("results/test_small_sample_gate_level_gas_exclude_hidden.json")
+    summary = run_small_sample_gas(
+        instance_path=Path("data/case14.json.gz"),
+        results_path=path,
+        backend="qasm",
+        shots=64,
+        seed=1,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=1,
+        max_trials_per_threshold=1,
+        selected_generator_indices=(0, 5),
+        train_sample_count=4,
+        initial_index="random",
+        num_pieces=2,
+        max_weight=7,
+        save_qasm=False,
+        draw_circuit=False,
+        max_candidates_per_shotbatch=1,
+        exclude_hidden_optimum_from_training=True,
+    )
+
+    try:
+        assert summary["exclude_hidden_optimum_from_training"] is True
+        assert summary["training_contains_hidden_optimum"] is False
+        assert summary["hidden_best_index"] not in summary["train_indices"]
+        assert summary["hidden_best_bitstring"] not in summary["train_bitstrings"]
+        assert summary["algorithmic_ed_lp_calls"] == summary["ed_calls"]["total_algorithmic"]
+        assert summary["hidden_reference_ed_lp_calls"] == summary["ed_calls"]["hidden_reference"]
+        assert summary["found_hidden_exact_optimum"] == (
+            summary["final_bitstring"] == summary["hidden_best_bitstring"]
+        )
+        allocation = summary["learned_max_affine_oracle"]["register_allocation"]
+        assert len(allocation) == summary["learned_max_affine_oracle"]["training_diagnostics"]["num_pieces"]
+        assert {
+            "piece_index",
+            "weights",
+            "bias",
+            "inverted_bit_indices",
+            "max_weighted_sum",
+            "value_register_bits",
+            "compare_value",
+            "flag_qubits",
+            "carry_qubits",
+            "control_qubits",
+            "comparator_ancillas",
+        }.issubset(allocation[0])
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def test_sweep_parsers_accept_config_and_train_sample_lists() -> None:
+    assert parse_configs("0,5;0,1,5") == [(0, 5), (0, 1, 5)]
+    assert parse_train_sample_counts("4,8,12") == [4, 8, 12]
+
+
+def test_sweep_grouped_summary_computes_success_rates() -> None:
+    runs = [
+        {
+            "selected_generators": [0, 5],
+            "num_search_qubits": 4,
+            "train_sample_count": 4,
+            "exclude_hidden_optimum_from_training": True,
+            "training_contains_hidden_optimum": False,
+            "found_hidden_exact_optimum": True,
+            "status": "ok",
+            "algorithmic_ed_lp_calls": 6,
+            "circuit_executions": 2,
+            "total_shots": 200,
+            "max_qubits": 18,
+            "max_circuit_depth": 20,
+            "max_transpiled_depth": 100,
+        },
+        {
+            "selected_generators": [0, 5],
+            "num_search_qubits": 4,
+            "train_sample_count": 4,
+            "exclude_hidden_optimum_from_training": True,
+            "training_contains_hidden_optimum": True,
+            "found_hidden_exact_optimum": False,
+            "status": "ok",
+            "algorithmic_ed_lp_calls": 8,
+            "circuit_executions": 4,
+            "total_shots": 400,
+            "max_qubits": 20,
+            "max_circuit_depth": 40,
+            "max_transpiled_depth": 200,
+        },
+    ]
+
+    grouped = build_grouped_summary(runs)
+
+    assert len(grouped) == 1
+    row = grouped[0]
+    assert row["num_runs"] == 2
+    assert row["num_success"] == 1
+    assert row["success_rate"] == 0.5
+    assert row["num_runs_hidden_not_in_training"] == 1
+    assert row["success_rate_when_hidden_optimum_not_in_training"] == 1.0
+    assert row["training_contains_hidden_optimum_rate"] == 0.5
+    assert row["avg_algorithmic_ed_lp_calls"] == 7.0

@@ -400,6 +400,31 @@ def circuit_resource_summary(
     return summary
 
 
+def max_affine_register_allocation(spec: GateLevelMaxAffineOracleSpec) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    for piece_index, piece in enumerate(spec.pieces):
+        adder = WeightedAdder(spec.num_x_qubits, list(piece.weights))
+        compare_value = _piece_compare_value(spec.threshold, piece, adder.num_sum_qubits)
+        comparator = IntegerComparator(adder.num_sum_qubits, compare_value, geq=False)
+        comparator_ancilla_count = comparator.num_qubits - comparator.num_state_qubits - 1
+        rows.append(
+            {
+                "piece_index": int(piece_index),
+                "weights": [int(weight) for weight in piece.weights],
+                "bias": int(piece.bias),
+                "inverted_bit_indices": [int(index) for index in piece.inverted_bit_indices],
+                "max_weighted_sum": int(sum(piece.weights)),
+                "value_register_bits": int(adder.num_sum_qubits),
+                "compare_value": int(compare_value),
+                "flag_qubits": 1,
+                "carry_qubits": int(adder.num_carry_qubits),
+                "control_qubits": int(adder.num_control_qubits),
+                "comparator_ancillas": int(comparator_ancilla_count),
+            }
+        )
+    return rows
+
+
 def bitstring_from_index(state_index: int, num_bits: int) -> str:
     return "".join(str((int(state_index) >> bit_index) & 1) for bit_index in range(num_bits))
 
