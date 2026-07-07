@@ -1,11 +1,10 @@
-"""Fixed-load SCUC value-function oracle prototype."""
+"""Small-sample gate-level UC Grover oracle utilities."""
 
 __all__ = [
     "commitment",
-    "ancilla_vqc",
     "ed",
-    "oracle",
-    "phase_vqc",
+    "experiment_utils",
+    "gate_level_oracle",
+    "qft_weighted_sum_oracle",
     "uc_loader",
-    "vqc",
 ]

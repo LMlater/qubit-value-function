@@ -12,15 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from experiments.stage1_case14_t2_ancilla_vqc import (  # noqa: E402
-    commitment_row,
-    evaluate_values,
-    leading_time_window_instance,
-)
-from experiments.stage1_case14_t2_gate_level_grover_oracle import (  # noqa: E402
-    embedded_selected_commitments,
-)
 from qubit_value_function.commitment import all_commitments, commitment_to_bitstring  # noqa: E402
+from qubit_value_function.experiment_utils import (  # noqa: E402
+    commitment_row,
+    embedded_selected_commitments,
+    evaluate_values,
+    finite_or_none,
+    leading_time_window_instance,
+    parse_indices,
+)
 from qubit_value_function.gate_level_oracle import (  # noqa: E402
     GateLevelAffinePieceSpec,
     GateLevelMaxAffineOracleSpec,
@@ -538,18 +538,12 @@ def finite_rank_map(values: np.ndarray) -> dict[int, int]:
     return {index: rank + 1 for rank, index in enumerate(rows)}
 
 
-def parse_indices(raw: str) -> tuple[int, ...]:
-    return tuple(int(part.strip()) for part in raw.split(",") if part.strip())
-
-
 def parse_counts(raw: str) -> tuple[int, ...]:
     return tuple(int(part.strip()) for part in raw.split(",") if part.strip())
 
 
 def _finite_or_none(value: float) -> float | None:
-    if np.isfinite(value):
-        return float(value)
-    return None
+    return finite_or_none(value)
 
 
 def main() -> None:

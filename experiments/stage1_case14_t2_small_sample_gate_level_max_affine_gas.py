@@ -21,13 +21,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from experiments.stage1_case14_t2_ancilla_vqc import (  # noqa: E402
-    leading_time_window_instance,
-)
-from experiments.stage1_case14_t2_gate_level_grover_oracle import (  # noqa: E402
+from qubit_value_function.experiment_utils import (  # noqa: E402
     embedded_selected_commitments,
-)
-from experiments.stage1_case14_t2_max_affine_adaptive_grover_search import (  # noqa: E402
+    finite_or_none,
+    leading_time_window_instance,
+    parse_indices,
     sanitize_for_strict_json,
     write_strict_json,
 )
@@ -668,14 +666,7 @@ def _save_reference_qasm(learned: SmallSampleLearnedOracle, results_path: Path) 
 
 
 def _finite_or_none(value: float) -> float | None:
-    value = float(value)
-    if np.isfinite(value):
-        return value
-    return None
-
-
-def parse_indices(raw: str) -> tuple[int, ...]:
-    return tuple(int(part.strip()) for part in raw.split(",") if part.strip())
+    return finite_or_none(value)
 
 
 def parse_bool(raw: str | bool) -> bool:

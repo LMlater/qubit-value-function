@@ -12,12 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from experiments.stage1_case14_t2_ancilla_vqc import (  # noqa: E402
-    commitment_row,
-    evaluate_values,
-    leading_time_window_instance,
-)
 from qubit_value_function.commitment import all_commitments, commitment_to_bitstring  # noqa: E402
+from qubit_value_function.experiment_utils import (  # noqa: E402
+    commitment_row,
+    embedded_selected_commitments,
+    evaluate_values,
+    finite_or_none,
+    leading_time_window_instance,
+    parse_indices,
+)
 from qubit_value_function.gate_level_oracle import (  # noqa: E402
     GateLevelAffineOracleSpec,
     bitstring_from_index,
@@ -207,24 +210,6 @@ def case14_t2_gate_level_proxy_spec(
     )
 
 
-def embedded_selected_commitments(
-    base_commitment: np.ndarray,
-    selected_generator_indices: tuple[int, ...],
-) -> np.ndarray:
-    base = np.asarray(base_commitment, dtype=int)
-    horizon = base.shape[1]
-    num_selected_bits = len(selected_generator_indices) * horizon
-    rows = []
-    for state_index in range(2**num_selected_bits):
-        commitment = base.copy()
-        for local_generator_index, generator_index in enumerate(selected_generator_indices):
-            for time_index in range(horizon):
-                bit_index = local_generator_index * horizon + time_index
-                commitment[generator_index, time_index] = (state_index >> bit_index) & 1
-        rows.append(commitment)
-    return np.array(rows, dtype=int)
-
-
 def top_probability_rows(
     probabilities: np.ndarray,
     proxy_values: np.ndarray,
@@ -274,10 +259,6 @@ def spec_to_dict(spec: GateLevelAffineOracleSpec) -> dict[str, object]:
     }
 
 
-def parse_indices(raw: str) -> tuple[int, ...]:
-    return tuple(int(part.strip()) for part in raw.split(",") if part.strip())
-
-
 def _marginal_cost_slope(generator) -> float:
     mw_span = generator.cost_mw[-1] - generator.cost_mw[0]
     if abs(mw_span) < 1e-12:
@@ -286,9 +267,7 @@ def _marginal_cost_slope(generator) -> float:
 
 
 def _finite_or_none(value: float) -> float | None:
-    if np.isfinite(value):
-        return float(value)
-    return None
+    return finite_or_none(value)
 
 
 def main() -> None:
