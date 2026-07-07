@@ -929,6 +929,162 @@ def test_max_affine_adaptive_summary_separates_oracle_modes_and_is_strict_json()
         assert "Infinity" not in path.read_text(encoding="utf-8")
     finally:
         path.unlink(missing_ok=True)
+
+
+def test_small_sample_gate_level_learner_uses_only_train_samples() -> None:
+    from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import (
+        learn_small_sample_integer_max_affine_pieces,
+    )
+
+    train_bitstrings = ["0000", "1100", "1111", "0101"]
+    train_values = np.array([4.0, 1.0, 8.0, 3.0])
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=train_bitstrings,
+        train_values=train_values,
+        num_bits=4,
+        num_pieces=2,
+        max_weight=7,
+        seed=0,
+    )
+
+    assert learned.diagnostics["train_sample_count"] == 4
+    assert learned.diagnostics["train_best_bitstring"] == "1100"
+    assert learned.used_training_indices == [0, 1, 2, 3]
+
+
+def test_small_sample_gate_level_learner_builds_max_affine_spec() -> None:
+    from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import (
+        learn_small_sample_integer_max_affine_pieces,
+        max_affine_spec_from_learned,
+    )
+
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=["0000", "1100", "1111"],
+        train_values=np.array([4.0, 1.0, 8.0]),
+        num_bits=4,
+        num_pieces=2,
+        max_weight=7,
+        seed=0,
+    )
+    spec = max_affine_spec_from_learned(learned, tau_int=0)
+
+    assert isinstance(spec, GateLevelMaxAffineOracleSpec)
+    assert spec.num_x_qubits == 4
+    assert all(isinstance(weight, int) for piece in spec.pieces for weight in piece.weights)
+
+
+def test_small_sample_gate_level_builds_grover_circuit_with_iterations() -> None:
+    from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import (
+        build_gate_level_grover_circuit_for_threshold,
+        learn_small_sample_integer_max_affine_pieces,
+    )
+
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=["0000", "1100", "1111"],
+        train_values=np.array([4.0, 1.0, 8.0]),
+        num_bits=4,
+        num_pieces=2,
+        max_weight=7,
+        seed=0,
+    )
+    circuit = build_gate_level_grover_circuit_for_threshold(learned, tau_int=0, iterations=2)
+
+    assert circuit.num_qubits > 4
+    assert circuit.count_ops().get("measure", 0) == 4
+
+
+def test_small_sample_gate_level_qasm_execution_returns_mappable_counts() -> None:
+    from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import (
+        build_gate_level_grover_circuit_for_threshold,
+        execute_gate_level_circuit,
+        learn_small_sample_integer_max_affine_pieces,
+        measured_bitstring_to_index,
+    )
+
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=["0000", "1100", "1111"],
+        train_values=np.array([4.0, 1.0, 8.0]),
+        num_bits=4,
+        num_pieces=2,
+        max_weight=7,
+        seed=0,
+    )
+    circuit = build_gate_level_grover_circuit_for_threshold(learned, tau_int=0, iterations=1)
+    execution = execute_gate_level_circuit(circuit, backend="qasm", shots=64, seed=0)
+
+    assert sum(execution["counts"].values()) == 64
+    first_bitstring = next(iter(execution["counts"]))
+    assert 0 <= measured_bitstring_to_index(first_bitstring) < 16
+
+
+def test_small_sample_gate_level_adaptive_updates_only_on_true_ed_improvement() -> None:
+    from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import (
+        CandidateEvaluationCache,
+        adaptive_gate_level_search,
+        learn_small_sample_integer_max_affine_pieces,
+    )
+
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=["0000", "1100", "1111"],
+        train_values=np.array([4.0, 1.0, 8.0]),
+        num_bits=4,
+        num_pieces=2,
+        max_weight=7,
+        seed=0,
+    )
+    cache = CandidateEvaluationCache({0: 4.0, 12: 1.0, 15: 8.0})
+    result = adaptive_gate_level_search(
+        learned=learned,
+        evaluator=cache.evaluate,
+        initial_index=0,
+        backend="qasm",
+        shots=64,
+        seed=3,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=2,
+        max_trials_per_threshold=3,
+        max_candidates_per_shotbatch=3,
+    )
+
+    for row in result["rounds"]:
+        for trial in row["trials"]:
+            before = trial["incumbent_true_cost_before"]
+            after = trial["incumbent_true_cost_after"]
+            if trial["accepted_update"]:
+                assert after < before
+
+
+def test_small_sample_gate_level_hidden_reference_is_not_algorithmic_ed_calls() -> None:
+    from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import run
+
+    summary = run(
+        instance_path=Path("data/case14.json.gz"),
+        results_path=Path("results/test_small_sample_gate_level_gas.json"),
+        backend="qasm",
+        shots=64,
+        seed=1,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=1,
+        max_trials_per_threshold=1,
+        selected_generator_indices=(0, 5),
+        train_sample_count=3,
+        initial_index="random",
+        num_pieces=2,
+        max_weight=7,
+        save_qasm=False,
+        draw_circuit=False,
+        max_candidates_per_shotbatch=2,
+    )
+
+    try:
+        assert "hidden_reference_not_used_by_algorithm" in summary
+        assert summary["ed_calls"]["hidden_reference"] > 0
+        assert summary["ed_calls"]["total_algorithmic"] == (
+            summary["ed_calls"]["training"]
+            + summary["ed_calls"]["search_verification"]
+        )
+    finally:
+        Path("results/test_small_sample_gate_level_gas.json").unlink(missing_ok=True)
 def test_tie_tolerant_threshold_keeps_nearly_equal_costs_together() -> None:
     values = np.array([1.0, 2.0, 2.0 + 1e-12, 3.0])
     strict = tie_tolerant_threshold_case_for_top_count(values, 2, 0.0)

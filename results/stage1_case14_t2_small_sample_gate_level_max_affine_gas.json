@@ -1,0 +1,3144 @@
+{
+  "method": "small-sample gate-level max-affine Grover adaptive search for UC",
+  "not_full_enumeration_training": true,
+  "uses_gate_level_circuits": true,
+  "uses_statevector_amplitude_update": false,
+  "backend": "qasm",
+  "shots": 2000,
+  "selected_generators": [
+    0,
+    5
+  ],
+  "num_search_qubits": 4,
+  "train_sample_count": 8,
+  "train_indices": [
+    13,
+    14,
+    3,
+    10,
+    12,
+    6,
+    7,
+    8
+  ],
+  "train_bitstrings": [
+    "1011",
+    "0111",
+    "1100",
+    "0101",
+    "0011",
+    "0110",
+    "1110",
+    "0001"
+  ],
+  "ed_calls": {
+    "training": 8,
+    "search_verification": 8,
+    "hidden_reference": 16,
+    "total_algorithmic": 16
+  },
+  "learned_max_affine_oracle": {
+    "integer_pieces": [
+      {
+        "name": "L0_small_sample_mismatch",
+        "weights": [
+          1,
+          0,
+          2,
+          0
+        ],
+        "bias": 0,
+        "inverted_bit_indices": [
+          0
+        ]
+      },
+      {
+        "name": "L1_small_sample_mismatch",
+        "weights": [
+          0,
+          2,
+          0,
+          2
+        ],
+        "bias": 0,
+        "inverted_bit_indices": [
+          1
+        ]
+      }
+    ],
+    "training_diagnostics": {
+      "train_sample_count": 8,
+      "train_best_bitstring": "1100",
+      "train_best_true_cost": 24578.2152604,
+      "train_pairwise_order_accuracy": 0.75,
+      "train_predicted_values": [
+        4,
+        3,
+        0,
+        2,
+        4,
+        3,
+        2,
+        4
+      ],
+      "num_pieces": 2,
+      "max_weight": 7,
+      "seed": 7,
+      "probe_marked_count_at_best_tau": 1
+    }
+  },
+  "adaptive_search": {
+    "lambda_growth": 1.1428571428571428,
+    "rounds": [
+      {
+        "round": 0,
+        "incumbent_before": {
+          "index": 13,
+          "bitstring": "1011",
+          "true_cost": 39794.7596684
+        },
+        "threshold_before": 39794.7596684,
+        "tau_int": 3,
+        "calibration": {
+          "tau_int": 3,
+          "train_marked_count": 5,
+          "train_false_positive_count": 1,
+          "train_false_negative_count": 1,
+          "error_count": 2,
+          "strategy": "train_improving_samples",
+          "margin": -1,
+          "incumbent_true_value": 39794.7596684
+        },
+        "trials": [
+          {
+            "trial": 0,
+            "z": 1.0,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "1000",
+                "count": 142
+              },
+              {
+                "bitstring": "0001",
+                "count": 136
+              },
+              {
+                "bitstring": "0111",
+                "count": 136
+              },
+              {
+                "bitstring": "1101",
+                "count": 135
+              },
+              {
+                "bitstring": "0000",
+                "count": 133
+              },
+              {
+                "bitstring": "0110",
+                "count": 132
+              },
+              {
+                "bitstring": "1001",
+                "count": 129
+              },
+              {
+                "bitstring": "1010",
+                "count": 128
+              },
+              {
+                "bitstring": "0010",
+                "count": 127
+              },
+              {
+                "bitstring": "1100",
+                "count": 127
+              }
+            ],
+            "measured_bitstring": "1000",
+            "raw_counts_top": [
+              {
+                "bitstring": "1000",
+                "count": 142
+              },
+              {
+                "bitstring": "0001",
+                "count": 136
+              },
+              {
+                "bitstring": "0111",
+                "count": 136
+              },
+              {
+                "bitstring": "1101",
+                "count": 135
+              },
+              {
+                "bitstring": "0000",
+                "count": 133
+              },
+              {
+                "bitstring": "0110",
+                "count": 132
+              },
+              {
+                "bitstring": "1001",
+                "count": 129
+              },
+              {
+                "bitstring": "1010",
+                "count": 128
+              },
+              {
+                "bitstring": "0010",
+                "count": 127
+              },
+              {
+                "bitstring": "1100",
+                "count": 127
+              }
+            ],
+            "selected_index": 1,
+            "true_cost": 27956.61606872647,
+            "incumbent_true_cost_before": 39794.7596684,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": true,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "ccx": 20,
+                  "cx": 17,
+                  "u": 10,
+                  "mcx_vchain": 8,
+                  "or": 2
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          }
+        ],
+        "threshold_after": 27956.61606872647,
+        "incumbent_after": {
+          "index": 1,
+          "bitstring": "1000",
+          "true_cost": 27956.61606872647
+        }
+      },
+      {
+        "round": 1,
+        "incumbent_before": {
+          "index": 1,
+          "bitstring": "1000",
+          "true_cost": 27956.61606872647
+        },
+        "threshold_before": 27956.61606872647,
+        "tau_int": 0,
+        "calibration": {
+          "tau_int": 0,
+          "train_marked_count": 1,
+          "train_false_positive_count": 0,
+          "train_false_negative_count": 0,
+          "error_count": 0,
+          "strategy": "train_improving_samples",
+          "margin": 2,
+          "incumbent_true_value": 27956.61606872647
+        },
+        "trials": [
+          {
+            "trial": 0,
+            "z": 1.1428571428571428,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 145
+              },
+              {
+                "bitstring": "0001",
+                "count": 135
+              },
+              {
+                "bitstring": "1011",
+                "count": 135
+              },
+              {
+                "bitstring": "1000",
+                "count": 132
+              },
+              {
+                "bitstring": "1110",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 131
+              },
+              {
+                "bitstring": "0111",
+                "count": 131
+              },
+              {
+                "bitstring": "0101",
+                "count": 128
+              },
+              {
+                "bitstring": "0110",
+                "count": 126
+              },
+              {
+                "bitstring": "1111",
+                "count": 125
+              }
+            ],
+            "measured_bitstring": "0001",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 145
+              },
+              {
+                "bitstring": "0001",
+                "count": 135
+              },
+              {
+                "bitstring": "1011",
+                "count": 135
+              },
+              {
+                "bitstring": "1000",
+                "count": 132
+              },
+              {
+                "bitstring": "1110",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 131
+              },
+              {
+                "bitstring": "0111",
+                "count": 131
+              },
+              {
+                "bitstring": "0101",
+                "count": 128
+              },
+              {
+                "bitstring": "0110",
+                "count": 126
+              },
+              {
+                "bitstring": "1111",
+                "count": 125
+              }
+            ],
+            "selected_index": 8,
+            "true_cost": 35153.21718604706,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 1,
+            "z": 1.3061224489795917,
+            "k": 1,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 931
+              },
+              {
+                "bitstring": "1001",
+                "count": 85
+              },
+              {
+                "bitstring": "0100",
+                "count": 82
+              },
+              {
+                "bitstring": "1110",
+                "count": 79
+              },
+              {
+                "bitstring": "0010",
+                "count": 78
+              },
+              {
+                "bitstring": "1101",
+                "count": 77
+              },
+              {
+                "bitstring": "1111",
+                "count": 74
+              },
+              {
+                "bitstring": "1010",
+                "count": 73
+              },
+              {
+                "bitstring": "0111",
+                "count": 72
+              },
+              {
+                "bitstring": "1000",
+                "count": 70
+              }
+            ],
+            "measured_bitstring": "0100",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 931
+              },
+              {
+                "bitstring": "1001",
+                "count": 85
+              },
+              {
+                "bitstring": "0100",
+                "count": 82
+              },
+              {
+                "bitstring": "1110",
+                "count": 79
+              },
+              {
+                "bitstring": "0010",
+                "count": 78
+              },
+              {
+                "bitstring": "1101",
+                "count": 77
+              },
+              {
+                "bitstring": "1111",
+                "count": 74
+              },
+              {
+                "bitstring": "1010",
+                "count": 73
+              },
+              {
+                "bitstring": "0111",
+                "count": 72
+              },
+              {
+                "bitstring": "1000",
+                "count": 70
+              }
+            ],
+            "selected_index": 2,
+            "true_cost": 28212.01718604706,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 20,
+                "operations": {
+                  "h": 16,
+                  "x": 16,
+                  "adder": 2,
+                  "cmp": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1,
+                  "mcx": 1
+                },
+                "decomposed_depth": 46,
+                "decomposed_operations": {
+                  "u": 32,
+                  "cx": 15,
+                  "p": 15,
+                  "h": 2,
+                  "circuit-97": 1,
+                  "circuit-101": 1,
+                  "circuit-105": 1,
+                  "circuit-109": 1,
+                  "circuit-101_dg": 1,
+                  "circuit-109_dg": 1,
+                  "circuit-105_dg": 1,
+                  "circuit-97_dg": 1
+                }
+              },
+              "transpiled_depth": 170,
+              "transpiled_ops": {
+                "x": 88,
+                "cx": 73,
+                "h": 48,
+                "ccx": 32,
+                "t": 32,
+                "tdg": 32,
+                "measure": 4,
+                "mcx": 1
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 2,
+            "z": 1.4927113702623904,
+            "k": 1,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 953
+              },
+              {
+                "bitstring": "0010",
+                "count": 86
+              },
+              {
+                "bitstring": "0101",
+                "count": 84
+              },
+              {
+                "bitstring": "1001",
+                "count": 79
+              },
+              {
+                "bitstring": "1000",
+                "count": 77
+              },
+              {
+                "bitstring": "1110",
+                "count": 71
+              },
+              {
+                "bitstring": "0110",
+                "count": 69
+              },
+              {
+                "bitstring": "1010",
+                "count": 68
+              },
+              {
+                "bitstring": "0000",
+                "count": 67
+              },
+              {
+                "bitstring": "0001",
+                "count": 67
+              }
+            ],
+            "measured_bitstring": "0101",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 953
+              },
+              {
+                "bitstring": "0010",
+                "count": 86
+              },
+              {
+                "bitstring": "0101",
+                "count": 84
+              },
+              {
+                "bitstring": "1001",
+                "count": 79
+              },
+              {
+                "bitstring": "1000",
+                "count": 77
+              },
+              {
+                "bitstring": "1110",
+                "count": 71
+              },
+              {
+                "bitstring": "0110",
+                "count": 69
+              },
+              {
+                "bitstring": "1010",
+                "count": 68
+              },
+              {
+                "bitstring": "0000",
+                "count": 67
+              },
+              {
+                "bitstring": "0001",
+                "count": 67
+              }
+            ],
+            "selected_index": 10,
+            "true_cost": 34582.01081764706,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 20,
+                "operations": {
+                  "h": 16,
+                  "x": 16,
+                  "adder": 2,
+                  "cmp": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1,
+                  "mcx": 1
+                },
+                "decomposed_depth": 46,
+                "decomposed_operations": {
+                  "u": 32,
+                  "cx": 15,
+                  "p": 15,
+                  "h": 2,
+                  "circuit-159": 1,
+                  "circuit-163": 1,
+                  "circuit-167": 1,
+                  "circuit-171": 1,
+                  "circuit-163_dg": 1,
+                  "circuit-171_dg": 1,
+                  "circuit-167_dg": 1,
+                  "circuit-159_dg": 1
+                }
+              },
+              "transpiled_depth": 170,
+              "transpiled_ops": {
+                "x": 88,
+                "cx": 73,
+                "h": 48,
+                "ccx": 32,
+                "t": 32,
+                "tdg": 32,
+                "measure": 4,
+                "mcx": 1
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 3,
+            "z": 1.705955851728446,
+            "k": 1,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 981
+              },
+              {
+                "bitstring": "0110",
+                "count": 84
+              },
+              {
+                "bitstring": "0010",
+                "count": 77
+              },
+              {
+                "bitstring": "1010",
+                "count": 76
+              },
+              {
+                "bitstring": "1011",
+                "count": 73
+              },
+              {
+                "bitstring": "1000",
+                "count": 71
+              },
+              {
+                "bitstring": "1100",
+                "count": 70
+              },
+              {
+                "bitstring": "1111",
+                "count": 70
+              },
+              {
+                "bitstring": "0101",
+                "count": 69
+              },
+              {
+                "bitstring": "0001",
+                "count": 66
+              }
+            ],
+            "measured_bitstring": "0110",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 981
+              },
+              {
+                "bitstring": "0110",
+                "count": 84
+              },
+              {
+                "bitstring": "0010",
+                "count": 77
+              },
+              {
+                "bitstring": "1010",
+                "count": 76
+              },
+              {
+                "bitstring": "1011",
+                "count": 73
+              },
+              {
+                "bitstring": "1000",
+                "count": 71
+              },
+              {
+                "bitstring": "1100",
+                "count": 70
+              },
+              {
+                "bitstring": "1111",
+                "count": 70
+              },
+              {
+                "bitstring": "0101",
+                "count": 69
+              },
+              {
+                "bitstring": "0001",
+                "count": 66
+              }
+            ],
+            "selected_index": 6,
+            "true_cost": 33603.67922298824,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 20,
+                "operations": {
+                  "h": 16,
+                  "x": 16,
+                  "adder": 2,
+                  "cmp": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1,
+                  "mcx": 1
+                },
+                "decomposed_depth": 46,
+                "decomposed_operations": {
+                  "u": 32,
+                  "cx": 15,
+                  "p": 15,
+                  "h": 2,
+                  "circuit-221": 1,
+                  "circuit-225": 1,
+                  "circuit-229": 1,
+                  "circuit-233": 1,
+                  "circuit-225_dg": 1,
+                  "circuit-233_dg": 1,
+                  "circuit-229_dg": 1,
+                  "circuit-221_dg": 1
+                }
+              },
+              "transpiled_depth": 170,
+              "transpiled_ops": {
+                "x": 88,
+                "cx": 73,
+                "h": 48,
+                "ccx": 32,
+                "t": 32,
+                "tdg": 32,
+                "measure": 4,
+                "mcx": 1
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 4,
+            "z": 1.9496638305467955,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "0000",
+                "count": 139
+              },
+              {
+                "bitstring": "1010",
+                "count": 136
+              },
+              {
+                "bitstring": "1011",
+                "count": 132
+              },
+              {
+                "bitstring": "0100",
+                "count": 130
+              },
+              {
+                "bitstring": "1111",
+                "count": 130
+              },
+              {
+                "bitstring": "0111",
+                "count": 129
+              },
+              {
+                "bitstring": "1000",
+                "count": 126
+              },
+              {
+                "bitstring": "0101",
+                "count": 125
+              },
+              {
+                "bitstring": "1101",
+                "count": 125
+              },
+              {
+                "bitstring": "0010",
+                "count": 124
+              }
+            ],
+            "measured_bitstring": "0000",
+            "raw_counts_top": [
+              {
+                "bitstring": "0000",
+                "count": 139
+              },
+              {
+                "bitstring": "1010",
+                "count": 136
+              },
+              {
+                "bitstring": "1011",
+                "count": 132
+              },
+              {
+                "bitstring": "0100",
+                "count": 130
+              },
+              {
+                "bitstring": "1111",
+                "count": 130
+              },
+              {
+                "bitstring": "0111",
+                "count": 129
+              },
+              {
+                "bitstring": "1000",
+                "count": 126
+              },
+              {
+                "bitstring": "0101",
+                "count": 125
+              },
+              {
+                "bitstring": "1101",
+                "count": 125
+              },
+              {
+                "bitstring": "0010",
+                "count": 124
+              }
+            ],
+            "selected_index": 0,
+            "true_cost": 29590.41799437353,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 5,
+            "z": 2.228187234910623,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "0010",
+                "count": 141
+              },
+              {
+                "bitstring": "1000",
+                "count": 138
+              },
+              {
+                "bitstring": "1001",
+                "count": 138
+              },
+              {
+                "bitstring": "0110",
+                "count": 136
+              },
+              {
+                "bitstring": "1010",
+                "count": 132
+              },
+              {
+                "bitstring": "0001",
+                "count": 131
+              },
+              {
+                "bitstring": "0100",
+                "count": 130
+              },
+              {
+                "bitstring": "0111",
+                "count": 129
+              },
+              {
+                "bitstring": "1101",
+                "count": 128
+              },
+              {
+                "bitstring": "1111",
+                "count": 125
+              }
+            ],
+            "measured_bitstring": "1000",
+            "raw_counts_top": [
+              {
+                "bitstring": "0010",
+                "count": 141
+              },
+              {
+                "bitstring": "1000",
+                "count": 138
+              },
+              {
+                "bitstring": "1001",
+                "count": 138
+              },
+              {
+                "bitstring": "0110",
+                "count": 136
+              },
+              {
+                "bitstring": "1010",
+                "count": 132
+              },
+              {
+                "bitstring": "0001",
+                "count": 131
+              },
+              {
+                "bitstring": "0100",
+                "count": 130
+              },
+              {
+                "bitstring": "0111",
+                "count": 129
+              },
+              {
+                "bitstring": "1101",
+                "count": 128
+              },
+              {
+                "bitstring": "1111",
+                "count": 125
+              }
+            ],
+            "selected_index": 1,
+            "true_cost": 27956.61606872647,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 6,
+            "z": 2.546499697040712,
+            "k": 2,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 1821
+              },
+              {
+                "bitstring": "0010",
+                "count": 18
+              },
+              {
+                "bitstring": "0110",
+                "count": 17
+              },
+              {
+                "bitstring": "1011",
+                "count": 17
+              },
+              {
+                "bitstring": "0100",
+                "count": 15
+              },
+              {
+                "bitstring": "0000",
+                "count": 14
+              },
+              {
+                "bitstring": "0001",
+                "count": 14
+              },
+              {
+                "bitstring": "1000",
+                "count": 13
+              },
+              {
+                "bitstring": "0101",
+                "count": 12
+              },
+              {
+                "bitstring": "1010",
+                "count": 10
+              }
+            ],
+            "measured_bitstring": "0110",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 1821
+              },
+              {
+                "bitstring": "0010",
+                "count": 18
+              },
+              {
+                "bitstring": "0110",
+                "count": 17
+              },
+              {
+                "bitstring": "1011",
+                "count": 17
+              },
+              {
+                "bitstring": "0100",
+                "count": 15
+              },
+              {
+                "bitstring": "0000",
+                "count": 14
+              },
+              {
+                "bitstring": "0001",
+                "count": 14
+              },
+              {
+                "bitstring": "1000",
+                "count": 13
+              },
+              {
+                "bitstring": "0101",
+                "count": 12
+              },
+              {
+                "bitstring": "1010",
+                "count": 10
+              }
+            ],
+            "selected_index": 6,
+            "true_cost": 33603.67922298824,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 38,
+                "operations": {
+                  "x": 32,
+                  "h": 28,
+                  "adder": 4,
+                  "cmp": 4,
+                  "cmp_dg": 4,
+                  "adder_dg": 4,
+                  "cx": 2,
+                  "mcx": 2
+                },
+                "decomposed_depth": 90,
+                "decomposed_operations": {
+                  "u": 60,
+                  "cx": 30,
+                  "p": 30,
+                  "h": 4,
+                  "circuit-333": 2,
+                  "circuit-337": 2,
+                  "circuit-341": 2,
+                  "circuit-345": 2,
+                  "circuit-337_dg": 2,
+                  "circuit-345_dg": 2,
+                  "circuit-341_dg": 2,
+                  "circuit-333_dg": 2
+                }
+              },
+              "transpiled_depth": 336,
+              "transpiled_ops": {
+                "x": 176,
+                "cx": 146,
+                "h": 92,
+                "ccx": 64,
+                "t": 64,
+                "tdg": 64,
+                "measure": 4,
+                "mcx": 2
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 7,
+            "z": 2.910285368046528,
+            "k": 1,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 934
+              },
+              {
+                "bitstring": "1011",
+                "count": 85
+              },
+              {
+                "bitstring": "1111",
+                "count": 82
+              },
+              {
+                "bitstring": "0111",
+                "count": 77
+              },
+              {
+                "bitstring": "1110",
+                "count": 77
+              },
+              {
+                "bitstring": "1001",
+                "count": 76
+              },
+              {
+                "bitstring": "0001",
+                "count": 74
+              },
+              {
+                "bitstring": "1100",
+                "count": 74
+              },
+              {
+                "bitstring": "0101",
+                "count": 72
+              },
+              {
+                "bitstring": "1010",
+                "count": 72
+              }
+            ],
+            "measured_bitstring": "1111",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 934
+              },
+              {
+                "bitstring": "1011",
+                "count": 85
+              },
+              {
+                "bitstring": "1111",
+                "count": 82
+              },
+              {
+                "bitstring": "0111",
+                "count": 77
+              },
+              {
+                "bitstring": "1110",
+                "count": 77
+              },
+              {
+                "bitstring": "1001",
+                "count": 76
+              },
+              {
+                "bitstring": "0001",
+                "count": 74
+              },
+              {
+                "bitstring": "1100",
+                "count": 74
+              },
+              {
+                "bitstring": "0101",
+                "count": 72
+              },
+              {
+                "bitstring": "1010",
+                "count": 72
+              }
+            ],
+            "selected_index": 15,
+            "true_cost": 37223.5533,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 27956.61606872647,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 20,
+                "operations": {
+                  "h": 16,
+                  "x": 16,
+                  "adder": 2,
+                  "cmp": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1,
+                  "mcx": 1
+                },
+                "decomposed_depth": 46,
+                "decomposed_operations": {
+                  "u": 32,
+                  "cx": 15,
+                  "p": 15,
+                  "h": 2,
+                  "circuit-420": 1,
+                  "circuit-424": 1,
+                  "circuit-428": 1,
+                  "circuit-432": 1,
+                  "circuit-424_dg": 1,
+                  "circuit-432_dg": 1,
+                  "circuit-428_dg": 1,
+                  "circuit-420_dg": 1
+                }
+              },
+              "transpiled_depth": 170,
+              "transpiled_ops": {
+                "x": 88,
+                "cx": 73,
+                "h": 48,
+                "ccx": 32,
+                "t": 32,
+                "tdg": 32,
+                "measure": 4,
+                "mcx": 1
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 8,
+            "z": 1.0,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "1011",
+                "count": 149
+              },
+              {
+                "bitstring": "1111",
+                "count": 141
+              },
+              {
+                "bitstring": "1100",
+                "count": 140
+              },
+              {
+                "bitstring": "1101",
+                "count": 136
+              },
+              {
+                "bitstring": "0001",
+                "count": 131
+              },
+              {
+                "bitstring": "1001",
+                "count": 128
+              },
+              {
+                "bitstring": "0000",
+                "count": 126
+              },
+              {
+                "bitstring": "0010",
+                "count": 125
+              },
+              {
+                "bitstring": "1110",
+                "count": 121
+              },
+              {
+                "bitstring": "0110",
+                "count": 120
+              }
+            ],
+            "measured_bitstring": "1100",
+            "raw_counts_top": [
+              {
+                "bitstring": "1011",
+                "count": 149
+              },
+              {
+                "bitstring": "1111",
+                "count": 141
+              },
+              {
+                "bitstring": "1100",
+                "count": 140
+              },
+              {
+                "bitstring": "1101",
+                "count": 136
+              },
+              {
+                "bitstring": "0001",
+                "count": 131
+              },
+              {
+                "bitstring": "1001",
+                "count": 128
+              },
+              {
+                "bitstring": "0000",
+                "count": 126
+              },
+              {
+                "bitstring": "0010",
+                "count": 125
+              },
+              {
+                "bitstring": "1110",
+                "count": 121
+              },
+              {
+                "bitstring": "0110",
+                "count": 120
+              }
+            ],
+            "selected_index": 3,
+            "true_cost": 24578.2152604,
+            "incumbent_true_cost_before": 27956.61606872647,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": true,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          }
+        ],
+        "threshold_after": 24578.2152604,
+        "incumbent_after": {
+          "index": 3,
+          "bitstring": "1100",
+          "true_cost": 24578.2152604
+        }
+      },
+      {
+        "round": 2,
+        "incumbent_before": {
+          "index": 3,
+          "bitstring": "1100",
+          "true_cost": 24578.2152604
+        },
+        "threshold_before": 24578.2152604,
+        "tau_int": 0,
+        "calibration": {
+          "tau_int": 0,
+          "train_marked_count": 1,
+          "train_false_positive_count": 1,
+          "train_false_negative_count": 0,
+          "error_count": 1,
+          "strategy": "incumbent_predicted_value_minus_one",
+          "margin": null,
+          "incumbent_true_value": 24578.2152604
+        },
+        "trials": [
+          {
+            "trial": 0,
+            "z": 1.1428571428571428,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "1001",
+                "count": 139
+              },
+              {
+                "bitstring": "1111",
+                "count": 139
+              },
+              {
+                "bitstring": "0110",
+                "count": 138
+              },
+              {
+                "bitstring": "1010",
+                "count": 133
+              },
+              {
+                "bitstring": "1110",
+                "count": 132
+              },
+              {
+                "bitstring": "1100",
+                "count": 130
+              },
+              {
+                "bitstring": "1101",
+                "count": 126
+              },
+              {
+                "bitstring": "0111",
+                "count": 125
+              },
+              {
+                "bitstring": "1000",
+                "count": 125
+              },
+              {
+                "bitstring": "1011",
+                "count": 124
+              }
+            ],
+            "measured_bitstring": "1001",
+            "raw_counts_top": [
+              {
+                "bitstring": "1001",
+                "count": 139
+              },
+              {
+                "bitstring": "1111",
+                "count": 139
+              },
+              {
+                "bitstring": "0110",
+                "count": 138
+              },
+              {
+                "bitstring": "1010",
+                "count": 133
+              },
+              {
+                "bitstring": "1110",
+                "count": 132
+              },
+              {
+                "bitstring": "1100",
+                "count": 130
+              },
+              {
+                "bitstring": "1101",
+                "count": 126
+              },
+              {
+                "bitstring": "0111",
+                "count": 125
+              },
+              {
+                "bitstring": "1000",
+                "count": 125
+              },
+              {
+                "bitstring": "1011",
+                "count": 124
+              }
+            ],
+            "selected_index": 9,
+            "true_cost": 33519.4152604,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 1,
+            "z": 1.3061224489795917,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "1010",
+                "count": 149
+              },
+              {
+                "bitstring": "0100",
+                "count": 135
+              },
+              {
+                "bitstring": "0011",
+                "count": 134
+              },
+              {
+                "bitstring": "0110",
+                "count": 133
+              },
+              {
+                "bitstring": "0101",
+                "count": 132
+              },
+              {
+                "bitstring": "0111",
+                "count": 130
+              },
+              {
+                "bitstring": "1100",
+                "count": 129
+              },
+              {
+                "bitstring": "1101",
+                "count": 127
+              },
+              {
+                "bitstring": "1110",
+                "count": 126
+              },
+              {
+                "bitstring": "1000",
+                "count": 125
+              }
+            ],
+            "measured_bitstring": "0100",
+            "raw_counts_top": [
+              {
+                "bitstring": "1010",
+                "count": 149
+              },
+              {
+                "bitstring": "0100",
+                "count": 135
+              },
+              {
+                "bitstring": "0011",
+                "count": 134
+              },
+              {
+                "bitstring": "0110",
+                "count": 133
+              },
+              {
+                "bitstring": "0101",
+                "count": 132
+              },
+              {
+                "bitstring": "0111",
+                "count": 130
+              },
+              {
+                "bitstring": "1100",
+                "count": 129
+              },
+              {
+                "bitstring": "1101",
+                "count": 127
+              },
+              {
+                "bitstring": "1110",
+                "count": 126
+              },
+              {
+                "bitstring": "1000",
+                "count": 125
+              }
+            ],
+            "selected_index": 2,
+            "true_cost": 28212.01718604706,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 2,
+            "z": 1.4927113702623904,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "1000",
+                "count": 144
+              },
+              {
+                "bitstring": "1101",
+                "count": 139
+              },
+              {
+                "bitstring": "1011",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 131
+              },
+              {
+                "bitstring": "0011",
+                "count": 129
+              },
+              {
+                "bitstring": "0110",
+                "count": 129
+              },
+              {
+                "bitstring": "1010",
+                "count": 129
+              },
+              {
+                "bitstring": "0111",
+                "count": 125
+              },
+              {
+                "bitstring": "1001",
+                "count": 124
+              },
+              {
+                "bitstring": "1100",
+                "count": 121
+              }
+            ],
+            "measured_bitstring": "1000",
+            "raw_counts_top": [
+              {
+                "bitstring": "1000",
+                "count": 144
+              },
+              {
+                "bitstring": "1101",
+                "count": 139
+              },
+              {
+                "bitstring": "1011",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 131
+              },
+              {
+                "bitstring": "0011",
+                "count": 129
+              },
+              {
+                "bitstring": "0110",
+                "count": 129
+              },
+              {
+                "bitstring": "1010",
+                "count": 129
+              },
+              {
+                "bitstring": "0111",
+                "count": 125
+              },
+              {
+                "bitstring": "1001",
+                "count": 124
+              },
+              {
+                "bitstring": "1100",
+                "count": 121
+              }
+            ],
+            "selected_index": 1,
+            "true_cost": 27956.61606872647,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 3,
+            "z": 1.705955851728446,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "1001",
+                "count": 148
+              },
+              {
+                "bitstring": "1100",
+                "count": 135
+              },
+              {
+                "bitstring": "1110",
+                "count": 135
+              },
+              {
+                "bitstring": "0001",
+                "count": 134
+              },
+              {
+                "bitstring": "0110",
+                "count": 134
+              },
+              {
+                "bitstring": "1111",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 126
+              },
+              {
+                "bitstring": "1101",
+                "count": 124
+              },
+              {
+                "bitstring": "0000",
+                "count": 122
+              },
+              {
+                "bitstring": "0011",
+                "count": 120
+              }
+            ],
+            "measured_bitstring": "1100",
+            "raw_counts_top": [
+              {
+                "bitstring": "1001",
+                "count": 148
+              },
+              {
+                "bitstring": "1100",
+                "count": 135
+              },
+              {
+                "bitstring": "1110",
+                "count": 135
+              },
+              {
+                "bitstring": "0001",
+                "count": 134
+              },
+              {
+                "bitstring": "0110",
+                "count": 134
+              },
+              {
+                "bitstring": "1111",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 126
+              },
+              {
+                "bitstring": "1101",
+                "count": 124
+              },
+              {
+                "bitstring": "0000",
+                "count": 122
+              },
+              {
+                "bitstring": "0011",
+                "count": 120
+              }
+            ],
+            "selected_index": 3,
+            "true_cost": 24578.2152604,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 4,
+            "z": 1.9496638305467955,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "0001",
+                "count": 138
+              },
+              {
+                "bitstring": "1110",
+                "count": 137
+              },
+              {
+                "bitstring": "1010",
+                "count": 133
+              },
+              {
+                "bitstring": "1011",
+                "count": 132
+              },
+              {
+                "bitstring": "1100",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 130
+              },
+              {
+                "bitstring": "0011",
+                "count": 127
+              },
+              {
+                "bitstring": "0111",
+                "count": 127
+              },
+              {
+                "bitstring": "1101",
+                "count": 123
+              },
+              {
+                "bitstring": "0100",
+                "count": 120
+              }
+            ],
+            "measured_bitstring": "1110",
+            "raw_counts_top": [
+              {
+                "bitstring": "0001",
+                "count": 138
+              },
+              {
+                "bitstring": "1110",
+                "count": 137
+              },
+              {
+                "bitstring": "1010",
+                "count": 133
+              },
+              {
+                "bitstring": "1011",
+                "count": 132
+              },
+              {
+                "bitstring": "1100",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 130
+              },
+              {
+                "bitstring": "0011",
+                "count": 127
+              },
+              {
+                "bitstring": "0111",
+                "count": 127
+              },
+              {
+                "bitstring": "1101",
+                "count": 123
+              },
+              {
+                "bitstring": "0100",
+                "count": 120
+              }
+            ],
+            "selected_index": 7,
+            "true_cost": 30853.5596684,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 5,
+            "z": 2.228187234910623,
+            "k": 0,
+            "counts_top": [
+              {
+                "bitstring": "0101",
+                "count": 147
+              },
+              {
+                "bitstring": "1110",
+                "count": 143
+              },
+              {
+                "bitstring": "0100",
+                "count": 133
+              },
+              {
+                "bitstring": "1001",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 131
+              },
+              {
+                "bitstring": "0111",
+                "count": 131
+              },
+              {
+                "bitstring": "1101",
+                "count": 127
+              },
+              {
+                "bitstring": "1010",
+                "count": 126
+              },
+              {
+                "bitstring": "1011",
+                "count": 126
+              },
+              {
+                "bitstring": "1111",
+                "count": 123
+              }
+            ],
+            "measured_bitstring": "0100",
+            "raw_counts_top": [
+              {
+                "bitstring": "0101",
+                "count": 147
+              },
+              {
+                "bitstring": "1110",
+                "count": 143
+              },
+              {
+                "bitstring": "0100",
+                "count": 133
+              },
+              {
+                "bitstring": "1001",
+                "count": 132
+              },
+              {
+                "bitstring": "0010",
+                "count": 131
+              },
+              {
+                "bitstring": "0111",
+                "count": 131
+              },
+              {
+                "bitstring": "1101",
+                "count": 127
+              },
+              {
+                "bitstring": "1010",
+                "count": 126
+              },
+              {
+                "bitstring": "1011",
+                "count": 126
+              },
+              {
+                "bitstring": "1111",
+                "count": 123
+              }
+            ],
+            "selected_index": 2,
+            "true_cost": 28212.01718604706,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 1,
+                "operations": {
+                  "h": 4
+                },
+                "decomposed_depth": 1,
+                "decomposed_operations": {
+                  "u": 4
+                }
+              },
+              "transpiled_depth": 2,
+              "transpiled_ops": {
+                "h": 4,
+                "measure": 4
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 6,
+            "z": 2.546499697040712,
+            "k": 1,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 918
+              },
+              {
+                "bitstring": "0110",
+                "count": 81
+              },
+              {
+                "bitstring": "0111",
+                "count": 80
+              },
+              {
+                "bitstring": "0101",
+                "count": 77
+              },
+              {
+                "bitstring": "1100",
+                "count": 77
+              },
+              {
+                "bitstring": "1110",
+                "count": 76
+              },
+              {
+                "bitstring": "0100",
+                "count": 75
+              },
+              {
+                "bitstring": "1101",
+                "count": 74
+              },
+              {
+                "bitstring": "0000",
+                "count": 72
+              },
+              {
+                "bitstring": "0001",
+                "count": 71
+              }
+            ],
+            "measured_bitstring": "0110",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 918
+              },
+              {
+                "bitstring": "0110",
+                "count": 81
+              },
+              {
+                "bitstring": "0111",
+                "count": 80
+              },
+              {
+                "bitstring": "0101",
+                "count": 77
+              },
+              {
+                "bitstring": "1100",
+                "count": 77
+              },
+              {
+                "bitstring": "1110",
+                "count": 76
+              },
+              {
+                "bitstring": "0100",
+                "count": 75
+              },
+              {
+                "bitstring": "1101",
+                "count": 74
+              },
+              {
+                "bitstring": "0000",
+                "count": 72
+              },
+              {
+                "bitstring": "0001",
+                "count": 71
+              }
+            ],
+            "selected_index": 6,
+            "true_cost": 33603.67922298824,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 20,
+                "operations": {
+                  "h": 16,
+                  "x": 16,
+                  "adder": 2,
+                  "cmp": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1,
+                  "mcx": 1
+                },
+                "decomposed_depth": 46,
+                "decomposed_operations": {
+                  "u": 32,
+                  "cx": 15,
+                  "p": 15,
+                  "h": 2,
+                  "circuit-657": 1,
+                  "circuit-661": 1,
+                  "circuit-665": 1,
+                  "circuit-669": 1,
+                  "circuit-661_dg": 1,
+                  "circuit-669_dg": 1,
+                  "circuit-665_dg": 1,
+                  "circuit-657_dg": 1
+                }
+              },
+              "transpiled_depth": 170,
+              "transpiled_ops": {
+                "x": 88,
+                "cx": 73,
+                "h": 48,
+                "ccx": 32,
+                "t": 32,
+                "tdg": 32,
+                "measure": 4,
+                "mcx": 1
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 7,
+            "z": 2.910285368046528,
+            "k": 1,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 956
+              },
+              {
+                "bitstring": "1000",
+                "count": 85
+              },
+              {
+                "bitstring": "1011",
+                "count": 78
+              },
+              {
+                "bitstring": "1111",
+                "count": 77
+              },
+              {
+                "bitstring": "0001",
+                "count": 75
+              },
+              {
+                "bitstring": "0101",
+                "count": 75
+              },
+              {
+                "bitstring": "0010",
+                "count": 74
+              },
+              {
+                "bitstring": "1010",
+                "count": 73
+              },
+              {
+                "bitstring": "0100",
+                "count": 69
+              },
+              {
+                "bitstring": "0111",
+                "count": 68
+              }
+            ],
+            "measured_bitstring": "1000",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 956
+              },
+              {
+                "bitstring": "1000",
+                "count": 85
+              },
+              {
+                "bitstring": "1011",
+                "count": 78
+              },
+              {
+                "bitstring": "1111",
+                "count": 77
+              },
+              {
+                "bitstring": "0001",
+                "count": 75
+              },
+              {
+                "bitstring": "0101",
+                "count": 75
+              },
+              {
+                "bitstring": "0010",
+                "count": 74
+              },
+              {
+                "bitstring": "1010",
+                "count": 73
+              },
+              {
+                "bitstring": "0100",
+                "count": 69
+              },
+              {
+                "bitstring": "0111",
+                "count": 68
+              }
+            ],
+            "selected_index": 1,
+            "true_cost": 27956.61606872647,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 20,
+                "operations": {
+                  "h": 16,
+                  "x": 16,
+                  "adder": 2,
+                  "cmp": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1,
+                  "mcx": 1
+                },
+                "decomposed_depth": 46,
+                "decomposed_operations": {
+                  "u": 32,
+                  "cx": 15,
+                  "p": 15,
+                  "h": 2,
+                  "circuit-719": 1,
+                  "circuit-723": 1,
+                  "circuit-727": 1,
+                  "circuit-731": 1,
+                  "circuit-723_dg": 1,
+                  "circuit-731_dg": 1,
+                  "circuit-727_dg": 1,
+                  "circuit-719_dg": 1
+                }
+              },
+              "transpiled_depth": 170,
+              "transpiled_ops": {
+                "x": 88,
+                "cx": 73,
+                "h": 48,
+                "ccx": 32,
+                "t": 32,
+                "tdg": 32,
+                "measure": 4,
+                "mcx": 1
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 8,
+            "z": 3.326040420624603,
+            "k": 2,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 1826
+              },
+              {
+                "bitstring": "1010",
+                "count": 17
+              },
+              {
+                "bitstring": "0001",
+                "count": 16
+              },
+              {
+                "bitstring": "1111",
+                "count": 16
+              },
+              {
+                "bitstring": "1011",
+                "count": 14
+              },
+              {
+                "bitstring": "1100",
+                "count": 14
+              },
+              {
+                "bitstring": "0110",
+                "count": 13
+              },
+              {
+                "bitstring": "1101",
+                "count": 13
+              },
+              {
+                "bitstring": "0101",
+                "count": 12
+              },
+              {
+                "bitstring": "0000",
+                "count": 11
+              }
+            ],
+            "measured_bitstring": "1010",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 1826
+              },
+              {
+                "bitstring": "1010",
+                "count": 17
+              },
+              {
+                "bitstring": "0001",
+                "count": 16
+              },
+              {
+                "bitstring": "1111",
+                "count": 16
+              },
+              {
+                "bitstring": "1011",
+                "count": 14
+              },
+              {
+                "bitstring": "1100",
+                "count": 14
+              },
+              {
+                "bitstring": "0110",
+                "count": 13
+              },
+              {
+                "bitstring": "1101",
+                "count": 13
+              },
+              {
+                "bitstring": "0101",
+                "count": 12
+              },
+              {
+                "bitstring": "0000",
+                "count": 11
+              }
+            ],
+            "selected_index": 5,
+            "true_cost": 34256.00041105882,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 38,
+                "operations": {
+                  "x": 32,
+                  "h": 28,
+                  "adder": 4,
+                  "cmp": 4,
+                  "cmp_dg": 4,
+                  "adder_dg": 4,
+                  "cx": 2,
+                  "mcx": 2
+                },
+                "decomposed_depth": 90,
+                "decomposed_operations": {
+                  "u": 60,
+                  "cx": 30,
+                  "p": 30,
+                  "h": 4,
+                  "circuit-781": 2,
+                  "circuit-785": 2,
+                  "circuit-789": 2,
+                  "circuit-793": 2,
+                  "circuit-785_dg": 2,
+                  "circuit-793_dg": 2,
+                  "circuit-789_dg": 2,
+                  "circuit-781_dg": 2
+                }
+              },
+              "transpiled_depth": 336,
+              "transpiled_ops": {
+                "x": 176,
+                "cx": 146,
+                "h": 92,
+                "ccx": 64,
+                "t": 64,
+                "tdg": 64,
+                "measure": 4,
+                "mcx": 2
+              },
+              "backend_name": "qasm"
+            }
+          },
+          {
+            "trial": 9,
+            "z": 3.801189052142403,
+            "k": 3,
+            "counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 1917
+              },
+              {
+                "bitstring": "0111",
+                "count": 10
+              },
+              {
+                "bitstring": "1100",
+                "count": 9
+              },
+              {
+                "bitstring": "1101",
+                "count": 8
+              },
+              {
+                "bitstring": "0001",
+                "count": 7
+              },
+              {
+                "bitstring": "0110",
+                "count": 7
+              },
+              {
+                "bitstring": "0000",
+                "count": 6
+              },
+              {
+                "bitstring": "0100",
+                "count": 6
+              },
+              {
+                "bitstring": "1010",
+                "count": 5
+              },
+              {
+                "bitstring": "1110",
+                "count": 5
+              }
+            ],
+            "measured_bitstring": "1100",
+            "raw_counts_top": [
+              {
+                "bitstring": "0011",
+                "count": 1917
+              },
+              {
+                "bitstring": "0111",
+                "count": 10
+              },
+              {
+                "bitstring": "1100",
+                "count": 9
+              },
+              {
+                "bitstring": "1101",
+                "count": 8
+              },
+              {
+                "bitstring": "0001",
+                "count": 7
+              },
+              {
+                "bitstring": "0110",
+                "count": 7
+              },
+              {
+                "bitstring": "0000",
+                "count": 6
+              },
+              {
+                "bitstring": "0100",
+                "count": 6
+              },
+              {
+                "bitstring": "1010",
+                "count": 5
+              },
+              {
+                "bitstring": "1110",
+                "count": 5
+              }
+            ],
+            "selected_index": 3,
+            "true_cost": 24578.2152604,
+            "incumbent_true_cost_before": 24578.2152604,
+            "incumbent_true_cost_after": 24578.2152604,
+            "accepted_update": false,
+            "resources": {
+              "phase_oracle": {
+                "num_qubits": 18,
+                "depth": 13,
+                "operations": {
+                  "x": 8,
+                  "adder": 2,
+                  "cmp": 2,
+                  "h": 2,
+                  "cmp_dg": 2,
+                  "adder_dg": 2,
+                  "cx": 1
+                },
+                "decomposed_depth": 39,
+                "decomposed_operations": {
+                  "x": 32,
+                  "cx": 25,
+                  "ccx": 16,
+                  "u": 10,
+                  "or": 8,
+                  "mcx_vchain": 8
+                }
+              },
+              "grover_circuit": {
+                "num_qubits": 18,
+                "depth": 56,
+                "operations": {
+                  "x": 48,
+                  "h": 40,
+                  "adder": 6,
+                  "cmp": 6,
+                  "cmp_dg": 6,
+                  "adder_dg": 6,
+                  "cx": 3,
+                  "mcx": 3
+                },
+                "decomposed_depth": 134,
+                "decomposed_operations": {
+                  "u": 88,
+                  "cx": 45,
+                  "p": 45,
+                  "h": 6,
+                  "circuit-868": 3,
+                  "circuit-872": 3,
+                  "circuit-876": 3,
+                  "circuit-880": 3,
+                  "circuit-872_dg": 3,
+                  "circuit-880_dg": 3,
+                  "circuit-876_dg": 3,
+                  "circuit-868_dg": 3
+                }
+              },
+              "transpiled_depth": 502,
+              "transpiled_ops": {
+                "x": 264,
+                "cx": 219,
+                "h": 136,
+                "ccx": 96,
+                "t": 96,
+                "tdg": 96,
+                "measure": 4,
+                "mcx": 3
+              },
+              "backend_name": "qasm"
+            }
+          }
+        ],
+        "threshold_after": 24578.2152604,
+        "incumbent_after": {
+          "index": 3,
+          "bitstring": "1100",
+          "true_cost": 24578.2152604
+        }
+      }
+    ],
+    "final_incumbent": {
+      "index": 3,
+      "bitstring": "1100",
+      "true_cost": 24578.2152604
+    },
+    "stop_reason": "trial_budget_exhausted_for_threshold",
+    "total_quantum_circuit_executions": 20,
+    "total_shots": 40000,
+    "max_qubits": 18,
+    "max_depth": 56,
+    "max_transpiled_depth": 502,
+    "aggregate_transpiled_ops": {
+      "h": 652,
+      "measure": 80,
+      "x": 1144,
+      "cx": 949,
+      "ccx": 416,
+      "t": 416,
+      "tdg": 416,
+      "mcx": 13
+    }
+  },
+  "hidden_reference_not_used_by_algorithm": {
+    "exact_best_bitstring": "1100",
+    "exact_best_true_cost": 24578.2152604,
+    "whether_final_incumbent_matches_reference": true
+  },
+  "saved_qasm_files": [
+    "results\\stage1_case14_t2_small_sample_gate_level_max_affine_gas.qasm"
+  ]
+}
