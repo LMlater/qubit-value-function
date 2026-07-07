@@ -780,6 +780,97 @@ def test_case14_t2_adaptive_success_uses_true_not_predicted_optimum() -> None:
     assert int(np.argmin(predicted_values)) != int(np.argmin(true_values))
     assert result["success"] == (result["best_index"] == int(np.argmin(true_values)))
     assert not result["success"]
+
+
+def test_max_affine_adaptive_grover_sampling_returns_valid_probability_row() -> None:
+    from experiments.stage1_case14_t2_max_affine_adaptive_grover_search import (
+        sample_after_grover_iterations,
+    )
+
+    marked = np.array([False, True, False, False])
+    result = sample_after_grover_iterations(
+        marked,
+        iterations=1,
+        rng=np.random.default_rng(0),
+    )
+
+    assert 0 <= result["sampled_index"] < marked.size
+    assert np.isclose(result["marked_probability"] + result["nonmarked_probability"], 1.0)
+    assert result["target_probability"] == result["marked_probability"]
+
+
+def test_max_affine_adaptive_bbht_finds_true_improvement_with_exact_marks() -> None:
+    from experiments.stage1_case14_t2_max_affine_adaptive_grover_search import (
+        bbht_search_current_threshold,
+    )
+
+    values = np.array([10.0, 1.0, 12.0, 13.0])
+    marked = np.array([False, True, False, False])
+    result = bbht_search_current_threshold(
+        marked=marked,
+        true_improving_labels=marked,
+        values=values,
+        incumbent_value=10.0,
+        rng=np.random.default_rng(0),
+        lambda_growth=8.0 / 7.0,
+        max_trials=20,
+        tie_tolerance=1e-9,
+    )
+
+    assert result["improved_index"] == 1
+    assert any(trial["success"] for trial in result["trials"])
+
+
+def test_max_affine_adaptive_outer_loop_stops_without_true_improvement() -> None:
+    from experiments.stage1_case14_t2_max_affine_adaptive_grover_search import (
+        run_adaptive_minimum_search,
+    )
+
+    values = np.array([1.0, 2.0, 3.0, np.inf])
+    predictions = np.array([1.0, 2.0, 3.0, 4.0])
+    value_domain = np.array([True, True, True, False])
+    result = run_adaptive_minimum_search(
+        values=values,
+        predictions=predictions,
+        value_domain=value_domain,
+        initial_index=0,
+        rng=np.random.default_rng(0),
+        lambda_growth=8.0 / 7.0,
+        max_rounds=5,
+        max_bbht_trials_per_threshold=4,
+        use_calibrated_threshold=True,
+        stop_after_no_improvement=2,
+        tie_tolerance=1e-9,
+    )
+
+    assert result["stop_reason"] == "no_true_improving_state"
+    assert result["rounds"] == []
+    assert result["final_incumbent_index"] == 0
+
+
+def test_max_affine_adaptive_calibrated_oracle_reports_diagnostics() -> None:
+    from experiments.stage1_case14_t2_max_affine_adaptive_grover_search import (
+        max_affine_threshold_oracle_labels,
+    )
+
+    values = np.array([5.0, 1.0, 2.0, 10.0])
+    predictions = np.array([5.0, 4.0, 1.0, 2.0])
+    value_domain = np.ones(4, dtype=bool)
+    result = max_affine_threshold_oracle_labels(
+        predictions=predictions,
+        value_domain=value_domain,
+        tau_true=5.0,
+        values=values,
+        use_calibrated_threshold=True,
+        tie_tolerance=1e-9,
+    )
+
+    diagnostics = result["oracle_diagnostics"]
+    assert "false_positive_count" in diagnostics
+    assert "false_negative_count" in diagnostics
+    assert "calibrated_prediction_threshold" in diagnostics
+    assert "calibration_margin" in diagnostics
+    assert result["true_improving_labels"].tolist() == [False, True, True, False]
 def test_tie_tolerant_threshold_keeps_nearly_equal_costs_together() -> None:
     values = np.array([1.0, 2.0, 2.0 + 1e-12, 3.0])
     strict = tie_tolerant_threshold_case_for_top_count(values, 2, 0.0)
