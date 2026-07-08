@@ -27,7 +27,8 @@ from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import 
     select_best_measured_candidate,
 )
 from experiments.stage1_case14_t2_small_sample_gate_level_gas_diagnostics import (
-    hidden_perfect_diagnostic_run,
+    classify_run_failure,
+    hidden_perfect_uniform_marked_run,
     _markdown_summary,
 )
 from experiments.stage1_case14_t2_small_sample_gate_level_gas_sweep import (
@@ -626,18 +627,120 @@ def test_refit_policy_and_pairwise_learner_are_reported_without_hidden_training(
         path.unlink(missing_ok=True)
 
 
-def test_hidden_perfect_diagnostic_is_marked_diagnostic_only() -> None:
-    result = hidden_perfect_diagnostic_run(
-        selected_generator_indices=(0, 5),
-        train_sample_count=4,
-        seed=0,
-        search_verification_budget=4,
+def test_hidden_perfect_uniform_marked_budget_does_not_imply_success() -> None:
+    result = hidden_perfect_uniform_marked_run(
+        selected_generator_indices=(0,),
+        train_sample_count=1,
+        seed=1,
+        search_verification_budget=1,
+        values=np.array([10.0, 8.0, 6.0, 1.0]),
+        initial_index=0,
     )
 
-    assert result["oracle_mode"] == "hidden_perfect_diagnostic"
+    assert result["oracle_mode"] == "hidden_perfect_uniform_marked"
     assert result["diagnostic_only"] is True
+    assert result["is_gate_level"] is False
+    assert result["uses_hidden_reference_for_sampling"] is True
     assert result["training_contains_hidden_optimum"] is False
     assert result["initial_matches_hidden_optimum"] is False
+    assert result["search_verification_calls"] == 1
+    assert result["found_hidden_exact_optimum"] is False
+
+
+def test_single_shot_repeated_respects_equal_shot_limits() -> None:
+    path = Path("results/test_single_shot_repeated.json")
+    summary = run_small_sample_gas(
+        instance_path=Path("data/case14.json.gz"),
+        results_path=path,
+        backend="qasm",
+        shots=64,
+        seed=4,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=4,
+        max_trials_per_threshold=4,
+        selected_generator_indices=(0, 5),
+        train_sample_count=4,
+        initial_index="random",
+        num_pieces=2,
+        max_weight=7,
+        save_qasm=False,
+        draw_circuit=False,
+        max_candidates_per_shotbatch=1,
+        exclude_hidden_optimum_from_training=True,
+        exclude_hidden_optimum_from_initial=True,
+        measurement_policy="single_shot_repeated",
+        max_total_shots_per_run=2,
+        max_total_circuit_executions_per_run=2,
+    )
+
+    try:
+        assert summary["measurement_policy"] == "single_shot_repeated"
+        assert summary["shots_per_circuit"] == 1
+        assert summary["total_shots"] <= 2
+        assert summary["circuit_executions"] <= 2
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def test_resource_limit_errors_are_classified_as_skipped() -> None:
+    status, error_type = classify_run_failure(
+        "'Number of qubits (30) in small_sample_gate_level_tau_0 is greater than maximum (29) in the coupling_map'"
+    )
+
+    assert status == "skipped_resource_limit"
+    assert error_type == "resource_limit"
+
+
+def test_diagnostic_grouped_summary_counts_resource_limit_skips() -> None:
+    from experiments.stage1_case14_t2_small_sample_gate_level_gas_diagnostics import _group_diagnostics
+
+    rows = [
+        {
+            "selected_generators": [0, 5],
+            "num_search_qubits": 4,
+            "train_sample_count": 4,
+            "measurement_policy": "shot_batch",
+            "max_candidates_per_shotbatch": 1,
+            "refit_policy": "none",
+            "learner": "mismatch",
+            "oracle_mode": "learned",
+            "status": "ok",
+            "found_hidden_exact_optimum": True,
+            "success_within_1_percent": True,
+            "success_within_3_percent": True,
+            "success_within_5_percent": True,
+            "algorithmic_ed_lp_calls": 6,
+        },
+        {
+            "selected_generators": [0, 5],
+            "num_search_qubits": 4,
+            "train_sample_count": 4,
+            "measurement_policy": "shot_batch",
+            "max_candidates_per_shotbatch": 1,
+            "refit_policy": "none",
+            "learner": "mismatch",
+            "oracle_mode": "learned",
+            "status": "skipped_resource_limit",
+            "error_type": "resource_limit",
+        },
+        {
+            "selected_generators": [0, 5],
+            "num_search_qubits": 4,
+            "train_sample_count": 4,
+            "measurement_policy": "shot_batch",
+            "max_candidates_per_shotbatch": 1,
+            "refit_policy": "none",
+            "learner": "mismatch",
+            "oracle_mode": "learned",
+            "status": "error",
+        },
+    ]
+
+    summary = _group_diagnostics(rows)[0]
+
+    assert summary["num_ok_runs"] == 1
+    assert summary["num_error_runs"] == 1
+    assert summary["num_skipped_resource_limit_runs"] == 1
 
 
 def test_diagnostic_markdown_summary_includes_requested_comparison_sections() -> None:
@@ -674,14 +777,16 @@ def test_diagnostic_markdown_summary_includes_requested_comparison_sections() ->
     }
     perfect_row = {
         **learned_row,
-        "measurement_policy": "classical_hidden_perfect_diagnostic",
+        "measurement_policy": "classical_uniform_marked_diagnostic",
         "shots": 0,
         "shots_per_circuit": 0,
         "max_candidates_per_shotbatch": 0,
         "refit_policy": "none",
         "learner": "hidden_reference",
-        "oracle_mode": "hidden_perfect_diagnostic",
+        "oracle_mode": "hidden_perfect_uniform_marked",
         "diagnostic_only": True,
+        "uses_hidden_reference_for_sampling": True,
+        "is_gate_level": False,
         "random_exact_success_probability": None,
         "random_success_within_1_percent_probability": None,
         "random_success_within_3_percent_probability": None,
@@ -726,7 +831,7 @@ def test_diagnostic_markdown_summary_includes_requested_comparison_sections() ->
 
     for heading in [
         "## Random Baseline Comparison",
-        "## Measurement Policy Comparison",
+        "## Equal-Shot Measurement Comparison",
         "## Candidate Budget Comparison",
         "## Refit Comparison",
         "## Learner Comparison",
@@ -734,4 +839,5 @@ def test_diagnostic_markdown_summary_includes_requested_comparison_sections() ->
         "## Cautious Conclusions",
     ]:
         assert heading in summary
-    assert "hidden_perfect_diagnostic is not an algorithmic result" in summary
+    assert "hidden_perfect_uniform_marked uses hidden reference for diagnostic sampling" in summary
+    assert "hidden_oracle_trivial_upper_bound is a trivial upper bound" in summary

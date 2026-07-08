@@ -322,6 +322,8 @@ def adaptive_gate_level_search(
     max_trials_per_threshold: int,
     max_candidates_per_shotbatch: int,
     measurement_policy: str = "shot_batch",
+    max_total_shots_per_run: int | None = None,
+    max_total_circuit_executions_per_run: int | None = None,
     refit_policy: str = "none",
     learner_name: str = "mismatch",
     num_pieces: int = 2,
@@ -329,8 +331,8 @@ def adaptive_gate_level_search(
     observed_indices: list[int] | None = None,
     tie_tolerance: float = 1e-9,
 ) -> dict[str, object]:
-    if measurement_policy not in {"shot_batch", "single_shot"}:
-        raise ValueError("measurement_policy must be shot_batch or single_shot")
+    if measurement_policy not in {"shot_batch", "single_shot", "single_shot_repeated"}:
+        raise ValueError("measurement_policy must be shot_batch, single_shot, or single_shot_repeated")
     if refit_policy not in {"none", "accepted"}:
         raise ValueError("refit_policy must be none or accepted")
     rng = np.random.default_rng(seed)
@@ -371,11 +373,17 @@ def adaptive_gate_level_search(
         round_trials = []
         improved_this_round = False
         for trial_index in range(int(max_trials_per_threshold)):
+            if max_total_circuit_executions_per_run is not None and circuit_executions >= int(max_total_circuit_executions_per_run):
+                stop_reason = "max_total_circuit_executions_per_run"
+                break
             k = int(rng.integers(0, max(1, int(np.ceil(z)))))
             circuit = build_gate_level_grover_circuit_for_threshold(current_learned, tau_int=tau_int, iterations=k)
             spec = max_affine_spec_from_learned(current_learned, tau_int=tau_int)
             phase = build_max_affine_phase_oracle_circuit(spec)
-            shots_per_circuit = 1 if measurement_policy == "single_shot" else int(shots)
+            shots_per_circuit = 1 if measurement_policy in {"single_shot", "single_shot_repeated"} else int(shots)
+            if max_total_shots_per_run is not None and total_shots + shots_per_circuit > int(max_total_shots_per_run):
+                stop_reason = "max_total_shots_per_run"
+                break
             execution = execute_gate_level_circuit(circuit, backend=backend, shots=shots_per_circuit, seed=int(rng.integers(0, 2**31 - 1)))
             circuit_executions += 1
             total_shots += int(shots_per_circuit)
@@ -383,7 +391,7 @@ def adaptive_gate_level_search(
             selected_index, selected_bitstring, selected_cost, evaluated_candidates = select_best_measured_candidate(
                 counts_top,
                 evaluator,
-                max_candidates=1 if measurement_policy == "single_shot" else max_candidates_per_shotbatch,
+                max_candidates=1 if measurement_policy in {"single_shot", "single_shot_repeated"} else max_candidates_per_shotbatch,
             )
             verified_candidates += len(evaluated_candidates)
             for candidate in evaluated_candidates:
@@ -465,6 +473,8 @@ def adaptive_gate_level_search(
                 "incumbent_after": _incumbent_row(incumbent, incumbent_value, len(learned.bit_labels)),
             }
         )
+        if stop_reason in {"max_total_shots_per_run", "max_total_circuit_executions_per_run"}:
+            break
         if not improved_this_round and len(round_trials) >= int(max_trials_per_threshold):
             stop_reason = "trial_budget_exhausted_for_threshold"
             break
@@ -509,6 +519,8 @@ def run(
     exclude_hidden_optimum_from_training: bool = False,
     exclude_hidden_optimum_from_initial: bool = False,
     measurement_policy: str = "shot_batch",
+    max_total_shots_per_run: int | None = None,
+    max_total_circuit_executions_per_run: int | None = None,
     learner: str = "mismatch",
     refit_policy: str = "none",
 ) -> dict[str, object]:
@@ -567,6 +579,8 @@ def run(
         max_trials_per_threshold=max_trials_per_threshold,
         max_candidates_per_shotbatch=max_candidates_per_shotbatch,
         measurement_policy=measurement_policy,
+        max_total_shots_per_run=max_total_shots_per_run,
+        max_total_circuit_executions_per_run=max_total_circuit_executions_per_run,
         refit_policy=refit_policy,
         learner_name=learner,
         num_pieces=num_pieces,
@@ -603,7 +617,11 @@ def run(
         "backend": backend,
         "shots": int(shots),
         "measurement_policy": measurement_policy,
-        "shots_per_circuit": 1 if measurement_policy == "single_shot" else int(shots),
+        "shots_per_circuit": 1 if measurement_policy in {"single_shot", "single_shot_repeated"} else int(shots),
+        "max_total_shots_per_run": None if max_total_shots_per_run is None else int(max_total_shots_per_run),
+        "max_total_circuit_executions_per_run": None
+        if max_total_circuit_executions_per_run is None
+        else int(max_total_circuit_executions_per_run),
         "learner": learner,
         "refit_policy": refit_policy,
         "seed": int(seed),
@@ -958,7 +976,9 @@ def main() -> None:
     parser.add_argument("--max-candidates-per-shotbatch", type=int, default=3)
     parser.add_argument("--exclude-hidden-optimum-from-training", action="store_true")
     parser.add_argument("--exclude-hidden-optimum-from-initial", action="store_true")
-    parser.add_argument("--measurement-policy", choices=("shot_batch", "single_shot"), default="shot_batch")
+    parser.add_argument("--measurement-policy", choices=("shot_batch", "single_shot", "single_shot_repeated"), default="shot_batch")
+    parser.add_argument("--max-total-shots-per-run", type=int, default=None)
+    parser.add_argument("--max-total-circuit-executions-per-run", type=int, default=None)
     parser.add_argument("--learner", choices=("mismatch", "pairwise_ranking"), default="mismatch")
     parser.add_argument("--refit-policy", choices=("none", "accepted"), default="none")
     args = parser.parse_args()
@@ -983,6 +1003,8 @@ def main() -> None:
         exclude_hidden_optimum_from_training=args.exclude_hidden_optimum_from_training,
         exclude_hidden_optimum_from_initial=args.exclude_hidden_optimum_from_initial,
         measurement_policy=args.measurement_policy,
+        max_total_shots_per_run=args.max_total_shots_per_run,
+        max_total_circuit_executions_per_run=args.max_total_circuit_executions_per_run,
         learner=args.learner,
         refit_policy=args.refit_policy,
     )
