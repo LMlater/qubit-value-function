@@ -24,11 +24,21 @@ from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import 
     max_affine_spec_from_learned,
     measured_bitstring_to_index,
     run as run_small_sample_gas,
+    select_best_measured_candidate,
+)
+from experiments.stage1_case14_t2_small_sample_gate_level_gas_diagnostics import (
+    hidden_perfect_diagnostic_run,
+    _markdown_summary,
 )
 from experiments.stage1_case14_t2_small_sample_gate_level_gas_sweep import (
     build_grouped_summary,
     parse_configs,
     parse_train_sample_counts,
+)
+from qubit_value_function.diagnostics import (
+    gap_metrics,
+    hypergeometric_hit_probability,
+    random_baseline_probabilities,
 )
 from qubit_value_function.commitment import all_commitments, commitment_to_bitstring
 from qubit_value_function.ed import FixedCommitmentEvaluator
@@ -496,3 +506,232 @@ def test_sweep_grouped_summary_computes_success_rates() -> None:
     assert row["success_rate_when_hidden_optimum_not_in_training_and_not_initial"] == 1.0
     assert row["training_contains_hidden_optimum_rate"] == 0.5
     assert row["avg_algorithmic_ed_lp_calls"] == 7.0
+
+
+def test_gap_metrics_cover_exact_near_optimal_and_nonfinite_values() -> None:
+    exact = gap_metrics(100.0, 100.0)
+    near = gap_metrics(102.0, 100.0)
+    bad = gap_metrics(float("inf"), 100.0)
+
+    assert exact["absolute_gap_to_hidden_best"] == 0.0
+    assert exact["success_within_1_percent"] is True
+    assert near["relative_gap_to_hidden_best"] == 0.02
+    assert near["success_within_1_percent"] is False
+    assert near["success_within_3_percent"] is True
+    assert bad["absolute_gap_to_hidden_best"] is None
+    assert bad["success_within_5_percent"] is False
+
+
+def test_random_baseline_without_replacement_probability() -> None:
+    assert hypergeometric_hit_probability(dimension=16, num_good_states=1, draws=1) == 1 / 16
+    assert hypergeometric_hit_probability(dimension=16, num_good_states=1, draws=16) == 1.0
+    assert np.isclose(
+        hypergeometric_hit_probability(dimension=16, num_good_states=2, draws=2),
+        1.0 - (14 * 13) / (16 * 15),
+    )
+    baseline = random_baseline_probabilities(
+        values=np.array([1.0, 1.01, 1.04, 2.0]),
+        hidden_best_true_cost=1.0,
+        draws=1,
+    )
+    assert baseline["random_exact_success_probability"] == 0.25
+    assert baseline["random_success_within_1_percent_probability"] == 0.5
+    assert baseline["random_success_within_5_percent_probability"] == 0.75
+
+
+def test_measurement_policy_records_single_shot_and_shot_batch() -> None:
+    path = Path("results/test_measurement_policy_single_shot.json")
+    summary = run_small_sample_gas(
+        instance_path=Path("data/case14.json.gz"),
+        results_path=path,
+        backend="qasm",
+        shots=64,
+        seed=2,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=1,
+        max_trials_per_threshold=1,
+        selected_generator_indices=(0, 5),
+        train_sample_count=4,
+        initial_index="random",
+        num_pieces=2,
+        max_weight=7,
+        save_qasm=False,
+        draw_circuit=False,
+        max_candidates_per_shotbatch=3,
+        exclude_hidden_optimum_from_training=True,
+        exclude_hidden_optimum_from_initial=True,
+        measurement_policy="single_shot",
+    )
+
+    try:
+        assert summary["measurement_policy"] == "single_shot"
+        assert summary["shots_per_circuit"] == 1
+        assert summary["adaptive_search"]["total_shots"] == summary["adaptive_search"]["total_quantum_circuit_executions"]
+        assert summary["verified_candidates"] >= summary["ed_calls"]["search_verification"]
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def test_candidate_budget_evaluates_unique_top_k_bitstrings() -> None:
+    cache = CandidateEvaluationCache({0: 5.0, 3: 1.0, 7: 2.0})
+    selected_index, selected_bitstring, selected_cost, evaluated = select_best_measured_candidate(
+        [
+            {"bitstring": "000", "count": 9},
+            {"bitstring": "110", "count": 8},
+            {"bitstring": "110", "count": 7},
+            {"bitstring": "111", "count": 6},
+        ],
+        cache.evaluate,
+        max_candidates=3,
+    )
+
+    assert selected_index == 3
+    assert selected_bitstring == "110"
+    assert selected_cost == 1.0
+    assert [row["index"] for row in evaluated] == [0, 3, 7]
+
+
+def test_refit_policy_and_pairwise_learner_are_reported_without_hidden_training() -> None:
+    path = Path("results/test_refit_pairwise.json")
+    summary = run_small_sample_gas(
+        instance_path=Path("data/case14.json.gz"),
+        results_path=path,
+        backend="qasm",
+        shots=64,
+        seed=3,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=1,
+        max_trials_per_threshold=1,
+        selected_generator_indices=(0, 5),
+        train_sample_count=4,
+        initial_index="random",
+        num_pieces=2,
+        max_weight=7,
+        save_qasm=False,
+        draw_circuit=False,
+        max_candidates_per_shotbatch=1,
+        exclude_hidden_optimum_from_training=True,
+        exclude_hidden_optimum_from_initial=True,
+        learner="pairwise_ranking",
+        refit_policy="accepted",
+    )
+
+    try:
+        assert summary["learner"] == "pairwise_ranking"
+        assert summary["refit_policy"] == "accepted"
+        assert summary["learned_max_affine_oracle"]["training_diagnostics"]["learner_name"] == "pairwise_ranking"
+        assert summary["adaptive_search"]["observed_sample_count"] >= summary["train_sample_count"]
+        assert summary["hidden_best_index"] not in summary["adaptive_search"]["observed_indices"]
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def test_hidden_perfect_diagnostic_is_marked_diagnostic_only() -> None:
+    result = hidden_perfect_diagnostic_run(
+        selected_generator_indices=(0, 5),
+        train_sample_count=4,
+        seed=0,
+        search_verification_budget=4,
+    )
+
+    assert result["oracle_mode"] == "hidden_perfect_diagnostic"
+    assert result["diagnostic_only"] is True
+    assert result["training_contains_hidden_optimum"] is False
+    assert result["initial_matches_hidden_optimum"] is False
+
+
+def test_diagnostic_markdown_summary_includes_requested_comparison_sections() -> None:
+    learned_row = {
+        "selected_generators": [0, 5],
+        "num_search_qubits": 4,
+        "dimension": 16,
+        "seed": 0,
+        "train_sample_count": 4,
+        "measurement_policy": "shot_batch",
+        "shots": 2000,
+        "shots_per_circuit": 2000,
+        "max_candidates_per_shotbatch": 3,
+        "refit_policy": "accepted",
+        "learner": "pairwise_ranking",
+        "oracle_mode": "learned",
+        "diagnostic_only": False,
+        "training_contains_hidden_optimum": False,
+        "initial_matches_hidden_optimum": False,
+        "found_hidden_exact_optimum": True,
+        "success_within_1_percent": True,
+        "success_within_3_percent": True,
+        "success_within_5_percent": True,
+        "random_exact_success_probability": 0.25,
+        "random_success_within_1_percent_probability": 0.25,
+        "random_success_within_3_percent_probability": 0.5,
+        "random_success_within_5_percent_probability": 0.75,
+        "algorithmic_ed_lp_calls": 10,
+        "search_verification_calls": 6,
+        "circuit_executions": 2,
+        "total_shots": 4000,
+        "verified_candidates": 6,
+        "status": "ok",
+    }
+    perfect_row = {
+        **learned_row,
+        "measurement_policy": "classical_hidden_perfect_diagnostic",
+        "shots": 0,
+        "shots_per_circuit": 0,
+        "max_candidates_per_shotbatch": 0,
+        "refit_policy": "none",
+        "learner": "hidden_reference",
+        "oracle_mode": "hidden_perfect_diagnostic",
+        "diagnostic_only": True,
+        "random_exact_success_probability": None,
+        "random_success_within_1_percent_probability": None,
+        "random_success_within_3_percent_probability": None,
+        "random_success_within_5_percent_probability": None,
+        "algorithmic_ed_lp_calls": 6,
+        "search_verification_calls": 2,
+        "circuit_executions": 0,
+        "total_shots": 0,
+        "verified_candidates": 2,
+    }
+    payload = {
+        "runs": [learned_row, perfect_row],
+        "grouped_summary": [
+            {
+                "selected_generators": [0, 5],
+                "num_search_qubits": 4,
+                "train_sample_count": 4,
+                "measurement_policy": "shot_batch",
+                "max_candidates_per_shotbatch": 3,
+                "refit_policy": "accepted",
+                "learner": "pairwise_ranking",
+                "oracle_mode": "learned",
+                "exact_success_rate": 1.0,
+                "within_1_percent_success_rate": 1.0,
+                "within_3_percent_success_rate": 1.0,
+                "within_5_percent_success_rate": 1.0,
+                "avg_random_exact_success_probability": 0.25,
+                "avg_random_within_1_percent_probability": 0.25,
+                "avg_random_within_3_percent_probability": 0.5,
+                "avg_random_within_5_percent_probability": 0.75,
+                "avg_algorithmic_ed_lp_calls": 10.0,
+                "avg_search_verification_calls": 6.0,
+                "avg_circuit_executions": 2.0,
+                "avg_total_shots": 4000.0,
+                "avg_verified_candidates": 6.0,
+                "avg_max_transpiled_depth": 100.0,
+            }
+        ],
+    }
+
+    summary = _markdown_summary(payload)
+
+    for heading in [
+        "## Random Baseline Comparison",
+        "## Measurement Policy Comparison",
+        "## Candidate Budget Comparison",
+        "## Refit Comparison",
+        "## Learner Comparison",
+        "## Perfect Oracle Diagnostic",
+        "## Cautious Conclusions",
+    ]:
+        assert heading in summary
+    assert "hidden_perfect_diagnostic is not an algorithmic result" in summary
