@@ -23,8 +23,12 @@ from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import 
     learn_small_sample_integer_max_affine_pieces,
     max_affine_spec_from_learned,
     measured_bitstring_to_index,
+    pairwise_hinge_diagnostics,
     run as run_small_sample_gas,
     select_best_measured_candidate,
+)
+from experiments.stage1_case14_t2_small_sample_gate_level_gas_surrogate_sweep import (
+    build_surrogate_grouped_summary,
 )
 from experiments.stage1_case14_t2_small_sample_gate_level_gas_diagnostics import (
     classify_run_failure,
@@ -625,6 +629,106 @@ def test_refit_policy_and_pairwise_learner_are_reported_without_hidden_training(
         assert summary["hidden_best_index"] not in summary["adaptive_search"]["observed_indices"]
     finally:
         path.unlink(missing_ok=True)
+
+
+def test_rank_hinge_learner_outputs_integer_max_affine_oracle_and_diagnostics() -> None:
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=["0000", "1000", "1100", "1110", "1111"],
+        train_values=np.array([9.0, 7.0, 3.0, 2.0, 8.0]),
+        num_bits=4,
+        num_pieces=2,
+        max_weight=7,
+        seed=0,
+        learner="rank_hinge",
+    )
+    spec = max_affine_spec_from_learned(learned, tau_int=0)
+
+    assert spec.num_x_qubits == 4
+    assert learned.diagnostics["learner_name"] == "rank_hinge"
+    assert "learner_fallback" in learned.diagnostics
+    assert "pairwise_hinge_loss" in learned.diagnostics
+    assert "num_pairwise_violations" in learned.diagnostics
+    for piece in learned.pieces:
+        assert isinstance(piece.bias, int)
+        for weight in piece.weights:
+            assert isinstance(weight, int)
+            assert 0 <= weight <= 7
+
+
+def test_pairwise_hinge_diagnostics_count_violations_and_loss() -> None:
+    diagnostics = pairwise_hinge_diagnostics(
+        true_values=np.array([1.0, 2.0, 3.0]),
+        predicted_values=np.array([0.0, 0.0, 4.0]),
+        margin=1,
+    )
+
+    assert diagnostics["num_pairs"] == 3
+    assert diagnostics["num_pairwise_violations"] == 1
+    assert diagnostics["pairwise_hinge_loss"] == 1.0
+    assert diagnostics["train_pairwise_order_accuracy"] == 2 / 3
+
+
+def test_rank_hinge_records_fallback_field_for_tiny_training_set() -> None:
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=["0"],
+        train_values=np.array([1.0]),
+        num_bits=1,
+        num_pieces=1,
+        max_weight=3,
+        seed=0,
+        learner="rank_hinge",
+    )
+
+    assert learned.diagnostics["learner_fallback"] is not None
+
+
+def test_surrogate_sweep_grouping_tracks_learner_refit_and_skips() -> None:
+    runs = [
+        {
+            "learner": "rank_hinge",
+            "refit_policy": "accepted",
+            "num_search_qubits": 4,
+            "status": "ok",
+            "found_hidden_exact_optimum": True,
+            "success_within_3_percent": True,
+            "success_within_1_percent": True,
+            "success_within_5_percent": True,
+            "algorithmic_ed_lp_calls": 10,
+            "total_shots": 2000,
+            "max_qubits": 20,
+            "max_transpiled_depth": 100,
+            "pairwise_hinge_loss": 2.0,
+            "train_pairwise_order_accuracy": 0.75,
+            "refit_count": 1,
+            "observed_sample_count": 6,
+            "random_exact_success_probability": 0.25,
+        },
+        {
+            "learner": "rank_hinge",
+            "refit_policy": "accepted",
+            "num_search_qubits": 4,
+            "status": "skipped_resource_limit",
+        },
+        {
+            "learner": "rank_hinge",
+            "refit_policy": "accepted",
+            "num_search_qubits": 4,
+            "status": "skipped_invalid_config",
+        },
+    ]
+
+    grouped = build_surrogate_grouped_summary(runs)
+    row = grouped["by_learner"][0]
+
+    assert row["learner"] == "rank_hinge"
+    assert row["refit_policy"] is None
+    assert row["num_ok_runs"] == 1
+    assert row["num_skipped_resource_limit_runs"] == 1
+    assert row["num_skipped_invalid_config_runs"] == 1
+    assert row["exact_success_rate"] == 1.0
+    assert row["within_3_percent_success_rate"] == 1.0
+    assert row["avg_pairwise_order_accuracy"] == 0.75
+    assert row["avg_algorithmic_ed_lp_calls"] == 10.0
 
 
 def test_hidden_perfect_uniform_marked_budget_does_not_imply_success() -> None:

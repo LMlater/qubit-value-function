@@ -121,8 +121,15 @@ def learn_small_sample_integer_max_affine_pieces(
             best_bits,
             max_weight=max_weight,
         )
+    elif learner == "rank_hinge":
+        bit_weights = _pairwise_ranking_weights(
+            train_bitstrings,
+            train_values,
+            best_bits,
+            max_weight=max_weight,
+        )
     else:
-        raise ValueError("learner must be mismatch or pairwise_ranking")
+        raise ValueError("learner must be mismatch, pairwise_ranking, or rank_hinge")
 
     pieces = []
     for piece_index, group in enumerate(groups):
@@ -141,29 +148,52 @@ def learn_small_sample_integer_max_affine_pieces(
             )
         )
 
+    learner_fallback: str | None = None
+    if learner == "rank_hinge":
+        initial_pieces = tuple(pieces)
+        pieces, learner_fallback = _rank_hinge_local_search(
+            initial_pieces,
+            train_bitstrings=train_bitstrings,
+            train_values=train_values,
+            max_weight=max_weight,
+            seed=seed,
+            name_prefix="rank_hinge",
+        )
+
+    piece_tuple = tuple(pieces)
     probe = max_affine_spec_from_pieces(
-        tuple(pieces),
-        tau_int=max(0, _predicted_value(tuple(pieces), bitstring_to_index(best_bitstring))),
+        piece_tuple,
+        tau_int=max(0, _predicted_value(piece_tuple, bitstring_to_index(best_bitstring))),
         bit_labels=tuple(f"x{idx}" for idx in range(num_bits)),
     )
     train_predictions = np.array(
-        [_predicted_value(tuple(pieces), bitstring_to_index(bitstring)) for bitstring in train_bitstrings],
+        [_predicted_value(piece_tuple, bitstring_to_index(bitstring)) for bitstring in train_bitstrings],
         dtype=float,
+    )
+    ranking_diagnostics = _training_ranking_diagnostics(
+        train_bitstrings=train_bitstrings,
+        train_values=train_values,
+        predicted_values=train_predictions,
+        pieces=piece_tuple,
+        best_row=best_row,
+        max_weight=max_weight,
+        learner=learner,
+        learner_fallback=learner_fallback,
     )
     diagnostics = {
         "train_sample_count": int(train_values.size),
         "train_best_bitstring": best_bitstring,
         "train_best_true_cost": _finite_or_none(float(train_values[best_row])),
-        "train_pairwise_order_accuracy": _pairwise_order_accuracy(train_values, train_predictions),
         "train_predicted_values": [int(value) for value in train_predictions],
         "num_pieces": int(num_pieces),
         "max_weight": int(max_weight),
         "learner_name": learner,
         "seed": int(seed),
         "probe_marked_count_at_best_tau": int(probe.marked_mask().sum()),
+        **ranking_diagnostics,
     }
     return SmallSampleLearnedOracle(
-        pieces=tuple(pieces),
+        pieces=piece_tuple,
         bit_labels=tuple(f"x{idx}" for idx in range(num_bits)),
         train_bitstrings=tuple(str(bitstring) for bitstring in train_bitstrings),
         train_values=tuple(float(value) for value in train_values.tolist()),
@@ -418,6 +448,10 @@ def adaptive_gate_level_search(
                             "refit_count": int(refit_count),
                             "observed_sample_count": int(len(observed_by_index)),
                             "observed_indices": sorted(int(index) for index in observed_by_index),
+                            "learner": learner_name,
+                            "train_pairwise_order_accuracy": current_learned.diagnostics[
+                                "train_pairwise_order_accuracy"
+                            ],
                             "current_integer_pieces": _pieces_to_dict(current_learned.pieces),
                             "learner_diagnostics": current_learned.diagnostics,
                         }
@@ -776,6 +810,202 @@ def _pairwise_ranking_weights(
     return weights
 
 
+def pairwise_hinge_diagnostics(
+    *,
+    true_values: np.ndarray,
+    predicted_values: np.ndarray,
+    margin: int = 1,
+) -> dict[str, object]:
+    true_values = np.asarray(true_values, dtype=float)
+    predicted_values = np.asarray(predicted_values, dtype=float)
+    if true_values.size != predicted_values.size:
+        raise ValueError("true_values and predicted_values must have matching length")
+
+    total = 0
+    violations = 0
+    loss = 0.0
+    for i in range(true_values.size):
+        for j in range(i + 1, true_values.size):
+            if true_values[i] == true_values[j]:
+                continue
+            if true_values[i] < true_values[j]:
+                low, high = i, j
+            else:
+                low, high = j, i
+            hinge = max(0.0, float(margin) + float(predicted_values[low]) - float(predicted_values[high]))
+            total += 1
+            loss += hinge
+            violations += int(hinge > 0.0)
+    return {
+        "num_pairs": int(total),
+        "num_pairwise_violations": int(violations),
+        "pairwise_hinge_loss": float(loss),
+        "train_pairwise_order_accuracy": 1.0 if total == 0 else float((total - violations) / total),
+    }
+
+
+def _training_ranking_diagnostics(
+    *,
+    train_bitstrings: list[str] | tuple[str, ...],
+    train_values: np.ndarray,
+    predicted_values: np.ndarray,
+    pieces: tuple[GateLevelAffinePieceSpec, ...],
+    best_row: int,
+    max_weight: int,
+    learner: str,
+    learner_fallback: str | None,
+) -> dict[str, object]:
+    hinge = pairwise_hinge_diagnostics(true_values=train_values, predicted_values=predicted_values, margin=1)
+    ordered_by_prediction = sorted(
+        range(predicted_values.size),
+        key=lambda idx: (float(predicted_values[idx]), float(train_values[idx]), str(train_bitstrings[idx])),
+    )
+    best_rank = int(ordered_by_prediction.index(int(best_row)) + 1)
+    weights = [int(weight) for piece in pieces for weight in piece.weights]
+    return {
+        **hinge,
+        "learner": str(learner),
+        "learner_fallback": learner_fallback,
+        "train_best_rank": best_rank,
+        "train_best_bitstring": str(train_bitstrings[best_row]),
+        "train_best_true_cost": _finite_or_none(float(train_values[best_row])),
+        "train_predicted_values": [int(value) for value in predicted_values],
+        "train_true_values": [_finite_or_none(float(value)) for value in train_values],
+        "surrogate_piece_count": int(len(pieces)),
+        "surrogate_max_weight": int(max(weights) if weights else 0),
+        "surrogate_total_weight": int(sum(abs(weight) for weight in weights)),
+        "surrogate_configured_max_weight": int(max_weight),
+    }
+
+
+def _rank_hinge_local_search(
+    initial_pieces: tuple[GateLevelAffinePieceSpec, ...],
+    *,
+    train_bitstrings: list[str] | tuple[str, ...],
+    train_values: np.ndarray,
+    max_weight: int,
+    seed: int,
+    name_prefix: str,
+) -> tuple[tuple[GateLevelAffinePieceSpec, ...], str | None]:
+    if len(train_bitstrings) < 2:
+        return initial_pieces, "too_few_training_samples"
+
+    rng = np.random.default_rng(seed)
+    pieces = tuple(initial_pieces)
+    best_loss = _rank_hinge_objective(pieces, train_bitstrings=train_bitstrings, train_values=train_values)
+    initial_loss = best_loss
+    changed = False
+
+    for _ in range(40):
+        improved = False
+        piece_order = list(range(len(pieces)))
+        rng.shuffle(piece_order)
+        for piece_index in piece_order:
+            bit_order = list(range(pieces[piece_index].num_x_qubits))
+            rng.shuffle(bit_order)
+            for bit_index in bit_order:
+                for delta in (-1, 1):
+                    updated = _replace_piece_weight(
+                        pieces,
+                        piece_index=piece_index,
+                        bit_index=bit_index,
+                        value=min(max(int(pieces[piece_index].weights[bit_index]) + delta, 0), int(max_weight)),
+                        name_prefix=name_prefix,
+                    )
+                    loss = _rank_hinge_objective(
+                        updated,
+                        train_bitstrings=train_bitstrings,
+                        train_values=train_values,
+                    )
+                    if loss + 1e-12 < best_loss:
+                        pieces = updated
+                        best_loss = loss
+                        improved = True
+                        changed = True
+            for delta in (-1, 1):
+                updated = _replace_piece_bias(
+                    pieces,
+                    piece_index=piece_index,
+                    value=min(max(int(pieces[piece_index].bias) + delta, -int(max_weight)), int(max_weight)),
+                    name_prefix=name_prefix,
+                )
+                loss = _rank_hinge_objective(
+                    updated,
+                    train_bitstrings=train_bitstrings,
+                    train_values=train_values,
+                )
+                if loss + 1e-12 < best_loss:
+                    pieces = updated
+                    best_loss = loss
+                    improved = True
+                    changed = True
+        if not improved:
+            break
+
+    fallback = None if changed and best_loss + 1e-12 < initial_loss else "pairwise_ranking_no_improvement"
+    if fallback is not None:
+        return initial_pieces, fallback
+    return pieces, None
+
+
+def _rank_hinge_objective(
+    pieces: tuple[GateLevelAffinePieceSpec, ...],
+    *,
+    train_bitstrings: list[str] | tuple[str, ...],
+    train_values: np.ndarray,
+) -> float:
+    predicted = np.array(
+        [_predicted_value(pieces, bitstring_to_index(bitstring)) for bitstring in train_bitstrings],
+        dtype=float,
+    )
+    diagnostics = pairwise_hinge_diagnostics(true_values=train_values, predicted_values=predicted, margin=1)
+    best_row = int(np.nanargmin(train_values))
+    best_pred = float(predicted[best_row])
+    misrank_best = float(sum(value < best_pred for idx, value in enumerate(predicted) if idx != best_row))
+    total_weight = float(sum(abs(int(weight)) for piece in pieces for weight in piece.weights))
+    total_bias = float(sum(abs(int(piece.bias)) for piece in pieces))
+    return float(diagnostics["pairwise_hinge_loss"]) + 4.0 * misrank_best + 0.01 * total_weight + 0.01 * total_bias
+
+
+def _replace_piece_weight(
+    pieces: tuple[GateLevelAffinePieceSpec, ...],
+    *,
+    piece_index: int,
+    bit_index: int,
+    value: int,
+    name_prefix: str,
+) -> tuple[GateLevelAffinePieceSpec, ...]:
+    out = list(pieces)
+    piece = out[piece_index]
+    weights = list(piece.weights)
+    weights[bit_index] = int(value)
+    out[piece_index] = GateLevelAffinePieceSpec(
+        weights=tuple(weights),
+        inverted_bit_indices=piece.inverted_bit_indices,
+        name=f"L{piece_index}_small_sample_{name_prefix}",
+        bias=piece.bias,
+    )
+    return tuple(out)
+
+
+def _replace_piece_bias(
+    pieces: tuple[GateLevelAffinePieceSpec, ...],
+    *,
+    piece_index: int,
+    value: int,
+    name_prefix: str,
+) -> tuple[GateLevelAffinePieceSpec, ...]:
+    out = list(pieces)
+    piece = out[piece_index]
+    out[piece_index] = GateLevelAffinePieceSpec(
+        weights=piece.weights,
+        inverted_bit_indices=piece.inverted_bit_indices,
+        name=f"L{piece_index}_small_sample_{name_prefix}",
+        bias=int(value),
+    )
+    return tuple(out)
+
+
 def _refit_from_observed(
     observed_by_index: dict[int, float],
     *,
@@ -979,7 +1209,7 @@ def main() -> None:
     parser.add_argument("--measurement-policy", choices=("shot_batch", "single_shot", "single_shot_repeated"), default="shot_batch")
     parser.add_argument("--max-total-shots-per-run", type=int, default=None)
     parser.add_argument("--max-total-circuit-executions-per-run", type=int, default=None)
-    parser.add_argument("--learner", choices=("mismatch", "pairwise_ranking"), default="mismatch")
+    parser.add_argument("--learner", choices=("mismatch", "pairwise_ranking", "rank_hinge"), default="mismatch")
     parser.add_argument("--refit-policy", choices=("none", "accepted"), default="none")
     args = parser.parse_args()
 
