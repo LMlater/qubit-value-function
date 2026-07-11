@@ -345,6 +345,7 @@ def _group_rows(
                 "avg_refit_count": _avg(ok, "refit_count"),
                 "avg_observed_sample_count": _avg(ok, "observed_sample_count"),
                 "avg_random_exact_success_probability": _avg(ok, "random_exact_success_probability"),
+                "fallback_rate": _rate(sum(item.get("learner_fallback") is not None for item in ok), len(ok)),
             }
         )
         out.append(row)
@@ -356,6 +357,8 @@ def _markdown_summary(payload: dict[str, object]) -> str:
     settings = payload["fixed_settings"]
     ok = [row for row in runs if row.get("status") == "ok"]
     skipped = [row for row in runs if str(row.get("status", "")).startswith("skipped_")]
+    skipped_invalid = [row for row in runs if row.get("status") == "skipped_invalid_config"]
+    skipped_resource = [row for row in runs if row.get("status") == "skipped_resource_limit"]
     errors = [row for row in runs if row.get("status") not in {"ok", "skipped_resource_limit", "skipped_invalid_config"}]
     grouped = payload["grouped_summary"]
     exact = _rate(sum(bool(row.get("found_hidden_exact_optimum")) for row in ok), len(ok))
@@ -363,16 +366,25 @@ def _markdown_summary(payload: dict[str, object]) -> str:
     within3 = _rate(sum(bool(row.get("success_within_3_percent")) for row in ok), len(ok))
     within5 = _rate(sum(bool(row.get("success_within_5_percent")) for row in ok), len(ok))
     rank_hinge = _first_group(grouped["by_learner"], "learner", "rank_hinge")
-    best_other = max(
-        (
-            float(row["exact_success_rate"] or 0.0)
-            for row in grouped["by_learner"]
-            if row.get("learner") != "rank_hinge"
-        ),
-        default=0.0,
-    )
+    mismatch = _first_group(grouped["by_learner"], "learner", "mismatch")
     rank_hinge_exact = float((rank_hinge or {}).get("exact_success_rate") or 0.0)
-    improved = rank_hinge_exact > best_other
+    mismatch_exact = float((mismatch or {}).get("exact_success_rate") or 0.0)
+    rank_hinge_gain = rank_hinge_exact - mismatch_exact
+    rank_hinge_6q = _first_group(
+        [row for row in grouped["by_qubit_count"] if row.get("num_search_qubits") == 6],
+        "learner",
+        "rank_hinge",
+    )
+    mismatch_6q = _first_group(
+        [row for row in grouped["by_qubit_count"] if row.get("num_search_qubits") == 6],
+        "learner",
+        "mismatch",
+    )
+    rank_hinge_6q_gain = float((rank_hinge_6q or {}).get("exact_success_rate") or 0.0) - float(
+        (mismatch_6q or {}).get("exact_success_rate") or 0.0
+    )
+    refit_gain = _best_refit_gain(grouped["by_learner_refit"])
+    improved = rank_hinge_gain >= 0.10 or rank_hinge_6q_gain >= 0.10 or refit_gain >= 0.10
     conclusion = (
         "The result supports that learned surrogate quality is a key performance bottleneck."
         if improved
@@ -403,6 +415,8 @@ Prior diagnostics suggest learned surrogate quality is the main bottleneck. This
 - total runs: {len(runs)}
 - ok runs: {len(ok)}
 - skipped runs: {len(skipped)}
+- skipped invalid config runs: {len(skipped_invalid)}
+- skipped resource limit runs: {len(skipped_resource)}
 - error runs: {len(errors)}
 - exact success: {_pct(exact)}
 - within 1 percent success: {_pct(within1)}
@@ -410,14 +424,15 @@ Prior diagnostics suggest learned surrogate quality is the main bottleneck. This
 - within 5 percent success: {_pct(within5)}
 - avg algorithmic ED/LP calls: {_fmt(_avg(ok, "algorithmic_ed_lp_calls"))}
 - avg total shots: {_fmt(_avg(ok, "total_shots"))}
+- avg circuit executions: {_fmt(_avg(ok, "circuit_executions"))}
 - avg max qubits: {_fmt(_avg(ok, "max_qubits"))}
 - avg max transpiled depth: {_fmt(_avg(ok, "max_transpiled_depth"))}
 - all learned ok runs exclude hidden optimum from training and initial: {hidden_exclusion_ok}
 
 ## Learner Comparison
 
-| learner | num_ok_runs | exact_success | within_3_percent_success | avg_pairwise_order_accuracy | avg_pairwise_hinge_loss | avg_algorithmic_ed_lp_calls | avg_total_shots | avg_max_transpiled_depth |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| learner | num_ok_runs | exact_success | within_3_percent_success | avg_pairwise_order_accuracy | avg_pairwise_hinge_loss | avg_algorithmic_ed_lp_calls | avg_total_shots | avg_max_transpiled_depth | fallback_rate |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 {_learner_rows(grouped["by_learner"])}
 
 ## Refit Comparison
@@ -425,6 +440,12 @@ Prior diagnostics suggest learned surrogate quality is the main bottleneck. This
 | refit_policy | num_ok_runs | exact_success | within_3_percent_success | avg_refit_count | avg_observed_sample_count | avg_algorithmic_ed_lp_calls |
 |---|---:|---:|---:|---:|---:|---:|
 {_refit_rows(grouped["by_refit_policy"])}
+
+## Learner × Refit
+
+| learner | refit_policy | num_ok_runs | exact_success | within_3_percent_success | avg_algorithmic_ed_lp_calls |
+|---|---|---:|---:|---:|---:|
+{_learner_refit_rows(grouped["by_learner_refit"])}
 
 ## 4q vs 6q
 
@@ -438,6 +459,13 @@ Same-budget random baseline is retained as a diagnostic comparison only.
 
 - observed exact success: {_pct(exact)}
 - average random exact probability: {_fmt(_avg(ok, "random_exact_success_probability"))}
+
+## Formal-Sweep Decision
+
+- rank_hinge overall exact gain vs mismatch: {_pct(rank_hinge_gain)}
+- rank_hinge 6q exact gain vs mismatch: {_pct(rank_hinge_6q_gain)}
+- best accepted-refit exact gain vs none with the same learner: {_pct(refit_gain)}
+- {"A 20-seed focused formal sweep is justified by the configured 10 percentage-point threshold." if improved else "The smoke results did not show a sufficiently clear improvement to justify a 20-seed focused formal sweep."}
 
 ## Cautious Conclusion
 
@@ -462,6 +490,7 @@ def _learner_rows(rows: list[dict[str, object]]) -> str:
                 _fmt(row["avg_algorithmic_ed_lp_calls"]),
                 _fmt(row["avg_total_shots"]),
                 _fmt(row["avg_max_transpiled_depth"]),
+                _pct(row["fallback_rate"]),
             ]
         )
         + " |"
@@ -480,6 +509,24 @@ def _refit_rows(rows: list[dict[str, object]]) -> str:
                 _pct(row["within_3_percent_success_rate"]),
                 _fmt(row["avg_refit_count"]),
                 _fmt(row["avg_observed_sample_count"]),
+                _fmt(row["avg_algorithmic_ed_lp_calls"]),
+            ]
+        )
+        + " |"
+        for row in rows
+    )
+
+
+def _learner_refit_rows(rows: list[dict[str, object]]) -> str:
+    return "\n".join(
+        "| "
+        + " | ".join(
+            [
+                str(row["learner"]),
+                str(row["refit_policy"]),
+                str(row["num_ok_runs"]),
+                _pct(row["exact_success_rate"]),
+                _pct(row["within_3_percent_success_rate"]),
                 _fmt(row["avg_algorithmic_ed_lp_calls"]),
             ]
         )
@@ -511,6 +558,19 @@ def _first_group(rows: list[dict[str, object]], field: str, value: object) -> di
         if row.get(field) == value:
             return row
     return None
+
+
+def _best_refit_gain(rows: list[dict[str, object]]) -> float:
+    exact_by_key = {
+        (str(row.get("learner")), str(row.get("refit_policy"))): float(row.get("exact_success_rate") or 0.0)
+        for row in rows
+    }
+    gains = [
+        exact_by_key[(learner, "accepted")] - exact_by_key[(learner, "none")]
+        for learner, policy in exact_by_key
+        if policy == "accepted" and (learner, "none") in exact_by_key
+    ]
+    return max(gains, default=0.0)
 
 
 def _write_csv(path: Path, runs: list[dict[str, object]]) -> None:

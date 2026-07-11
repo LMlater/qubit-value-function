@@ -5,6 +5,8 @@ from pathlib import Path
 
 import numpy as np
 
+import experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas as small_sample_gas_module
+
 from experiments.stage1_case14_t2_gate_level_grover_oracle import (
     case14_t2_gate_level_proxy_spec,
 )
@@ -28,6 +30,7 @@ from experiments.stage1_case14_t2_small_sample_gate_level_max_affine_gas import 
     select_best_measured_candidate,
 )
 from experiments.stage1_case14_t2_small_sample_gate_level_gas_surrogate_sweep import (
+    _markdown_summary as surrogate_markdown_summary,
     build_surrogate_grouped_summary,
 )
 from experiments.stage1_case14_t2_small_sample_gate_level_gas_diagnostics import (
@@ -317,6 +320,168 @@ def test_small_sample_gate_level_adaptive_updates_only_on_true_ed_improvement() 
         for trial in row["trials"]:
             if trial["accepted_update"]:
                 assert trial["incumbent_true_cost_after"] < trial["incumbent_true_cost_before"]
+
+
+def test_accepted_refit_excludes_verified_but_rejected_candidates(monkeypatch) -> None:
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=[bitstring_from_index(0, 2), bitstring_from_index(3, 2)],
+        train_values=np.array([5.0, 9.0]),
+        num_bits=2,
+        num_pieces=1,
+        max_weight=7,
+        seed=0,
+    )
+    _patch_adaptive_circuit_execution(
+        monkeypatch,
+        counts_by_call=[
+            {
+                bitstring_from_index(1, 2): 10,
+                bitstring_from_index(2, 2): 9,
+            }
+        ],
+    )
+
+    result = adaptive_gate_level_search(
+        learned=learned,
+        evaluator=CandidateEvaluationCache({0: 5.0, 1: 6.0, 2: 4.0, 3: 9.0}).evaluate,
+        initial_index=0,
+        backend="qasm",
+        shots=8,
+        seed=0,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=1,
+        max_trials_per_threshold=1,
+        max_candidates_per_shotbatch=2,
+        refit_policy="accepted",
+        learner_name="mismatch",
+        num_pieces=1,
+        max_weight=7,
+    )
+
+    assert result["verified_candidates"] == 2
+    assert result["refit_count"] == 1
+    assert result["observed_sample_count"] == 3
+    assert result["observed_indices"] == [0, 2, 3]
+    assert result["refit_history"][-1]["observed_indices"] == [0, 2, 3]
+
+
+def test_round_logging_uses_pre_refit_oracle_snapshot(monkeypatch) -> None:
+    learned = learn_small_sample_integer_max_affine_pieces(
+        train_bitstrings=[bitstring_from_index(0, 2), bitstring_from_index(3, 2)],
+        train_values=np.array([5.0, 9.0]),
+        num_bits=2,
+        num_pieces=1,
+        max_weight=7,
+        seed=0,
+    )
+    refit_piece = GateLevelAffinePieceSpec(
+        weights=(7, 0),
+        inverted_bit_indices=(),
+        name="refit-piece",
+        bias=3,
+    )
+    refit_learned = small_sample_gas_module.SmallSampleLearnedOracle(
+        pieces=(refit_piece,),
+        bit_labels=learned.bit_labels,
+        train_bitstrings=learned.train_bitstrings,
+        train_values=learned.train_values,
+        used_training_indices=learned.used_training_indices,
+        diagnostics={**learned.diagnostics, "learner_fallback": None},
+    )
+    monkeypatch.setattr(small_sample_gas_module, "_refit_from_observed", lambda *_args, **_kwargs: refit_learned)
+    _patch_adaptive_circuit_execution(
+        monkeypatch,
+        counts_by_call=[
+            {bitstring_from_index(2, 2): 10},
+            {bitstring_from_index(0, 2): 10},
+        ],
+    )
+
+    result = adaptive_gate_level_search(
+        learned=learned,
+        evaluator=CandidateEvaluationCache({0: 5.0, 2: 4.0, 3: 9.0}).evaluate,
+        initial_index=0,
+        backend="qasm",
+        shots=8,
+        seed=0,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=2,
+        max_trials_per_threshold=1,
+        max_candidates_per_shotbatch=1,
+        refit_policy="accepted",
+        learner_name="mismatch",
+        num_pieces=1,
+        max_weight=7,
+    )
+
+    first_round, second_round = result["rounds"]
+    assert first_round["refit_version_before"] == 0
+    assert first_round["refit_version_after"] == 1
+    assert first_round["oracle_pieces_before"][0]["name"] != "refit-piece"
+    assert second_round["refit_version_before"] == 1
+    assert second_round["oracle_pieces_before"][0]["name"] == "refit-piece"
+
+
+def test_adaptive_search_stops_cleanly_when_calibration_marks_no_states(monkeypatch) -> None:
+    learned = small_sample_gas_module.SmallSampleLearnedOracle(
+        pieces=(GateLevelAffinePieceSpec(weights=(0, 0), inverted_bit_indices=(), name="empty", bias=1),),
+        bit_labels=("x0", "x1"),
+        train_bitstrings=(bitstring_from_index(0, 2), bitstring_from_index(3, 2)),
+        train_values=(5.0, 9.0),
+        used_training_indices=[0, 3],
+        diagnostics={"learner": "rank_hinge", "learner_fallback": None},
+    )
+    monkeypatch.setattr(
+        small_sample_gas_module,
+        "calibrate_integer_threshold_from_samples_or_incumbent",
+        lambda **_kwargs: {"tau_int": 0},
+    )
+
+    result = adaptive_gate_level_search(
+        learned=learned,
+        evaluator=CandidateEvaluationCache({0: 5.0, 3: 9.0}).evaluate,
+        initial_index=0,
+        backend="qasm",
+        shots=8,
+        seed=0,
+        lambda_growth=8.0 / 7.0,
+        max_rounds=1,
+        max_trials_per_threshold=1,
+        max_candidates_per_shotbatch=1,
+    )
+
+    assert result["stop_reason"] == "no_marked_state_at_threshold"
+    assert result["rounds"][0]["trials"] == []
+    assert result["total_quantum_circuit_executions"] == 0
+
+
+def _patch_adaptive_circuit_execution(monkeypatch, *, counts_by_call: list[dict[str, int]]) -> None:
+    class _Circuit:
+        def remove_final_measurements(self, *, inplace: bool = False):
+            return self
+
+    calls = iter(counts_by_call)
+    monkeypatch.setattr(
+        small_sample_gas_module,
+        "build_gate_level_grover_circuit_for_threshold",
+        lambda *_args, **_kwargs: _Circuit(),
+    )
+    monkeypatch.setattr(small_sample_gas_module, "build_max_affine_phase_oracle_circuit", lambda *_args, **_kwargs: _Circuit())
+    monkeypatch.setattr(
+        small_sample_gas_module,
+        "execute_gate_level_circuit",
+        lambda *_args, **_kwargs: {
+            "backend_name": "synthetic",
+            "counts": next(calls),
+            "transpiled_depth": 1,
+            "transpiled_ops": {},
+        },
+    )
+    monkeypatch.setattr(
+        small_sample_gas_module,
+        "circuit_resource_summary",
+        lambda *_args, **_kwargs: {"num_qubits": 2, "depth": 1},
+    )
 
 
 def test_small_sample_gate_level_hidden_reference_is_not_algorithmic_ed_calls() -> None:
@@ -729,6 +894,28 @@ def test_surrogate_sweep_grouping_tracks_learner_refit_and_skips() -> None:
     assert row["within_3_percent_success_rate"] == 1.0
     assert row["avg_pairwise_order_accuracy"] == 0.75
     assert row["avg_algorithmic_ed_lp_calls"] == 10.0
+
+    markdown = surrogate_markdown_summary(
+        {
+            "fixed_settings": {
+                "backend": "qasm",
+                "shots": 2000,
+                "measurement_policy": "shot_batch",
+                "max_candidates_per_shotbatch": 3,
+                "oracle_mode": "learned",
+                "exclude_hidden_optimum_from_training": True,
+                "exclude_hidden_optimum_from_initial": True,
+            },
+            "runs": runs,
+            "grouped_summary": grouped,
+        }
+    )
+
+    assert "skipped invalid config runs" in markdown
+    assert "skipped resource limit runs" in markdown
+    assert "fallback_rate" in markdown
+    assert "## Learner × Refit" in markdown
+    assert "## Formal-Sweep Decision" in markdown
 
 
 def test_hidden_perfect_uniform_marked_budget_does_not_imply_success() -> None:

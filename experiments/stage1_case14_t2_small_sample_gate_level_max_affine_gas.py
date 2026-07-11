@@ -380,6 +380,8 @@ def adaptive_gate_level_search(
     circuit_executions = 0
     total_shots = 0
     verified_candidates = 0
+    verified_candidate_indices: set[int] = set()
+    accepted_refit_indices: set[int] = set()
     refit_count = 0
     refit_history: list[dict[str, object]] = []
     stop_reason = "max_rounds"
@@ -389,17 +391,45 @@ def adaptive_gate_level_search(
     aggregate_ops: dict[str, int] = {}
 
     for round_index in range(int(max_rounds)):
+        round_learned = current_learned
+        round_refit_version_before = refit_count
         before = incumbent
         before_value = incumbent_value
         calibration = calibrate_integer_threshold_from_samples_or_incumbent(
-            pieces=current_learned.pieces,
-            train_bitstrings=current_learned.train_bitstrings,
-            train_values=current_learned.train_values,
+            pieces=round_learned.pieces,
+            train_bitstrings=round_learned.train_bitstrings,
+            train_values=round_learned.train_values,
             incumbent_index=incumbent,
             incumbent_true_value=incumbent_value,
             tie_tolerance=tie_tolerance,
         )
         tau_int = int(calibration["tau_int"])
+        round_spec = max_affine_spec_from_learned(round_learned, tau_int=tau_int)
+        round_register_allocation = max_affine_register_allocation(round_spec)
+        if int(round_spec.marked_mask().sum()) == 0:
+            rounds.append(
+                {
+                    "round": int(round_index),
+                    "refit_version": int(round_refit_version_before),
+                    "refit_version_before": int(round_refit_version_before),
+                    "refit_version_after": int(refit_count),
+                    "refit_version_next_round": int(refit_count),
+                    "learner_before": str(round_learned.diagnostics["learner"]),
+                    "learner_fallback_before": round_learned.diagnostics["learner_fallback"],
+                    "oracle_pieces_before": _pieces_to_dict(round_learned.pieces),
+                    "refit_triggered": False,
+                    "incumbent_before": _incumbent_row(before, before_value, len(learned.bit_labels)),
+                    "threshold_before": _finite_or_none(before_value),
+                    "tau_int": tau_int,
+                    "register_allocation": round_register_allocation,
+                    "calibration": calibration,
+                    "trials": [],
+                    "threshold_after": _finite_or_none(incumbent_value),
+                    "incumbent_after": _incumbent_row(incumbent, incumbent_value, len(learned.bit_labels)),
+                }
+            )
+            stop_reason = "no_marked_state_at_threshold"
+            break
         round_trials = []
         improved_this_round = False
         for trial_index in range(int(max_trials_per_threshold)):
@@ -407,9 +437,8 @@ def adaptive_gate_level_search(
                 stop_reason = "max_total_circuit_executions_per_run"
                 break
             k = int(rng.integers(0, max(1, int(np.ceil(z)))))
-            circuit = build_gate_level_grover_circuit_for_threshold(current_learned, tau_int=tau_int, iterations=k)
-            spec = max_affine_spec_from_learned(current_learned, tau_int=tau_int)
-            phase = build_max_affine_phase_oracle_circuit(spec)
+            circuit = build_gate_level_grover_circuit_for_threshold(round_learned, tau_int=tau_int, iterations=k)
+            phase = build_max_affine_phase_oracle_circuit(round_spec)
             shots_per_circuit = 1 if measurement_policy in {"single_shot", "single_shot_repeated"} else int(shots)
             if max_total_shots_per_run is not None and total_shots + shots_per_circuit > int(max_total_shots_per_run):
                 stop_reason = "max_total_shots_per_run"
@@ -424,9 +453,7 @@ def adaptive_gate_level_search(
                 max_candidates=1 if measurement_policy in {"single_shot", "single_shot_repeated"} else max_candidates_per_shotbatch,
             )
             verified_candidates += len(evaluated_candidates)
-            for candidate in evaluated_candidates:
-                if candidate["true_cost"] is not None:
-                    observed_by_index[int(candidate["index"])] = float(candidate["true_cost"])
+            verified_candidate_indices.update(int(candidate["index"]) for candidate in evaluated_candidates)
             improved = bool(selected_cost < incumbent_value - tie_tolerance)
             if improved:
                 incumbent = int(selected_index)
@@ -434,9 +461,11 @@ def adaptive_gate_level_search(
                 z = 1.0
                 improved_this_round = True
                 if refit_policy == "accepted":
+                    observed_by_index[int(selected_index)] = float(selected_cost)
+                    accepted_refit_indices.add(int(selected_index))
                     current_learned = _refit_from_observed(
                         observed_by_index,
-                        num_bits=len(current_learned.bit_labels),
+                        num_bits=len(round_learned.bit_labels),
                         num_pieces=num_pieces,
                         max_weight=max_weight,
                         seed=seed + refit_count + 1,
@@ -494,13 +523,18 @@ def adaptive_gate_level_search(
         rounds.append(
             {
                 "round": int(round_index),
-                "refit_version": int(refit_count),
+                "refit_version": int(round_refit_version_before),
+                "refit_version_before": int(round_refit_version_before),
+                "refit_version_after": int(refit_count),
+                "refit_version_next_round": int(refit_count),
+                "learner_before": str(round_learned.diagnostics["learner"]),
+                "learner_fallback_before": round_learned.diagnostics["learner_fallback"],
+                "oracle_pieces_before": _pieces_to_dict(round_learned.pieces),
+                "refit_triggered": bool(refit_count > round_refit_version_before),
                 "incumbent_before": _incumbent_row(before, before_value, len(learned.bit_labels)),
                 "threshold_before": _finite_or_none(before_value),
                 "tau_int": tau_int,
-                "register_allocation": max_affine_register_allocation(
-                    max_affine_spec_from_learned(current_learned, tau_int=tau_int)
-                ),
+                "register_allocation": round_register_allocation,
                 "calibration": calibration,
                 "trials": round_trials,
                 "threshold_after": _finite_or_none(incumbent_value),
@@ -520,6 +554,8 @@ def adaptive_gate_level_search(
         "total_quantum_circuit_executions": int(circuit_executions),
         "total_shots": int(total_shots),
         "verified_candidates": int(verified_candidates),
+        "verified_candidate_indices": sorted(verified_candidate_indices),
+        "accepted_refit_indices": sorted(accepted_refit_indices),
         "refit_policy": refit_policy,
         "refit_count": int(refit_count),
         "observed_sample_count": int(len(observed_by_index)),
