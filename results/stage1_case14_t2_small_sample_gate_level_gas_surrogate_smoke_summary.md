@@ -90,3 +90,4 @@ The result suggests that simply improving pairwise ranking within the current in
 
 This is selected-generator subspace optimum recovery, not full 12-bit case14 T=2 global optimization.
 This does not establish quantum advantage.
+Shot-batch sampling includes repeated circuit sampling and classical top-k ED/LP verification.

@@ -473,6 +473,7 @@ Same-budget random baseline is retained as a diagnostic comparison only.
 
 This is selected-generator subspace optimum recovery, not full 12-bit case14 T=2 global optimization.
 This does not establish quantum advantage.
+Shot-batch sampling includes repeated circuit sampling and classical top-k ED/LP verification.
 """
 
 

@@ -916,6 +916,7 @@ def test_surrogate_sweep_grouping_tracks_learner_refit_and_skips() -> None:
     assert "fallback_rate" in markdown
     assert "## Learner × Refit" in markdown
     assert "## Formal-Sweep Decision" in markdown
+    assert "Shot-batch sampling includes repeated circuit sampling and classical top-k ED/LP verification." in markdown
 
 
 def test_hidden_perfect_uniform_marked_budget_does_not_imply_success() -> None:
