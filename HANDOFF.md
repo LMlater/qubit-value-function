@@ -8,10 +8,10 @@ Fixed scope: qasm backend, 2000 shots, `shot_batch`, three candidates per batch,
 
 ## Repository state
 
-- Branch: `main`, currently based on and tracking `origin/main` at `f911954 Add surrogate learner focused GAS sweep`.
+- Branch: `main`, currently tracking `origin/main` at `8cf1206 Clarify surrogate smoke summary`.
 - Earlier relevant commits: `e21b54d Document surrogate learner sweep design`, `f7e323d Fix GAS diagnostics and add equal-shot smoke`.
 - `f911954` contains the rank-hinge implementation, focused-sweep script, tests, and this handoff document.
-- Current uncommitted work: accepted-refit, round-oracle-version, and no-marked-state handling in `experiments/stage1_case14_t2_small_sample_gate_level_max_affine_gas.py`; regression and summary tests in `tests/test_stage1.py`; updated focused-sweep summary generation; and smoke artifacts.
+- The accepted-refit, round-oracle-version, and no-marked-state fixes, regression tests, smoke artifacts, and summary updates are committed and pushed in `99f2590` and `8cf1206`.
 - Untracked `results/test_diagnostics_tiny.*` are generated test artifacts; do not commit them.
 
 ## Completed verification
@@ -44,9 +44,7 @@ Fixed scope: qasm backend, 2000 shots, `shot_batch`, three candidates per batch,
 
 ## Next steps
 
-1. Run fresh `pytest -q` and `git diff --check`.
-2. Stage only source, tests, this handoff, and the three smoke artifacts. Do not stage `results/test_diagnostics_tiny.*`.
-3. Commit with `Fix surrogate refit semantics and add smoke results` and push `main`. Do not omit the add/commit/push cycle.
+The empirical work is complete. Do not add further experiment directions. Move to the writing stage, reporting both the negative rank-hinge/refit result and the current integer max-affine surrogate limitation.
 
 ## Pitfalls
 
