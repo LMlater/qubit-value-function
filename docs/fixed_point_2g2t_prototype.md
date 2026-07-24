@@ -4,6 +4,23 @@
 
 本原型属于研究内容1的门级算术基线。它保留“学习启停方案到经济调度最小成本的映射，再由 Grover Adaptive Search 更新真实成本阈值”的方向，但当前只使用一个经典 ridge 仿射模型，不把它表述为 VQC。
 
+## 运行方式
+
+```powershell
+python experiments/stage1_case14_t2_fixed_point_affine_gas.py `
+  --selected-generators 0,5 `
+  --train-sample-count 6 `
+  --max-rounds 3 `
+  --fractional-bits 2 `
+  --cost-unit 1000
+```
+
+默认结果写入：
+
+```text
+results/stage1_case14_t2_fixed_point_affine_gas.json
+```
+
 ## 定点数编码
 
 统一使用
@@ -37,6 +54,22 @@ compute WeightedAdder
 ## 小规模验证
 
 实验固定为 2 台机组、2 个时间步，共 4 个搜索 qubits。训练样本按照代表性索引顺序逐个进行 ED/LP 计算，达到指定数量后停止，不运行多学习器或多 seed sweep。
+
+输出记录：
+
+- 每个代表性样本的逐次 ED/LP 状态；
+- 仿射模型的真实成本系数；
+- 固定点 offset、weights、反相输入和量化误差；
+- 每轮真实 incumbent threshold；
+- phase oracle 误差、辅助寄存器回零概率和 Grover marked probability；
+- 门级电路 qubit、depth 和操作计数。
+
+## 验证命令
+
+```powershell
+pytest -q tests/test_fixed_point_oracle.py
+pytest -q
+```
 
 ## 尚未完成
 
