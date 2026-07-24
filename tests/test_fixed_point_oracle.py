@@ -3,6 +3,11 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from experiments.stage1_case14_t2_fixed_point_affine_gas import (
+    build_argument_parser,
+    predicted_cost_diagnostics,
+    select_initial_index,
+)
 from qubit_value_function.fixed_point_oracle import (
     FixedPointAffineSpec,
     FixedPointConfig,
@@ -52,6 +57,44 @@ def test_affine_fit_uses_one_deterministic_method() -> None:
     intercept, coefficients = fit_affine_cost_model(bitstrings=bitstrings, costs=costs)
     assert np.isclose(intercept, true_intercept, atol=1e-6)
     assert np.allclose(coefficients, true_coefficients, atol=1e-6)
+
+
+def test_default_initialization_policy_is_first() -> None:
+    args = build_argument_parser().parse_args([])
+    assert args.initialization_policy == "first"
+    assert args.seed == 0
+
+
+def test_first_initialization_does_not_choose_best_training_cost() -> None:
+    train_indices = [8, 3, 5]
+    observed = {8: 30.0, 3: 10.0, 5: 20.0}
+    assert select_initial_index(train_indices, observed, policy="first") == 8
+    assert select_initial_index(train_indices, observed, policy="best-training") == 3
+
+
+def test_random_initialization_is_reproducible() -> None:
+    train_indices = [8, 3, 5, 2]
+    observed = {8: 30.0, 3: 10.0, 5: 20.0, 2: 40.0}
+    first = select_initial_index(train_indices, observed, policy="random", seed=17)
+    second = select_initial_index(train_indices, observed, policy="random", seed=17)
+    assert first == second
+    assert first in train_indices
+
+
+def test_predicted_cost_diagnostics_has_complete_threshold_fields() -> None:
+    config = FixedPointConfig(fractional_bits=0, unit=1.0)
+    spec = FixedPointAffineSpec.from_real_coefficients(
+        config=config,
+        intercept=3.0,
+        coefficients=(-1.0, -1.0, -1.0),
+    )
+    diagnostics = predicted_cost_diagnostics(spec, real_threshold=2.0)
+    assert len(diagnostics["predicted_encoded_costs"]) == 8
+    assert diagnostics["minimum_predicted_index"] == 7
+    assert diagnostics["minimum_predicted_encoded_cost"] == 0
+    assert diagnostics["encoded_threshold"] == 2
+    assert diagnostics["minimum_predicted_minus_threshold"] == -2
+    assert diagnostics["marked_count"] == len(diagnostics["marked_indices"])
 
 
 def test_fixed_point_phase_oracle_marks_cost_below_true_threshold_and_uncomputes() -> None:
