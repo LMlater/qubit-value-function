@@ -35,6 +35,58 @@ from qubit_value_function.uc_loader import load_uc_instance  # noqa: E402
 
 
 REPRESENTATIVE_INDEX_ORDER = (0, 15, 3, 12, 5, 10, 6, 9, 1, 2, 4, 8, 7, 11, 13, 14)
+INITIALIZATION_POLICIES = ("first", "random", "best-training")
+
+
+def select_initial_index(
+    train_indices: list[int] | tuple[int, ...],
+    observed: dict[int, float],
+    *,
+    policy: str = "first",
+    seed: int = 0,
+) -> int:
+    """按指定策略选择 GAS 初始 incumbent，不额外调用 ED/LP。"""
+
+    indices = [int(index) for index in train_indices]
+    if not indices:
+        raise ValueError("train_indices 不能为空")
+    if any(index not in observed for index in indices):
+        raise ValueError("train_indices 中的每个索引都必须存在于 observed")
+    if policy not in INITIALIZATION_POLICIES:
+        raise ValueError(f"initialization_policy 必须是 {INITIALIZATION_POLICIES} 之一")
+    if policy == "first":
+        return int(indices[0])
+    if policy == "random":
+        rng = np.random.default_rng(int(seed))
+        return int(rng.choice(np.asarray(indices, dtype=int)))
+    return int(min(indices, key=lambda index: float(observed[index])))
+
+
+def predicted_cost_diagnostics(
+    spec: FixedPointAffineSpec,
+    *,
+    real_threshold: float,
+) -> dict[str, object]:
+    """汇总当前固定点 surrogate 与真实 incumbent threshold 的关系。"""
+
+    encoded_values = np.array(
+        [spec.encoded_cost_for_index(index) for index in range(2**spec.num_x_qubits)],
+        dtype=int,
+    )
+    encoded_threshold = int(spec.config.encode(real_threshold))
+    minimum_index = int(np.argmin(encoded_values))
+    minimum_value = int(encoded_values[minimum_index])
+    marked = encoded_values < encoded_threshold
+    return {
+        "predicted_encoded_costs": [int(value) for value in encoded_values],
+        "minimum_predicted_index": minimum_index,
+        "minimum_predicted_bitstring": bitstring_from_index(minimum_index, spec.num_x_qubits),
+        "minimum_predicted_encoded_cost": minimum_value,
+        "encoded_threshold": encoded_threshold,
+        "minimum_predicted_minus_threshold": int(minimum_value - encoded_threshold),
+        "marked_indices": [int(index) for index in np.flatnonzero(marked)],
+        "marked_count": int(marked.sum()),
+    }
 
 
 def run(
@@ -46,6 +98,8 @@ def run(
     max_rounds: int = 3,
     fractional_bits: int = 2,
     cost_unit: float = 1000.0,
+    initialization_policy: str = "first",
+    seed: int = 0,
 ) -> dict[str, object]:
     if len(selected_generator_indices) != 2:
         raise ValueError("本原型只验证 2 台机组")
@@ -53,6 +107,8 @@ def run(
         raise ValueError("4-bit 仿射模型至少需要 5 个有限训练样本")
     if max_rounds <= 0:
         raise ValueError("max_rounds 必须为正数")
+    if initialization_policy not in INITIALIZATION_POLICIES:
+        raise ValueError(f"initialization_policy 必须是 {INITIALIZATION_POLICIES} 之一")
 
     source = load_uc_instance(instance_path)
     instance = leading_time_window_instance(source, 2)
@@ -112,33 +168,57 @@ def run(
         name="case14_t2_fixed_point_affine_cost",
     )
 
-    initial_index = min(observed, key=observed.get)
+    initial_index = select_initial_index(
+        train_indices,
+        observed,
+        policy=initialization_policy,
+        seed=seed,
+    )
     incumbent_index = int(initial_index)
     incumbent_cost = float(observed[initial_index])
+    initial_diagnostics = predicted_cost_diagnostics(spec, real_threshold=incumbent_cost)
     rounds: list[dict[str, object]] = []
 
     for round_index in range(int(max_rounds)):
+        threshold_before = float(incumbent_cost)
+        diagnostics = predicted_cost_diagnostics(spec, real_threshold=threshold_before)
         probe = simulate_fixed_point_phase_oracle(
             spec,
-            real_threshold=incumbent_cost,
+            real_threshold=threshold_before,
             strict=True,
         )
         marked_indices = [int(index) for index in np.flatnonzero(probe.marked_mask)]
+        if marked_indices != diagnostics["marked_indices"]:
+            raise RuntimeError("经典固定点诊断与门级 phase oracle 的 marked states 不一致")
+
+        round_record: dict[str, object] = {
+            "round": int(round_index),
+            "threshold_before": threshold_before,
+            "encoded_threshold_before": int(diagnostics["encoded_threshold"]),
+            "minimum_predicted_index": int(diagnostics["minimum_predicted_index"]),
+            "minimum_predicted_encoded_cost": int(diagnostics["minimum_predicted_encoded_cost"]),
+            "minimum_predicted_minus_threshold": int(diagnostics["minimum_predicted_minus_threshold"]),
+            "marked_indices": marked_indices,
+            "marked_count": int(diagnostics["marked_count"]),
+            "grover_iterations": 0,
+            "marked_probability": None,
+            "phase_max_error": float(probe.max_phase_error),
+            "auxiliary_zero_probability": float(probe.auxiliary_zero_probability),
+            "candidate_index": None,
+            "candidate_bitstring": None,
+            "candidate_probability": None,
+            "candidate_status": None,
+            "candidate_true_cost": None,
+            "accepted_update": False,
+            "threshold_after": threshold_before,
+            "encoded_threshold_after": int(fixed_point.encode(threshold_before)),
+        }
+
         if not marked_indices:
-            rounds.append(
-                {
-                    "round": int(round_index),
-                    "threshold": incumbent_cost,
-                    "encoded_threshold": fixed_point.encode(incumbent_cost),
-                    "marked_indices": [],
-                    "stop_reason": "no_marked_state_at_fixed_point_threshold",
-                    "phase_max_error": probe.max_phase_error,
-                    "auxiliary_zero_probability": probe.auxiliary_zero_probability,
-                }
-            )
+            round_record["stop_reason"] = "no_marked_state_at_fixed_point_threshold"
+            rounds.append(round_record)
             break
 
-        threshold_before = float(incumbent_cost)
         grover = simulate_fixed_point_grover(
             spec,
             real_threshold=threshold_before,
@@ -155,20 +235,24 @@ def run(
             iterations=grover.iterations,
             strict=True,
         )
+        round_record.update(
+            {
+                "grover_iterations": int(grover.iterations),
+                "marked_probability": float(grover.marked_probability),
+                "auxiliary_zero_probability": float(grover.auxiliary_zero_probability),
+                "resources": {
+                    "phase_oracle": circuit_resource_summary(phase_circuit, decompose_reps=1),
+                    "grover_circuit": circuit_resource_summary(grover_circuit, decompose_reps=1),
+                },
+            }
+        )
+
         unobserved_marked = [index for index in marked_indices if index not in observed]
         if not unobserved_marked:
-            rounds.append(
-                {
-                    "round": int(round_index),
-                    "threshold_before": threshold_before,
-                    "encoded_threshold_before": fixed_point.encode(threshold_before),
-                    "marked_indices": marked_indices,
-                    "stop_reason": "all_marked_states_already_verified",
-                    "phase_max_error": probe.max_phase_error,
-                    "auxiliary_zero_probability": probe.auxiliary_zero_probability,
-                }
-            )
+            round_record["stop_reason"] = "all_marked_states_already_verified"
+            rounds.append(round_record)
             break
+
         candidate_index = max(
             unobserved_marked,
             key=lambda index: float(grover.x_probabilities[int(index)]),
@@ -191,16 +275,8 @@ def run(
             else:
                 status = "ed_failed"
 
-        rounds.append(
+        round_record.update(
             {
-                "round": int(round_index),
-                "threshold_before": threshold_before,
-                "encoded_threshold_before": fixed_point.encode(threshold_before),
-                "marked_indices": marked_indices,
-                "grover_iterations": int(grover.iterations),
-                "marked_probability": float(grover.marked_probability),
-                "phase_max_error": float(probe.max_phase_error),
-                "auxiliary_zero_probability": float(grover.auxiliary_zero_probability),
                 "candidate_index": int(candidate_index),
                 "candidate_bitstring": bitstring_from_index(candidate_index, 4),
                 "candidate_probability": float(grover.x_probabilities[candidate_index]),
@@ -209,16 +285,14 @@ def run(
                 "accepted_update": bool(accepted),
                 "incumbent_index_after": int(incumbent_index),
                 "incumbent_true_cost_after": float(incumbent_cost),
-                "resources": {
-                    "phase_oracle": circuit_resource_summary(phase_circuit, decompose_reps=1),
-                    "grover_circuit": circuit_resource_summary(grover_circuit, decompose_reps=1),
-                },
+                "threshold_after": float(incumbent_cost),
+                "encoded_threshold_after": int(fixed_point.encode(incumbent_cost)),
             }
         )
+        rounds.append(round_record)
         if not accepted:
             break
 
-    encoded_values = [spec.encoded_cost_for_index(index) for index in range(16)]
     summary = {
         "method": "2-generator 2-period fixed-point affine gate-level GAS prototype",
         "research_scope": "研究内容1的固定点门级算术基线，不是 VQC 值函数",
@@ -247,13 +321,15 @@ def run(
             "weights": [int(weight) for weight in spec.weights],
             "inverted_bit_indices": [int(index) for index in spec.inverted_bit_indices],
             "max_weighted_sum": int(spec.max_weighted_sum),
-            "encoded_values_for_debug_only": encoded_values,
         },
+        "initialization_policy": initialization_policy,
+        "seed": int(seed),
         "initial_incumbent": {
             "index": int(initial_index),
             "bitstring": bitstring_from_index(initial_index, 4),
             "true_cost": float(observed[initial_index]),
         },
+        "initial_search_diagnostics": initial_diagnostics,
         "rounds": rounds,
         "final_incumbent": {
             "index": int(incumbent_index),
@@ -264,6 +340,10 @@ def run(
         "verified_finite_indices": sorted(int(index) for index in observed),
         "notes": [
             "训练样本按代表性索引顺序逐个调用 ED/LP，达到指定数量后立即停止。",
+            (
+                "默认使用第一个有限训练样本作为初始 incumbent，"
+                "不再预先选择训练集最低成本。"
+            ),
             "所有成本、仿射系数和 GAS threshold 使用同一个固定点配置。",
             "statevector 只执行完整门级电路并读取概率，不直接改写量子振幅。",
             "当前模型是单一经典 ridge 仿射值函数基线，尚未实现 VQC。",
@@ -280,7 +360,7 @@ def _parse_selected_generators(raw: str) -> tuple[int, int]:
     return values
 
 
-def main() -> None:
+def build_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="2台机组×2时间步固定点门级 GAS 原型")
     parser.add_argument("--instance", type=Path, default=Path("data/case14.json.gz"))
     parser.add_argument(
@@ -293,7 +373,17 @@ def main() -> None:
     parser.add_argument("--max-rounds", type=int, default=3)
     parser.add_argument("--fractional-bits", type=int, default=2)
     parser.add_argument("--cost-unit", type=float, default=1000.0)
-    args = parser.parse_args()
+    parser.add_argument(
+        "--initialization-policy",
+        choices=INITIALIZATION_POLICIES,
+        default="first",
+    )
+    parser.add_argument("--seed", type=int, default=0)
+    return parser
+
+
+def main() -> None:
+    args = build_argument_parser().parse_args()
     summary = run(
         instance_path=args.instance,
         results_path=args.results,
@@ -302,6 +392,8 @@ def main() -> None:
         max_rounds=args.max_rounds,
         fractional_bits=args.fractional_bits,
         cost_unit=args.cost_unit,
+        initialization_policy=args.initialization_policy,
+        seed=args.seed,
     )
     print(json.dumps(summary["final_incumbent"], ensure_ascii=False, indent=2))
 
