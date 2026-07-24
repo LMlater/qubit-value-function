@@ -37,6 +37,11 @@ def test_time_window_instance_supports_shifted_independent_scenarios() -> None:
     assert leading.fixed_load == source.fixed_load[:2]
     assert shifted.generators[0].initial_status == source.generators[0].initial_status
     assert shifted.generators[0].initial_power == source.generators[0].initial_power
+    assert len(shifted.reserves) == len(source.reserves)
+    for shifted_reserve, source_reserve in zip(shifted.reserves, source.reserves):
+        assert shifted_reserve.name == source_reserve.name
+        assert shifted_reserve.amount == source_reserve.amount[1:3]
+        assert shifted_reserve.penalty == source_reserve.penalty[1:3]
 
 
 def test_sparse_feature_count_scales_with_local_graph_not_full_state_space() -> None:
