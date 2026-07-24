@@ -11,24 +11,45 @@ from .ed import FixedCommitmentEvaluator
 from .uc_loader import Reserve, UCInstance
 
 
-def leading_time_window_instance(instance: UCInstance, horizon: int) -> UCInstance:
-    if horizon <= 0 or horizon > instance.time_horizon:
-        raise ValueError("horizon must be within the source instance time horizon")
+def time_window_instance(instance: UCInstance, start: int, horizon: int) -> UCInstance:
+    """Return an independent UC scenario using a contiguous time-series window.
+
+    Generator initial status and initial power are preserved from the source
+    instance. Therefore a shifted window is an independent load/reserve
+    scenario, not a chronological continuation of an earlier commitment.
+    """
+
+    start = int(start)
+    horizon = int(horizon)
+    if start < 0:
+        raise ValueError("start must be nonnegative")
+    if horizon <= 0:
+        raise ValueError("horizon must be positive")
+    end = start + horizon
+    if end > instance.time_horizon:
+        raise ValueError("time window must be within the source instance horizon")
+
     reserves = [
         Reserve(
             name=reserve.name,
-            amount=reserve.amount[:horizon],
-            penalty=reserve.penalty[:horizon],
+            amount=reserve.amount[start:end],
+            penalty=reserve.penalty[start:end],
         )
         for reserve in instance.reserves
     ]
     return replace(
         instance,
         time_horizon=horizon,
-        fixed_load=instance.fixed_load[:horizon],
+        fixed_load=instance.fixed_load[start:end],
         reserves=reserves,
-        power_balance_penalty=instance.power_balance_penalty[:horizon],
+        power_balance_penalty=instance.power_balance_penalty[start:end],
     )
+
+
+def leading_time_window_instance(instance: UCInstance, horizon: int) -> UCInstance:
+    """Backward-compatible wrapper for the leading time window."""
+
+    return time_window_instance(instance, start=0, horizon=horizon)
 
 
 def evaluate_values(instance: UCInstance, commitments: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
