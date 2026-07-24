@@ -1,11 +1,19 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import json
 from pathlib import Path
 import sys
 
 import numpy as np
+from qiskit import ClassicalRegister, QuantumCircuit, transpile
+from qiskit.quantum_info import Statevector
+
+try:
+    from qiskit_aer import AerSimulator
+except Exception:  # pragma: no cover - 仅在缺少 Aer 时触发
+    AerSimulator = None
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -22,10 +30,10 @@ from qubit_value_function.fixed_point_oracle import (  # noqa: E402
     FixedPointAffineSpec,
     FixedPointConfig,
     build_fixed_point_grover_circuit,
-    build_fixed_point_phase_oracle_circuit,
     fit_affine_cost_model,
-    simulate_fixed_point_grover,
+    optimal_grover_iterations,
     simulate_fixed_point_phase_oracle,
+    x_marginal_probabilities,
 )
 from qubit_value_function.gate_level_oracle import (  # noqa: E402
     bitstring_from_index,
@@ -36,6 +44,19 @@ from qubit_value_function.uc_loader import load_uc_instance  # noqa: E402
 
 REPRESENTATIVE_INDEX_ORDER = (0, 15, 3, 12, 5, 10, 6, 9, 1, 2, 4, 8, 7, 11, 13, 14)
 INITIALIZATION_POLICIES = ("first", "random", "best-training")
+SIMULATION_METHODS = ("mps", "statevector")
+
+
+@dataclass(frozen=True)
+class GateExecutionResult:
+    """一次完整门级 Grover 电路的执行结果。"""
+
+    simulation_method: str
+    x_probabilities: np.ndarray
+    x_counts: dict[str, int] | None
+    auxiliary_zero_probability: float
+    total_qubits: int
+    estimated_statevector_memory_gb: float
 
 
 def select_initial_index(
@@ -89,6 +110,136 @@ def predicted_cost_diagnostics(
     }
 
 
+def estimate_statevector_memory_gb(num_qubits: int) -> float:
+    """估算 complex128 全状态向量的最低存储空间。"""
+
+    if int(num_qubits) < 0:
+        raise ValueError("num_qubits 不能为负数")
+    return float((2**int(num_qubits)) * 16 / (1024**3))
+
+
+def execute_grover_circuit(
+    circuit: QuantumCircuit,
+    *,
+    num_x_qubits: int,
+    simulation_method: str,
+    shots: int,
+    seed: int,
+    max_statevector_memory_gb: float,
+) -> GateExecutionResult:
+    """执行完整门级 Grover 电路，不使用经典 marked mask 改写振幅。"""
+
+    if simulation_method not in SIMULATION_METHODS:
+        raise ValueError(f"simulation_method 必须是 {SIMULATION_METHODS} 之一")
+    if int(num_x_qubits) <= 0 or int(num_x_qubits) > circuit.num_qubits:
+        raise ValueError("num_x_qubits 与量子电路不兼容")
+    if int(shots) <= 0:
+        raise ValueError("shots 必须为正数")
+    if not np.isfinite(max_statevector_memory_gb) or max_statevector_memory_gb <= 0.0:
+        raise ValueError("max_statevector_memory_gb 必须为有限正数")
+
+    total_qubits = int(circuit.num_qubits)
+    memory_gb = estimate_statevector_memory_gb(total_qubits)
+
+    if simulation_method == "statevector":
+        if memory_gb > float(max_statevector_memory_gb):
+            raise RuntimeError(
+                "预计 Statevector 至少需要 "
+                f"{memory_gb:.3f} GB，超过限制 {max_statevector_memory_gb:.3f} GB；"
+                "请改用 --simulation-method mps，或显式提高内存限制"
+            )
+        statevector = Statevector.from_instruction(circuit)
+        x_probabilities, auxiliary_zero_probability = x_marginal_probabilities(
+            statevector.probabilities(),
+            int(num_x_qubits),
+        )
+        return GateExecutionResult(
+            simulation_method="statevector",
+            x_probabilities=x_probabilities,
+            x_counts=None,
+            auxiliary_zero_probability=float(auxiliary_zero_probability),
+            total_qubits=total_qubits,
+            estimated_statevector_memory_gb=memory_gb,
+        )
+
+    if AerSimulator is None:
+        raise RuntimeError("MPS 模拟需要安装 qiskit-aer")
+
+    measured_circuit = circuit.copy()
+    measurement_register = ClassicalRegister(total_qubits, "measure")
+    measured_circuit.add_register(measurement_register)
+    measured_circuit.measure(measured_circuit.qubits, measurement_register)
+
+    backend = AerSimulator(method="matrix_product_state")
+    compiled = transpile(
+        measured_circuit,
+        backend,
+        optimization_level=1,
+        seed_transpiler=int(seed),
+    )
+    result = backend.run(
+        compiled,
+        shots=int(shots),
+        seed_simulator=int(seed),
+    ).result()
+    raw_counts = result.get_counts(compiled)
+
+    x_dimension = 2**int(num_x_qubits)
+    x_mask = x_dimension - 1
+    x_index_counts = np.zeros(x_dimension, dtype=int)
+    auxiliary_zero_count = 0
+    for raw_bitstring, count in raw_counts.items():
+        compact = str(raw_bitstring).replace(" ", "")
+        full_index = int(compact, 2)
+        x_index = full_index & x_mask
+        x_index_counts[x_index] += int(count)
+        if full_index >> int(num_x_qubits) == 0:
+            auxiliary_zero_count += int(count)
+
+    actual_shots = int(x_index_counts.sum())
+    if actual_shots <= 0:
+        raise RuntimeError("MPS 模拟没有返回有效测量结果")
+    x_probabilities = x_index_counts.astype(float) / float(actual_shots)
+    x_counts = {
+        bitstring_from_index(index, int(num_x_qubits)): int(count)
+        for index, count in enumerate(x_index_counts)
+        if int(count) > 0
+    }
+    return GateExecutionResult(
+        simulation_method="mps",
+        x_probabilities=x_probabilities,
+        x_counts=x_counts,
+        auxiliary_zero_probability=float(auxiliary_zero_count / actual_shots),
+        total_qubits=total_qubits,
+        estimated_statevector_memory_gb=memory_gb,
+    )
+
+
+def select_measured_candidate(
+    x_probabilities: np.ndarray,
+    *,
+    observed_indices: set[int] | list[int] | tuple[int, ...],
+    allowed_indices: set[int] | list[int] | tuple[int, ...] | None = None,
+) -> int | None:
+    """从实际电路输出分布中选择最高概率的未验证允许状态。"""
+
+    probabilities = np.asarray(x_probabilities, dtype=float)
+    observed = {int(index) for index in observed_indices}
+    allowed = (
+        set(range(probabilities.size))
+        if allowed_indices is None
+        else {int(index) for index in allowed_indices}
+    )
+    candidates = [
+        int(index)
+        for index, probability in enumerate(probabilities)
+        if int(index) in allowed and int(index) not in observed and float(probability) > 0.0
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda index: (float(probabilities[index]), -int(index)))
+
+
 def run(
     *,
     instance_path: Path,
@@ -100,6 +251,10 @@ def run(
     cost_unit: float = 1000.0,
     initialization_policy: str = "first",
     seed: int = 0,
+    simulation_method: str = "mps",
+    shots: int = 4096,
+    verify_phase_oracle: bool = False,
+    max_statevector_memory_gb: float = 1.0,
 ) -> dict[str, object]:
     if len(selected_generator_indices) != 2:
         raise ValueError("本原型只验证 2 台机组")
@@ -109,6 +264,10 @@ def run(
         raise ValueError("max_rounds 必须为正数")
     if initialization_policy not in INITIALIZATION_POLICIES:
         raise ValueError(f"initialization_policy 必须是 {INITIALIZATION_POLICIES} 之一")
+    if simulation_method not in SIMULATION_METHODS:
+        raise ValueError(f"simulation_method 必须是 {SIMULATION_METHODS} 之一")
+    if shots <= 0:
+        raise ValueError("shots 必须为正数")
 
     source = load_uc_instance(instance_path)
     instance = leading_time_window_instance(source, 2)
@@ -182,14 +341,7 @@ def run(
     for round_index in range(int(max_rounds)):
         threshold_before = float(incumbent_cost)
         diagnostics = predicted_cost_diagnostics(spec, real_threshold=threshold_before)
-        probe = simulate_fixed_point_phase_oracle(
-            spec,
-            real_threshold=threshold_before,
-            strict=True,
-        )
-        marked_indices = [int(index) for index in np.flatnonzero(probe.marked_mask)]
-        if marked_indices != diagnostics["marked_indices"]:
-            raise RuntimeError("经典固定点诊断与门级 phase oracle 的 marked states 不一致")
+        marked_indices = [int(index) for index in diagnostics["marked_indices"]]
 
         round_record: dict[str, object] = {
             "round": int(round_index),
@@ -200,13 +352,21 @@ def run(
             "minimum_predicted_minus_threshold": int(diagnostics["minimum_predicted_minus_threshold"]),
             "marked_indices": marked_indices,
             "marked_count": int(diagnostics["marked_count"]),
+            "simulation_method": simulation_method,
+            "shots": int(shots) if simulation_method == "mps" else None,
+            "phase_oracle_exact_verification": False,
+            "phase_max_error": None,
+            "phase_auxiliary_zero_probability": None,
+            "auxiliary_zero_probability": None,
             "grover_iterations": 0,
             "marked_probability": None,
-            "phase_max_error": float(probe.max_phase_error),
-            "auxiliary_zero_probability": float(probe.auxiliary_zero_probability),
+            "measured_marked_probability": None,
+            "x_counts": None,
+            "candidate_selection_source": None,
             "candidate_index": None,
             "candidate_bitstring": None,
             "candidate_probability": None,
+            "candidate_predicted_marked": None,
             "candidate_status": None,
             "candidate_true_cost": None,
             "accepted_update": False,
@@ -214,49 +374,69 @@ def run(
             "encoded_threshold_after": int(fixed_point.encode(threshold_before)),
         }
 
+        # 无 marked state 时直接停止，避免运行指数内存的 phase-oracle Statevector。
         if not marked_indices:
             round_record["stop_reason"] = "no_marked_state_at_fixed_point_threshold"
             rounds.append(round_record)
             break
 
-        grover = simulate_fixed_point_grover(
-            spec,
-            real_threshold=threshold_before,
-            strict=True,
-        )
-        phase_circuit = build_fixed_point_phase_oracle_circuit(
-            spec,
-            real_threshold=threshold_before,
-            strict=True,
-        )
+        if verify_phase_oracle:
+            probe = simulate_fixed_point_phase_oracle(
+                spec,
+                real_threshold=threshold_before,
+                strict=True,
+            )
+            probe_marked = [int(index) for index in np.flatnonzero(probe.marked_mask)]
+            if probe_marked != marked_indices:
+                raise RuntimeError("经典固定点诊断与门级 phase oracle 的 marked states 不一致")
+            round_record.update(
+                {
+                    "phase_oracle_exact_verification": True,
+                    "phase_max_error": float(probe.max_phase_error),
+                    "phase_auxiliary_zero_probability": float(probe.auxiliary_zero_probability),
+                }
+            )
+
+        iterations = optimal_grover_iterations(2**spec.num_x_qubits, len(marked_indices))
         grover_circuit = build_fixed_point_grover_circuit(
             spec,
             real_threshold=threshold_before,
-            iterations=grover.iterations,
+            iterations=iterations,
             strict=True,
         )
+        resources = circuit_resource_summary(grover_circuit, decompose_reps=1)
+        execution = execute_grover_circuit(
+            grover_circuit,
+            num_x_qubits=spec.num_x_qubits,
+            simulation_method=simulation_method,
+            shots=shots,
+            seed=seed + round_index,
+            max_statevector_memory_gb=max_statevector_memory_gb,
+        )
+        marked_probability = float(execution.x_probabilities[marked_indices].sum())
         round_record.update(
             {
-                "grover_iterations": int(grover.iterations),
-                "marked_probability": float(grover.marked_probability),
-                "auxiliary_zero_probability": float(grover.auxiliary_zero_probability),
-                "resources": {
-                    "phase_oracle": circuit_resource_summary(phase_circuit, decompose_reps=1),
-                    "grover_circuit": circuit_resource_summary(grover_circuit, decompose_reps=1),
-                },
+                "grover_iterations": int(iterations),
+                "marked_probability": marked_probability,
+                "measured_marked_probability": marked_probability if simulation_method == "mps" else None,
+                "x_counts": execution.x_counts,
+                "auxiliary_zero_probability": float(execution.auxiliary_zero_probability),
+                "total_qubits": int(execution.total_qubits),
+                "estimated_statevector_memory_gb": float(execution.estimated_statevector_memory_gb),
+                "resources": {"grover_circuit": resources},
             }
         )
 
-        unobserved_marked = [index for index in marked_indices if index not in observed]
-        if not unobserved_marked:
-            round_record["stop_reason"] = "all_marked_states_already_verified"
+        candidate_index = select_measured_candidate(
+            execution.x_probabilities,
+            observed_indices=set(observed),
+            allowed_indices=set(marked_indices),
+        )
+        if candidate_index is None:
+            round_record["stop_reason"] = "no_unverified_marked_state_in_quantum_output"
             rounds.append(round_record)
             break
 
-        candidate_index = max(
-            unobserved_marked,
-            key=lambda index: float(grover.x_probabilities[int(index)]),
-        )
         candidate_commitment = commitments[candidate_index]
         candidate_cost: float | None = None
         accepted = False
@@ -277,9 +457,15 @@ def run(
 
         round_record.update(
             {
+                "candidate_selection_source": (
+                    "measured_gate_level_counts"
+                    if simulation_method == "mps"
+                    else "exact_gate_level_statevector"
+                ),
                 "candidate_index": int(candidate_index),
                 "candidate_bitstring": bitstring_from_index(candidate_index, 4),
-                "candidate_probability": float(grover.x_probabilities[candidate_index]),
+                "candidate_probability": float(execution.x_probabilities[candidate_index]),
+                "candidate_predicted_marked": bool(candidate_index in marked_indices),
                 "candidate_status": status,
                 "candidate_true_cost": candidate_cost,
                 "accepted_update": bool(accepted),
@@ -299,8 +485,13 @@ def run(
         "uses_qft": False,
         "uses_weighted_adder": True,
         "uses_integer_comparator": True,
-        "uses_statevector_for_gate_level_execution": True,
+        "uses_statevector_for_gate_level_execution": simulation_method == "statevector",
+        "uses_aer_mps_for_gate_level_execution": simulation_method == "mps",
         "uses_hidden_full_enumeration_for_training": False,
+        "simulation_method": simulation_method,
+        "shots": int(shots) if simulation_method == "mps" else None,
+        "verify_phase_oracle": bool(verify_phase_oracle),
+        "max_statevector_memory_gb": float(max_statevector_memory_gb),
         "selected_generators": [int(index) for index in selected_generator_indices],
         "num_search_qubits": 4,
         "training_trace": training_trace,
@@ -340,12 +531,11 @@ def run(
         "verified_finite_indices": sorted(int(index) for index in observed),
         "notes": [
             "训练样本按代表性索引顺序逐个调用 ED/LP，达到指定数量后立即停止。",
-            (
-                "默认使用第一个有限训练样本作为初始 incumbent，"
-                "不再预先选择训练集最低成本。"
-            ),
+            "默认使用第一个有限训练样本作为初始 incumbent，不再预先选择训练集最低成本。",
+            "默认使用 Aer MPS + shots 执行完整门级 Grover 电路，候选来自实际测量分布。",
+            "无 marked state 时直接停止，不再启动昂贵的 phase-oracle Statevector。",
+            "精确 phase 和 uncompute 验证由专项测试覆盖，也可用 --verify-phase-oracle 显式开启。",
             "所有成本、仿射系数和 GAS threshold 使用同一个固定点配置。",
-            "statevector 只执行完整门级电路并读取概率，不直接改写量子振幅。",
             "当前模型是单一经典 ridge 仿射值函数基线，尚未实现 VQC。",
         ],
     }
@@ -379,6 +569,18 @@ def build_argument_parser() -> argparse.ArgumentParser:
         default="first",
     )
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--simulation-method",
+        choices=SIMULATION_METHODS,
+        default="mps",
+    )
+    parser.add_argument("--shots", type=int, default=4096)
+    parser.add_argument(
+        "--verify-phase-oracle",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument("--max-statevector-memory-gb", type=float, default=1.0)
     return parser
 
 
@@ -394,6 +596,10 @@ def main() -> None:
         cost_unit=args.cost_unit,
         initialization_policy=args.initialization_policy,
         seed=args.seed,
+        simulation_method=args.simulation_method,
+        shots=args.shots,
+        verify_phase_oracle=args.verify_phase_oracle,
+        max_statevector_memory_gb=args.max_statevector_memory_gb,
     )
     print(json.dumps(summary["final_incumbent"], ensure_ascii=False, indent=2))
 
