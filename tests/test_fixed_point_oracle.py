@@ -1,0 +1,84 @@
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+from qubit_value_function.fixed_point_oracle import (
+    FixedPointAffineSpec,
+    FixedPointConfig,
+    fit_affine_cost_model,
+    simulate_fixed_point_grover,
+    simulate_fixed_point_phase_oracle,
+)
+
+
+def test_fixed_point_config_uses_common_cost_scale() -> None:
+    config = FixedPointConfig(fractional_bits=2, unit=1000.0)
+    assert config.scale == 4
+    assert config.quantum == 250.0
+    assert config.encode(20625.0) == 82
+    assert config.decode(82) == 20500.0
+    assert config.max_abs_rounding_error == 125.0
+
+
+def test_fixed_point_config_has_chinese_validation_message() -> None:
+    with pytest.raises(ValueError, match="fractional_bits 不能为负数"):
+        FixedPointConfig(fractional_bits=-1)
+
+
+def test_negative_coefficients_are_rewritten_for_weighted_adder() -> None:
+    config = FixedPointConfig(fractional_bits=0, unit=1.0)
+    spec = FixedPointAffineSpec.from_real_coefficients(
+        config=config,
+        intercept=10.0,
+        coefficients=(3.0, -4.0, 2.0, -1.0),
+    )
+    assert spec.encoded_offset == 5
+    assert spec.weights == (3, 4, 2, 1)
+    assert spec.inverted_bit_indices == (1, 3)
+    for index in range(16):
+        assert spec.encoded_cost_for_index(index) == spec.direct_encoded_cost_for_index(index)
+
+
+def test_affine_fit_uses_one_deterministic_method() -> None:
+    bitstrings = ["0000", "1000", "0100", "0010", "0001", "1111"]
+    true_intercept = 20.0
+    true_coefficients = np.array([3.0, -4.0, 2.0, 1.0])
+    costs = [
+        true_intercept
+        + float(np.dot(true_coefficients, np.array([int(bit) for bit in bitstring], dtype=float)))
+        for bitstring in bitstrings
+    ]
+    intercept, coefficients = fit_affine_cost_model(bitstrings=bitstrings, costs=costs)
+    assert np.isclose(intercept, true_intercept, atol=1e-6)
+    assert np.allclose(coefficients, true_coefficients, atol=1e-6)
+
+
+def test_fixed_point_phase_oracle_marks_cost_below_true_threshold_and_uncomputes() -> None:
+    config = FixedPointConfig(fractional_bits=0, unit=1.0)
+    spec = FixedPointAffineSpec.from_real_coefficients(
+        config=config,
+        intercept=10.0,
+        coefficients=(-4.0, 2.0, 3.0),
+    )
+    probe = simulate_fixed_point_phase_oracle(spec, real_threshold=7.0, strict=True)
+    expected_marked = np.array(
+        [spec.encoded_cost_for_index(index) < config.encode(7.0) for index in range(8)],
+        dtype=bool,
+    )
+    assert np.array_equal(probe.marked_mask, expected_marked)
+    assert probe.auxiliary_zero_probability > 1.0 - 1e-12
+    assert probe.max_phase_error < 1e-12
+
+
+def test_fixed_point_grover_amplifies_unique_marked_state() -> None:
+    config = FixedPointConfig(fractional_bits=0, unit=1.0)
+    spec = FixedPointAffineSpec.from_real_coefficients(
+        config=config,
+        intercept=3.0,
+        coefficients=(-1.0, -1.0, -1.0),
+    )
+    result = simulate_fixed_point_grover(spec, real_threshold=1.0, strict=True)
+    assert int(result.marked_mask.sum()) == 1
+    assert result.marked_probability > 0.9
+    assert result.auxiliary_zero_probability > 1.0 - 1e-12
