@@ -2,15 +2,21 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from qiskit import QuantumCircuit
 
 from experiments.stage1_case14_t2_fixed_point_affine_gas import (
+    AerSimulator,
     build_argument_parser,
+    estimate_statevector_memory_gb,
+    execute_grover_circuit,
     predicted_cost_diagnostics,
     select_initial_index,
+    select_measured_candidate,
 )
 from qubit_value_function.fixed_point_oracle import (
     FixedPointAffineSpec,
     FixedPointConfig,
+    build_fixed_point_grover_circuit,
     fit_affine_cost_model,
     simulate_fixed_point_grover,
     simulate_fixed_point_phase_oracle,
@@ -59,10 +65,14 @@ def test_affine_fit_uses_one_deterministic_method() -> None:
     assert np.allclose(coefficients, true_coefficients, atol=1e-6)
 
 
-def test_default_initialization_policy_is_first() -> None:
+def test_default_initialization_and_simulation_options() -> None:
     args = build_argument_parser().parse_args([])
     assert args.initialization_policy == "first"
     assert args.seed == 0
+    assert args.simulation_method == "mps"
+    assert args.shots == 4096
+    assert args.verify_phase_oracle is False
+    assert args.max_statevector_memory_gb == 1.0
 
 
 def test_first_initialization_does_not_choose_best_training_cost() -> None:
@@ -97,6 +107,35 @@ def test_predicted_cost_diagnostics_has_complete_threshold_fields() -> None:
     assert diagnostics["marked_count"] == len(diagnostics["marked_indices"])
 
 
+def test_statevector_memory_estimate_and_guard() -> None:
+    assert estimate_statevector_memory_gb(27) == 2.0
+    circuit = QuantumCircuit(27)
+    with pytest.raises(RuntimeError, match="请改用 --simulation-method mps"):
+        execute_grover_circuit(
+            circuit,
+            num_x_qubits=1,
+            simulation_method="statevector",
+            shots=1,
+            seed=0,
+            max_statevector_memory_gb=1.0,
+        )
+
+
+def test_measured_candidate_comes_from_nonzero_allowed_distribution() -> None:
+    probabilities = np.array([0.05, 0.70, 0.20, 0.05])
+    candidate = select_measured_candidate(
+        probabilities,
+        observed_indices={1},
+        allowed_indices={1, 2},
+    )
+    assert candidate == 2
+    assert select_measured_candidate(
+        probabilities,
+        observed_indices={1, 2},
+        allowed_indices={1, 2},
+    ) is None
+
+
 def test_fixed_point_phase_oracle_marks_cost_below_true_threshold_and_uncomputes() -> None:
     config = FixedPointConfig(fractional_bits=0, unit=1.0)
     spec = FixedPointAffineSpec.from_real_coefficients(
@@ -125,3 +164,32 @@ def test_fixed_point_grover_amplifies_unique_marked_state() -> None:
     assert int(result.marked_mask.sum()) == 1
     assert result.marked_probability > 0.9
     assert result.auxiliary_zero_probability > 1.0 - 1e-12
+
+
+@pytest.mark.skipif(AerSimulator is None, reason="qiskit-aer 未安装")
+def test_mps_executes_complete_grover_circuit_and_measures_marked_state() -> None:
+    config = FixedPointConfig(fractional_bits=0, unit=1.0)
+    spec = FixedPointAffineSpec.from_real_coefficients(
+        config=config,
+        intercept=2.0,
+        coefficients=(-1.0, -1.0),
+    )
+    circuit = build_fixed_point_grover_circuit(
+        spec,
+        real_threshold=1.0,
+        iterations=1,
+        strict=True,
+    )
+    result = execute_grover_circuit(
+        circuit,
+        num_x_qubits=2,
+        simulation_method="mps",
+        shots=512,
+        seed=23,
+        max_statevector_memory_gb=1.0,
+    )
+    assert result.simulation_method == "mps"
+    assert result.x_counts is not None
+    assert result.x_counts.get("11", 0) > 450
+    assert result.x_probabilities[3] > 0.88
+    assert result.auxiliary_zero_probability > 0.99
