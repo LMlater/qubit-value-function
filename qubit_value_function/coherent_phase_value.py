@@ -14,15 +14,7 @@ from .sparse_phase_vqc import PhaseFeature, SparsePhaseVQC
 
 @dataclass(frozen=True)
 class QuantizedSparseValueModel:
-    """Integer fixed-point form of a sparse diagonal phase VQC.
-
-    The represented signed cost code is
-
-        integer_intercept + sum_j integer_weights[j] * feature_j(x).
-
-    ``value_shift`` maps the conservative signed range to a non-negative
-    phase-estimation register without enumerating the 2^(G*T) input states.
-    """
+    """Fixed-point sparse value model derived from a trained diagonal phase VQC."""
 
     num_generators: int
     num_periods: int
@@ -110,8 +102,10 @@ class QuantizedSparseValueModel:
         return np.array([feature.evaluate(row) for feature in self.features], dtype=int)
 
     def integer_value(self, bits: Sequence[int] | str) -> int:
-        values = self.feature_values(bits)
-        return int(self.integer_intercept + np.dot(np.asarray(self.integer_weights), values))
+        return int(
+            self.integer_intercept
+            + np.dot(np.asarray(self.integer_weights, dtype=int), self.feature_values(bits))
+        )
 
     def shifted_integer_value(self, bits: Sequence[int] | str) -> int:
         value = int(self.integer_value(bits) + self.value_shift)
@@ -136,7 +130,9 @@ class QuantizedSparseValueModel:
         strict: bool = True,
     ) -> bool:
         value = self.integer_value(bits)
-        return bool(value < int(encoded_threshold) if strict else value <= int(encoded_threshold))
+        if strict:
+            return bool(value < int(encoded_threshold))
+        return bool(value <= int(encoded_threshold))
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -172,9 +168,7 @@ class QuantizedSparseValueModel:
                     "integer_weight": int(integer_weight),
                 }
                 for feature, real_weight, integer_weight in zip(
-                    self.features,
-                    self.real_weights,
-                    self.integer_weights,
+                    self.features, self.real_weights, self.integer_weights
                 )
             ],
             "source_phase_model_metadata": self.source_phase_model_metadata,
@@ -230,15 +224,17 @@ def quantize_sparse_phase_model(
     integer_intercept = int(config.encode(real_intercept))
     integer_weights = tuple(int(config.encode(value)) for value in real_weights)
     lower_bound, upper_bound = conservative_integer_bounds(
-        integer_intercept,
-        integer_weights,
+        integer_intercept, integer_weights
     )
     value_shift = int(-lower_bound)
     shifted_upper_bound = int(upper_bound + value_shift)
     num_value_qubits = max(1, int(shifted_upper_bound).bit_length())
     coefficient_errors = (
         float(config.decode(integer_intercept) - real_intercept),
-        *(float(config.decode(value) - real) for value, real in zip(integer_weights, real_weights)),
+        *(
+            float(config.decode(value) - real)
+            for value, real in zip(integer_weights, real_weights)
+        ),
     )
     model = QuantizedSparseValueModel(
         num_generators=phase_model.num_generators,
@@ -265,12 +261,7 @@ def quantize_sparse_phase_model(
 
 
 def build_integer_value_phase_circuit(model: QuantizedSparseValueModel) -> QuantumCircuit:
-    """Build U|x> = exp(2πi shifted_value(x)/2^m)|x>.
-
-    The constant term is represented as the circuit global phase here. In the
-    coherent controlled powers used by phase estimation, the same term is
-    explicitly applied to each evaluation qubit as a relative phase.
-    """
+    """Build U|x> = exp(2πi shifted_value(x)/2^m)|x>."""
 
     circuit = QuantumCircuit(model.num_x_qubits, name="integer_sparse_value_phase")
     angle_unit = 2.0 * np.pi / float(model.phase_modulus)
@@ -285,7 +276,7 @@ def build_integer_value_phase_circuit(model: QuantizedSparseValueModel) -> Quant
 
 
 def build_phase_to_value_circuit(model: QuantizedSparseValueModel) -> QuantumCircuit:
-    """Coherently map |x>|0> to |x>|shifted_integer_value(x)> without measurement."""
+    """Coherently map |x>|0> to |x>|shifted_integer_value(x)>."""
 
     x_register = QuantumRegister(model.num_x_qubits, "x")
     value_register = QuantumRegister(model.num_value_qubits, "value")
@@ -325,7 +316,7 @@ def build_sparse_vqc_threshold_phase_oracle(
     encoded_real_threshold: int,
     strict: bool = True,
 ) -> QuantumCircuit:
-    """Build compute-comparator-phase-uncompute for the quantized sparse VQC."""
+    """Build phase-to-value, integer comparison, phase marking, and uncompute."""
 
     compare_value = model.shifted_compare_value(encoded_real_threshold, strict=strict)
     comparator = IntegerComparator(model.num_value_qubits, compare_value, geq=False)
@@ -346,10 +337,12 @@ def build_sparse_vqc_threshold_phase_oracle(
 
     x_qubits = list(x_register)
     value_qubits = list(value_register)
-    comparator_ancillas = list(comparator_register) if comparator_register is not None else []
+    comparator_ancillas = (
+        list(comparator_register) if comparator_register is not None else []
+    )
     compute_gate = build_phase_to_value_circuit(model).to_gate(label="phase_to_value")
-    circuit.append(compute_gate, x_qubits + value_qubits)
     comparator_gate = comparator.to_gate()
+    circuit.append(compute_gate, x_qubits + value_qubits)
     circuit.append(
         comparator_gate,
         value_qubits + [flag_register[0]] + comparator_ancillas,
@@ -368,17 +361,13 @@ def basis_value_code_probe(
     bits: Sequence[int] | str,
 ) -> BasisValueCodeProbe:
     row = _coerce_bits(bits, model.num_x_qubits)
-    circuit = build_phase_to_value_circuit(model)
+    compute_gate = build_phase_to_value_circuit(model).to_gate(label="phase_to_value")
+    circuit = QuantumCircuit(model.num_x_qubits + model.num_value_qubits)
     for index, bit in enumerate(row):
         if bit:
             circuit.x(index)
-    # State preparation must precede phase-to-value, so rebuild in the correct order.
-    prepared = QuantumCircuit(model.num_x_qubits + model.num_value_qubits)
-    for index, bit in enumerate(row):
-        if bit:
-            prepared.x(index)
-    prepared.append(circuit.to_gate(), list(prepared.qubits))
-    probabilities = Statevector.from_instruction(prepared).probabilities()
+    circuit.append(compute_gate, list(circuit.qubits))
+    probabilities = Statevector.from_instruction(circuit).probabilities()
     value_probabilities = _value_marginal_probabilities(
         probabilities,
         num_x_qubits=model.num_x_qubits,
@@ -398,10 +387,8 @@ def phase_to_value_superposition_probe(
 ) -> PhaseToValueSuperpositionProbe:
     compute = build_phase_to_value_circuit(model).to_gate(label="phase_to_value")
     circuit = QuantumCircuit(model.num_x_qubits + model.num_value_qubits)
-    x_qubits = list(circuit.qubits[: model.num_x_qubits])
-    all_qubits = list(circuit.qubits)
-    circuit.h(x_qubits)
-    circuit.append(compute, all_qubits)
+    circuit.h(list(circuit.qubits[: model.num_x_qubits]))
+    circuit.append(compute, list(circuit.qubits))
     probabilities = Statevector.from_instruction(circuit).probabilities()
     pairing_probability = 0.0
     for x_index in range(2 ** model.num_x_qubits):
@@ -417,10 +404,11 @@ def phase_to_value_superposition_probe(
     uncompute.append(compute.inverse(), list(uncompute.qubits))
     uncompute_probabilities = Statevector.from_instruction(uncompute).probabilities()
     x_dimension = 2 ** model.num_x_qubits
-    auxiliary_zero_probability = float(np.sum(uncompute_probabilities[:x_dimension]))
     return PhaseToValueSuperpositionProbe(
         pairing_probability=float(pairing_probability),
-        inverse_auxiliary_zero_probability=auxiliary_zero_probability,
+        inverse_auxiliary_zero_probability=float(
+            np.sum(uncompute_probabilities[:x_dimension])
+        ),
     )
 
 
@@ -458,11 +446,10 @@ def simulate_sparse_vqc_threshold_phase_oracle(
         dtype=bool,
     )
     expected = np.where(marked, -1.0 + 0.0j, 1.0 + 0.0j)
-    auxiliary_zero_probability = float(np.sum(probabilities[:dimension]))
     return SparseThresholdOracleProbe(
         phase_signs=phase_signs,
         marked_mask=marked,
-        auxiliary_zero_probability=auxiliary_zero_probability,
+        auxiliary_zero_probability=float(np.sum(probabilities[:dimension])),
         max_phase_error=float(np.max(np.abs(phase_signs - expected))),
     )
 
@@ -490,7 +477,6 @@ def _append_phase_to_value_body(
     for power_index, evaluation_qubit in enumerate(value_qubits):
         power = 2 ** int(power_index)
         angle_unit = 2.0 * np.pi * float(power) / modulus
-        # A global phase of U becomes a relative phase when U is controlled.
         circuit.p(angle_unit * float(model.shifted_intercept), evaluation_qubit)
         _append_controlled_integer_phase_terms(
             circuit,
