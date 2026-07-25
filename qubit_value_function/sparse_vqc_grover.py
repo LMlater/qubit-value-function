@@ -19,6 +19,10 @@ from .coherent_phase_value import (
     estimate_statevector_memory_gb,
 )
 from .gate_level_oracle import bitstring_from_index
+from .logic_feasibility_oracle import (
+    LogicFeasibilitySpec,
+    build_joint_feasible_better_phase_oracle,
+)
 
 
 DEFAULT_MAX_VALIDATION_QUBITS = 12
@@ -71,19 +75,37 @@ def build_sparse_vqc_grover_circuit(
     *,
     encoded_threshold: int,
     iterations: int,
+    feasibility_spec: LogicFeasibilitySpec | None = None,
 ) -> QuantumCircuit:
-    """Build ordinary Grover without enumerating states or inferring marked count."""
+    """Build ordinary Grover without enumerating states or inferring marked count.
+
+    When ``feasibility_spec`` is supplied, each Grover iteration uses the joint
+    hard-logic-feasible AND sparse-cost-better phase oracle.  Otherwise the
+    backward-compatible cost-only threshold oracle is used.
+    """
 
     iterations = int(iterations)
     if iterations < 0:
         raise ValueError("iterations 不能为负数")
-    oracle = build_sparse_vqc_threshold_phase_oracle(
-        model,
-        encoded_real_threshold=int(encoded_threshold),
-        strict=True,
-    )
-    oracle_gate = oracle.to_gate(label="sparse_vqc_threshold")
-    circuit = QuantumCircuit(oracle.num_qubits, name="sparse_vqc_ordinary_grover")
+    if feasibility_spec is None:
+        oracle = build_sparse_vqc_threshold_phase_oracle(
+            model,
+            encoded_real_threshold=int(encoded_threshold),
+            strict=True,
+        )
+        oracle_label = "sparse_vqc_threshold"
+        circuit_name = "sparse_vqc_ordinary_grover"
+    else:
+        oracle = build_joint_feasible_better_phase_oracle(
+            model,
+            encoded_threshold=int(encoded_threshold),
+            feasibility_spec=feasibility_spec,
+        )
+        oracle_label = "feasible_and_better"
+        circuit_name = "feasible_sparse_vqc_ordinary_grover"
+
+    oracle_gate = oracle.to_gate(label=oracle_label)
+    circuit = QuantumCircuit(oracle.num_qubits, name=circuit_name)
     x_qubits = list(circuit.qubits[: model.num_x_qubits])
     all_qubits = list(circuit.qubits)
     circuit.h(x_qubits)
@@ -121,18 +143,22 @@ def ordinary_grover_validation_plan(
     *,
     encoded_threshold: int,
     max_validation_qubits: int = DEFAULT_MAX_VALIDATION_QUBITS,
+    feasibility_spec: LogicFeasibilitySpec | None = None,
 ) -> OrdinaryGroverValidationPlan:
     """Enumerate only a guarded small instance for validation and iteration selection."""
 
     _validate_enumeration_size(model, max_validation_qubits)
+    if feasibility_spec is not None and feasibility_spec.num_x_qubits != model.num_x_qubits:
+        raise ValueError("feasibility spec 与 value model 的 search register 不一致")
     dimension = 2 ** int(model.num_x_qubits)
     marked = tuple(
         index
         for index in range(dimension)
-        if model.is_marked(
+        if _validation_marked(
+            model,
             _bits_from_index(index, model.num_x_qubits),
             int(encoded_threshold),
-            strict=True,
+            feasibility_spec,
         )
     )
     marked_count = len(marked)
@@ -156,14 +182,21 @@ def direct_float_marked_indices_for_validation(
     predict_cost,
     encoded_threshold: int,
     max_validation_qubits: int = DEFAULT_MAX_VALIDATION_QUBITS,
+    feasibility_spec: LogicFeasibilitySpec | None = None,
 ) -> tuple[int, ...]:
     """Diagnostic-only marked set from rounding the complete floating prediction."""
 
     _validate_enumeration_size(model, max_validation_qubits)
+    if feasibility_spec is not None and feasibility_spec.num_x_qubits != model.num_x_qubits:
+        raise ValueError("feasibility spec 与 value model 的 search register 不一致")
     return tuple(
         index
         for index in range(2 ** model.num_x_qubits)
-        if model.fixed_point_config.encode(
+        if (
+            feasibility_spec is None
+            or feasibility_spec.is_feasible(_bits_from_index(index, model.num_x_qubits))
+        )
+        and model.fixed_point_config.encode(
             float(predict_cost(bitstring_from_index(index, model.num_x_qubits)))
         )
         < int(encoded_threshold)
@@ -193,6 +226,7 @@ def simulate_sparse_vqc_grover_statevector(
     encoded_threshold: int,
     iterations: int,
     max_validation_qubits: int = DEFAULT_MAX_VALIDATION_QUBITS,
+    feasibility_spec: LogicFeasibilitySpec | None = None,
 ) -> SparseGroverStatevectorProbe:
     """Exact guarded small-instance validation of the full ordinary-Grover circuit."""
 
@@ -200,11 +234,13 @@ def simulate_sparse_vqc_grover_statevector(
         model,
         encoded_threshold=encoded_threshold,
         max_validation_qubits=max_validation_qubits,
+        feasibility_spec=feasibility_spec,
     )
     circuit = build_sparse_vqc_grover_circuit(
         model,
         encoded_threshold=encoded_threshold,
         iterations=iterations,
+        feasibility_spec=feasibility_spec,
     )
     probabilities = Statevector.from_instruction(circuit).probabilities()
     x_probabilities, auxiliary_zero_probability = _x_marginal_probabilities(
@@ -334,6 +370,17 @@ def select_measured_candidate(
         probability=float(count / total),
         was_observed=bool(index in observed),
     )
+
+
+def _validation_marked(
+    model: QuantizedSparseValueModel,
+    bits: Sequence[int],
+    encoded_threshold: int,
+    feasibility_spec: LogicFeasibilitySpec | None,
+) -> bool:
+    if feasibility_spec is not None and not feasibility_spec.is_feasible(bits):
+        return False
+    return model.is_marked(bits, int(encoded_threshold), strict=True)
 
 
 def _validate_enumeration_size(
