@@ -59,6 +59,8 @@ class SparseGroverMPSResult:
     total_qubits: int
     estimated_statevector_memory_gb: float
     elapsed_seconds: float
+    transpile_seconds: float = 0.0
+    backend_run_seconds: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -80,7 +82,7 @@ def build_sparse_vqc_grover_circuit(
     """Build ordinary Grover without enumerating states or inferring marked count.
 
     When ``feasibility_spec`` is supplied, each Grover iteration uses the joint
-    hard-logic-feasible AND sparse-cost-better phase oracle.  Otherwise the
+    hard-logic-feasible AND sparse-cost-better phase oracle. Otherwise the
     backward-compatible cost-only threshold oracle is used.
     """
 
@@ -266,7 +268,7 @@ def execute_sparse_vqc_grover_mps(
     shots: int = 4096,
     seed: int = 0,
 ) -> SparseGroverMPSResult:
-    """Execute the complete circuit with Aer MPS and aggregate actual measurements."""
+    """Execute the complete circuit with Aer MPS and report split timing."""
 
     if AerSimulator is None:
         raise RuntimeError("MPS 模拟需要安装 qiskit-aer")
@@ -285,19 +287,23 @@ def execute_sparse_vqc_grover_mps(
     measured.measure(measured.qubits, classical)
 
     backend = AerSimulator(method="matrix_product_state")
-    started = perf_counter()
+    transpile_started = perf_counter()
     compiled = transpile(
         measured,
         backend,
         optimization_level=1,
         seed_transpiler=seed,
     )
+    transpile_seconds = perf_counter() - transpile_started
+
+    backend_started = perf_counter()
     result = backend.run(
         compiled,
         shots=shots,
         seed_simulator=seed,
     ).result()
-    elapsed = perf_counter() - started
+    backend_run_seconds = perf_counter() - backend_started
+    elapsed = transpile_seconds + backend_run_seconds
     returned_counts = result.get_counts(compiled)
 
     x_dimension = 2**num_x_qubits
@@ -333,6 +339,8 @@ def execute_sparse_vqc_grover_mps(
         total_qubits=total_qubits,
         estimated_statevector_memory_gb=estimate_statevector_memory_gb(total_qubits),
         elapsed_seconds=float(elapsed),
+        transpile_seconds=float(transpile_seconds),
+        backend_run_seconds=float(backend_run_seconds),
     )
 
 
