@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import ceil, sqrt
+from time import perf_counter
 from typing import Callable, Mapping
 
 import numpy as np
@@ -31,7 +32,7 @@ STOP_REASONS = (
 
 @dataclass(frozen=True)
 class BBHTConfig:
-    """Budgets, random-window policy, and auxiliary-syndrome acceptance rule."""
+    """Budgets, random-window policy, margin, and syndrome acceptance rule."""
 
     lambda_factor: float = 1.2
     max_trials: int = 64
@@ -41,6 +42,7 @@ class BBHTConfig:
     max_consecutive_nonimproving_marked: int = 16
     max_same_encoded_threshold_updates: int = 3
     max_auxiliary_syndrome_rejections: int = 8
+    surrogate_integer_margin: int = 0
     shots_per_trial: int = 1
     minimum_auxiliary_zero_probability: float = 1.0 - 1e-12
     seed: int = 0
@@ -59,6 +61,8 @@ class BBHTConfig:
         ):
             if int(getattr(self, name)) <= 0:
                 raise ValueError(f"{name} 必须为正整数")
+        if int(self.surrogate_integer_margin) < 0:
+            raise ValueError("surrogate_integer_margin 必须为非负整数")
         if int(self.shots_per_trial) != 1:
             raise ValueError("正式 BBHT 循环要求 shots_per_trial=1；多 shots 仅用于普通 Grover 诊断")
         minimum = float(self.minimum_auxiliary_zero_probability)
@@ -68,12 +72,7 @@ class BBHTConfig:
 
 @dataclass(frozen=True)
 class ExactCandidateEvaluation:
-    """Exact candidate record cached by commitment index.
-
-    ``lp_solve_performed`` separates a true LP solve from a cheaper logic
-    precheck rejection. The legacy BBHT budget still counts one new exact
-    evaluation attempt for either path.
-    """
+    """Exact candidate record cached by commitment index."""
 
     success: bool
     total_cost: float | None
@@ -121,15 +120,20 @@ class BBHTTrialExecution:
     estimated_statevector_memory_gb: float
     elapsed_seconds: float
     circuit_resources: dict[str, object]
+    circuit_build_seconds: float = 0.0
+    transpile_seconds: float = 0.0
+    backend_run_seconds: float = 0.0
+    total_trial_seconds: float = 0.0
 
 
 @dataclass(frozen=True)
 class SparseVQCBBHTResult:
-    initial_incumbent_index: int
-    initial_incumbent_true_cost: float
-    final_incumbent_index: int
-    final_incumbent_true_cost: float
-    final_encoded_threshold: int
+    initial_incumbent_index: int | None
+    initial_incumbent_true_cost: float | None
+    final_incumbent_index: int | None
+    final_incumbent_true_cost: float | None
+    final_encoded_threshold: int | None
+    final_effective_oracle_threshold: int | None
     stop_reason: str
     trial_trace: tuple[dict[str, object], ...]
     threshold_history: tuple[dict[str, object], ...]
@@ -152,15 +156,28 @@ class SparseVQCBBHTResult:
     bbht_m_cap: int
     uses_hard_feasibility_oracle: bool
     config: BBHTConfig
+    preflight_hard_logic_space_empty: bool = False
+    preflight_reason: str | None = None
+    preflight_circuit_skipped: bool = False
 
     def as_dict(self) -> dict[str, object]:
         return {
-            "initial_incumbent_index": int(self.initial_incumbent_index),
-            "initial_incumbent_true_cost": float(self.initial_incumbent_true_cost),
-            "final_incumbent_index": int(self.final_incumbent_index),
-            "final_incumbent_true_cost": float(self.final_incumbent_true_cost),
-            "final_encoded_threshold": int(self.final_encoded_threshold),
+            "initial_incumbent_index": _optional_int(self.initial_incumbent_index),
+            "initial_incumbent_true_cost": _optional_float(
+                self.initial_incumbent_true_cost
+            ),
+            "final_incumbent_index": _optional_int(self.final_incumbent_index),
+            "final_incumbent_true_cost": _optional_float(self.final_incumbent_true_cost),
+            "final_encoded_threshold": _optional_int(self.final_encoded_threshold),
+            "final_effective_oracle_threshold": _optional_int(
+                self.final_effective_oracle_threshold
+            ),
             "stop_reason": self.stop_reason,
+            "preflight": {
+                "hard_logic_space_empty": bool(self.preflight_hard_logic_space_empty),
+                "reason": self.preflight_reason,
+                "circuit_skipped": bool(self.preflight_circuit_skipped),
+            },
             "trial_trace": list(self.trial_trace),
             "threshold_history": list(self.threshold_history),
             "exact_cache": {
@@ -210,6 +227,9 @@ class SparseVQCBBHTResult:
                 "max_auxiliary_syndrome_rejections": int(
                     self.config.max_auxiliary_syndrome_rejections
                 ),
+                "surrogate_integer_margin": int(
+                    self.config.surrogate_integer_margin
+                ),
                 "shots_per_trial": int(self.config.shots_per_trial),
                 "minimum_auxiliary_zero_probability": float(
                     self.config.minimum_auxiliary_zero_probability
@@ -220,6 +240,7 @@ class SparseVQCBBHTResult:
             "uses_validation_enumeration": False,
             "uses_hard_feasibility_oracle": bool(self.uses_hard_feasibility_oracle),
             "threshold_updates_require_true_ed_lp_improvement": True,
+            "surrogate_margin_affects_oracle_only": True,
             "legacy_new_ed_lp_calls_semantics": (
                 "alias of new_exact_evaluation_attempts; use actual_ed_lp_solves "
                 "for physical LP-solve count"
@@ -288,12 +309,14 @@ def execute_bbht_trial_mps(
 
     if int(shots) != 1:
         raise ValueError("BBHT trial 必须使用单 shot")
+    build_started = perf_counter()
     circuit = build_sparse_vqc_grover_circuit(
         model,
         encoded_threshold=int(encoded_threshold),
         iterations=int(iterations),
         feasibility_spec=feasibility_spec,
     )
+    circuit_build_seconds = perf_counter() - build_started
     execution = execute_sparse_vqc_grover_mps(
         circuit,
         num_x_qubits=model.num_x_qubits,
@@ -320,40 +343,90 @@ def execute_bbht_trial_mps(
         ),
         elapsed_seconds=float(execution.elapsed_seconds),
         circuit_resources=circuit_resource_summary(circuit, decompose_reps=1),
+        circuit_build_seconds=float(circuit_build_seconds),
+        transpile_seconds=float(execution.transpile_seconds),
+        backend_run_seconds=float(execution.backend_run_seconds),
+        total_trial_seconds=float(circuit_build_seconds + execution.elapsed_seconds),
     )
 
 
 def run_sparse_vqc_bbht(
     model: QuantizedSparseValueModel,
     *,
-    initial_incumbent_index: int,
-    initial_exact_cache: Mapping[int, ExactCandidateEvaluation],
-    evaluate_candidate: ExactEvaluator,
+    initial_incumbent_index: int | None = None,
+    initial_exact_cache: Mapping[int, ExactCandidateEvaluation] | None = None,
+    evaluate_candidate: ExactEvaluator | None = None,
     config: BBHTConfig = BBHTConfig(),
     trial_executor: TrialExecutor | None = None,
     feasibility_spec: LogicFeasibilitySpec | None = None,
 ) -> SparseVQCBBHTResult:
     """Run adaptive BBHT without marked-count enumeration.
 
-    A candidate is eligible for exact validation only when the actual measured
-    state passes the hard logic-feasibility specification (when supplied) and
-    its sparse integer value is below the current encoded threshold. The true
-    incumbent changes only after a strict cached/new exact-cost improvement.
+    The integer surrogate margin widens only the coherent oracle threshold:
+    ``integer_value < encode(true_incumbent_cost) + margin``. The incumbent and
+    base threshold still change only after a strict exact-cost improvement.
     """
 
-    cache = {int(index): record for index, record in initial_exact_cache.items()}
+    if feasibility_spec is not None and feasibility_spec.num_x_qubits != model.num_x_qubits:
+        raise ValueError("feasibility spec 与 value model 的 search register 不一致")
+
+    dimension = 2 ** int(model.num_x_qubits)
+    m_cap = max(1, int(ceil(sqrt(float(dimension)))))
+    cache = {
+        int(index): record
+        for index, record in (initial_exact_cache or {}).items()
+    }
+
+    if feasibility_spec is not None and feasibility_spec.always_infeasible:
+        return SparseVQCBBHTResult(
+            initial_incumbent_index=None,
+            initial_incumbent_true_cost=None,
+            final_incumbent_index=None,
+            final_incumbent_true_cost=None,
+            final_encoded_threshold=None,
+            final_effective_oracle_threshold=None,
+            stop_reason="no_hard_logic_feasible_state_by_compiled_constraints",
+            trial_trace=(),
+            threshold_history=(),
+            exact_cache=cache,
+            marked_candidate_hits={},
+            repeated_candidate_hits={},
+            circuit_executions=0,
+            total_shots=0,
+            total_oracle_calls=0,
+            total_diffuser_calls=0,
+            new_exact_evaluation_attempts=0,
+            actual_ed_lp_solves=0,
+            logic_precheck_rejections=0,
+            new_ed_lp_calls=0,
+            cached_exact_lookups=0,
+            auxiliary_syndrome_rejections=0,
+            threshold_updates=0,
+            same_encoded_threshold_updates=0,
+            max_m_reached=0,
+            bbht_m_cap=int(m_cap),
+            uses_hard_feasibility_oracle=True,
+            config=config,
+            preflight_hard_logic_space_empty=True,
+            preflight_reason="compiled_constraints",
+            preflight_circuit_skipped=True,
+        )
+
+    if initial_incumbent_index is None:
+        raise ValueError("非空搜索空间必须提供 initial_incumbent_index")
+    if initial_exact_cache is None:
+        raise ValueError("非空搜索空间必须提供 initial_exact_cache")
+    if evaluate_candidate is None:
+        raise ValueError("非空搜索空间必须提供 evaluate_candidate")
+
     initial_incumbent_index = int(initial_incumbent_index)
     initial_record = cache.get(initial_incumbent_index)
     if initial_record is None or not initial_record.success or initial_record.total_cost is None:
         raise ValueError("初始 incumbent 必须存在于成功的 exact cache 中")
-
     if feasibility_spec is not None:
-        if feasibility_spec.num_x_qubits != model.num_x_qubits:
-            raise ValueError("feasibility spec 与 value model 的 search register 不一致")
-        if not feasibility_spec.always_infeasible:
-            initial_bits = _bits_from_index(initial_incumbent_index, model.num_x_qubits)
-            if not feasibility_spec.is_feasible(initial_bits):
-                raise ValueError("初始 incumbent 不满足 hard logic-feasibility spec")
+        initial_bits = _bits_from_index(initial_incumbent_index, model.num_x_qubits)
+        if not feasibility_spec.is_feasible(initial_bits):
+            raise ValueError("初始 incumbent 不满足 hard logic-feasibility spec")
 
     if trial_executor is None:
 
@@ -377,14 +450,15 @@ def run_sparse_vqc_bbht(
         executor = trial_executor
 
     rng = np.random.default_rng(int(config.seed))
-    dimension = 2 ** int(model.num_x_qubits)
-    m_cap = max(1, int(ceil(sqrt(float(dimension)))))
     m = 1
     max_m_reached = 1
 
     incumbent_index = initial_incumbent_index
     incumbent_true_cost = float(initial_record.total_cost)
     encoded_threshold = int(model.fixed_point_config.encode(incumbent_true_cost))
+    effective_oracle_threshold = _effective_oracle_threshold(
+        encoded_threshold, config.surrogate_integer_margin
+    )
     initial_true_cost = incumbent_true_cost
 
     threshold_history: list[dict[str, object]] = [
@@ -396,6 +470,8 @@ def run_sparse_vqc_bbht(
             ),
             "true_threshold": float(incumbent_true_cost),
             "encoded_threshold": int(encoded_threshold),
+            "surrogate_integer_margin": int(config.surrogate_integer_margin),
+            "effective_oracle_threshold": int(effective_oracle_threshold),
             "source": "initial_exact_cache",
         }
     ]
@@ -415,11 +491,11 @@ def run_sparse_vqc_bbht(
     consecutive_nonimproving_marked = 0
     stop_reason: str | None = None
 
-    if feasibility_spec is not None and feasibility_spec.always_infeasible:
-        stop_reason = "no_hard_logic_feasible_state_by_compiled_constraints"
-
     while stop_reason is None:
-        if int(model.lower_bound) >= int(encoded_threshold):
+        effective_oracle_threshold = _effective_oracle_threshold(
+            encoded_threshold, config.surrogate_integer_margin
+        )
+        if int(model.lower_bound) >= int(effective_oracle_threshold):
             stop_reason = "no_surrogate_marked_state_by_conservative_lower_bound"
             break
         if circuit_executions >= int(config.max_trials):
@@ -440,7 +516,7 @@ def run_sparse_vqc_bbht(
         execution_seed = int(rng.integers(0, np.iinfo(np.int32).max))
         execution = executor(
             model,
-            int(encoded_threshold),
+            int(effective_oracle_threshold),
             int(sampled_iterations),
             int(config.shots_per_trial),
             execution_seed,
@@ -454,7 +530,9 @@ def run_sparse_vqc_bbht(
             raise RuntimeError("trial executor 返回的 measured_index 超出搜索空间")
         bits = _bits_from_index(candidate_index, model.num_x_qubits)
         surrogate_integer_cost = int(model.integer_value(bits))
-        surrogate_better = bool(surrogate_integer_cost < int(encoded_threshold))
+        surrogate_better = bool(
+            surrogate_integer_cost < int(effective_oracle_threshold)
+        )
         hard_logic_feasible = bool(
             feasibility_spec is None or feasibility_spec.is_feasible(bits)
         )
@@ -466,6 +544,7 @@ def run_sparse_vqc_bbht(
 
         threshold_before = float(incumbent_true_cost)
         encoded_before = int(encoded_threshold)
+        effective_before = int(effective_oracle_threshold)
         incumbent_before = int(incumbent_index)
         m_after = m_before
         verification_source: str | None = None
@@ -553,6 +632,9 @@ def run_sparse_vqc_bbht(
                     encoded_threshold = int(
                         model.fixed_point_config.encode(incumbent_true_cost)
                     )
+                    effective_oracle_threshold = _effective_oracle_threshold(
+                        encoded_threshold, config.surrogate_integer_margin
+                    )
                     encoded_threshold_changed = bool(encoded_threshold != encoded_before)
                     quantization_stagnation = not encoded_threshold_changed
                     threshold_updates += 1
@@ -573,6 +655,12 @@ def run_sparse_vqc_bbht(
                             ),
                             "true_threshold": float(incumbent_true_cost),
                             "encoded_threshold": int(encoded_threshold),
+                            "surrogate_integer_margin": int(
+                                config.surrogate_integer_margin
+                            ),
+                            "effective_oracle_threshold": int(
+                                effective_oracle_threshold
+                            ),
                             "encoded_threshold_changed": bool(
                                 encoded_threshold_changed
                             ),
@@ -607,6 +695,9 @@ def run_sparse_vqc_bbht(
 
         m = int(m_after)
         max_m_reached = max(max_m_reached, m)
+        effective_after = _effective_oracle_threshold(
+            encoded_threshold, config.surrogate_integer_margin
+        )
         trace.append(
             {
                 "trial_number": int(circuit_executions),
@@ -628,6 +719,7 @@ def run_sparse_vqc_bbht(
                 "auxiliary_accepted": bool(auxiliary_accepted),
                 "hard_logic_feasible": bool(hard_logic_feasible),
                 "surrogate_integer_cost": int(surrogate_integer_cost),
+                "surrogate_integer_margin": int(config.surrogate_integer_margin),
                 "surrogate_better": bool(surrogate_better),
                 "surrogate_marked": bool(joint_marked),
                 "joint_feasible_and_better": bool(joint_marked),
@@ -651,6 +743,8 @@ def run_sparse_vqc_bbht(
                 "true_threshold_after": float(incumbent_true_cost),
                 "encoded_threshold_before": int(encoded_before),
                 "encoded_threshold_after": int(encoded_threshold),
+                "effective_oracle_threshold_before": int(effective_before),
+                "effective_oracle_threshold_after": int(effective_after),
                 "encoded_threshold_changed": bool(encoded_threshold_changed),
                 "quantization_stagnation": bool(quantization_stagnation),
                 "threshold_updated": bool(true_improvement),
@@ -661,6 +755,10 @@ def run_sparse_vqc_bbht(
                     auxiliary_syndrome_rejections
                 ),
                 "elapsed_seconds": float(execution.elapsed_seconds),
+                "circuit_build_seconds": float(execution.circuit_build_seconds),
+                "transpile_seconds": float(execution.transpile_seconds),
+                "backend_run_seconds": float(execution.backend_run_seconds),
+                "total_trial_seconds": float(execution.total_trial_seconds),
                 "total_qubits": int(execution.total_qubits),
                 "estimated_statevector_memory_gb": float(
                     execution.estimated_statevector_memory_gb
@@ -678,6 +776,11 @@ def run_sparse_vqc_bbht(
         final_incumbent_index=int(incumbent_index),
         final_incumbent_true_cost=float(incumbent_true_cost),
         final_encoded_threshold=int(encoded_threshold),
+        final_effective_oracle_threshold=int(
+            _effective_oracle_threshold(
+                encoded_threshold, config.surrogate_integer_margin
+            )
+        ),
         stop_reason=stop_reason,
         trial_trace=tuple(trace),
         threshold_history=tuple(threshold_history),
@@ -703,6 +806,10 @@ def run_sparse_vqc_bbht(
     )
 
 
+def _effective_oracle_threshold(encoded_threshold: int, margin: int) -> int:
+    return int(encoded_threshold) + int(margin)
+
+
 def _select_actual_measurement(
     x_counts: Mapping[str, int],
     num_x_qubits: int,
@@ -724,3 +831,11 @@ def _select_actual_measurement(
 
 def _bits_from_index(index: int, num_qubits: int) -> tuple[int, ...]:
     return tuple((int(index) >> qubit) & 1 for qubit in range(int(num_qubits)))
+
+
+def _optional_int(value: int | None) -> int | None:
+    return None if value is None else int(value)
+
+
+def _optional_float(value: float | None) -> float | None:
+    return None if value is None else float(value)
