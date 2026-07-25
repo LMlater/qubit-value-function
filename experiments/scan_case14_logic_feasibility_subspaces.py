@@ -11,7 +11,6 @@ if str(ROOT) not in sys.path:
 
 from qubit_value_function.experiment_utils import write_strict_json  # noqa: E402
 from qubit_value_function.logic_subspace_scan import (  # noqa: E402
-    DEFAULT_MAX_SCAN_QUBITS,
     scan_logic_feasibility_subspaces,
     select_active_logic_subspace,
 )
@@ -33,7 +32,6 @@ def run(
     selected_generator_count: int = 2,
     window_start: int = 0,
     minimum_feasible_states: int = 8,
-    max_scan_qubits: int = DEFAULT_MAX_SCAN_QUBITS,
 ) -> dict[str, object]:
     source = load_uc_instance(instance_path)
     rows = scan_logic_feasibility_subspaces(
@@ -41,7 +39,6 @@ def run(
         horizons=horizons,
         selected_generator_count=selected_generator_count,
         window_start=window_start,
-        max_scan_qubits=max_scan_qubits,
     )
     selected = select_active_logic_subspace(
         rows,
@@ -55,7 +52,6 @@ def run(
         "horizons": [int(value) for value in horizons],
         "selected_generator_count": int(selected_generator_count),
         "minimum_feasible_states": int(minimum_feasible_states),
-        "max_scan_qubits": int(max_scan_qubits),
         "selection_policy": {
             "uses_cost": False,
             "uses_ed_lp": False,
@@ -67,7 +63,6 @@ def run(
                 "retained forbidden patterns > 0",
                 "both logic-feasible and logic-infeasible states exist",
                 "minimum feasible training-state count is met",
-                "selected_generator_count * horizon <= max_scan_qubits",
             ],
             "ranking": [
                 "prefer feasible ratio in [0.25, 0.75]",
@@ -100,11 +95,6 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--selected-generator-count", type=int, default=2)
     parser.add_argument("--window-start", type=int, default=0)
     parser.add_argument("--minimum-feasible-states", type=int, default=8)
-    parser.add_argument(
-        "--max-scan-qubits",
-        type=int,
-        default=DEFAULT_MAX_SCAN_QUBITS,
-    )
     return parser
 
 
@@ -117,7 +107,6 @@ def main() -> None:
         selected_generator_count=args.selected_generator_count,
         window_start=args.window_start,
         minimum_feasible_states=args.minimum_feasible_states,
-        max_scan_qubits=args.max_scan_qubits,
     )
     selected = payload["selected_subspace"]
     print(
@@ -125,7 +114,6 @@ def main() -> None:
             {
                 "num_scanned_subspaces": payload["num_scanned_subspaces"],
                 "num_active_subspaces": payload["num_active_subspaces"],
-                "max_scan_qubits": payload["max_scan_qubits"],
                 "selected_generator_indices": selected["selected_generator_indices"],
                 "selected_generator_names": selected["selected_generator_names"],
                 "horizon": selected["horizon"],
