@@ -8,6 +8,7 @@ import numpy as np
 
 from .coherent_phase_value import QuantizedSparseValueModel
 from .gate_level_oracle import bitstring_from_index, circuit_resource_summary
+from .logic_feasibility_oracle import LogicFeasibilitySpec
 from .sparse_vqc_grover import (
     build_sparse_vqc_grover_circuit,
     execute_sparse_vqc_grover_mps,
@@ -28,7 +29,7 @@ STOP_REASONS = (
 
 @dataclass(frozen=True)
 class BBHTConfig:
-    """Budgets and random-window policy for one adaptive BBHT run."""
+    """Budgets, random-window policy, and auxiliary-syndrome acceptance rule."""
 
     lambda_factor: float = 1.2
     max_trials: int = 64
@@ -38,6 +39,7 @@ class BBHTConfig:
     max_consecutive_nonimproving_marked: int = 16
     max_same_encoded_threshold_updates: int = 3
     shots_per_trial: int = 1
+    minimum_auxiliary_zero_probability: float = 1.0 - 1e-12
     seed: int = 0
 
     def __post_init__(self) -> None:
@@ -55,23 +57,37 @@ class BBHTConfig:
                 raise ValueError(f"{name} 必须为正整数")
         if int(self.shots_per_trial) != 1:
             raise ValueError("正式 BBHT 循环要求 shots_per_trial=1；多 shots 仅用于普通 Grover 诊断")
+        minimum = float(self.minimum_auxiliary_zero_probability)
+        if not np.isfinite(minimum) or minimum < 0.0 or minimum > 1.0:
+            raise ValueError("minimum_auxiliary_zero_probability 必须位于 [0, 1]")
 
 
 @dataclass(frozen=True)
 class ExactCandidateEvaluation:
-    """Exact ED/LP record cached by commitment index."""
+    """Exact candidate record cached by commitment index.
+
+    ``lp_solve_performed`` separates a true LP solve from a cheaper logic
+    precheck rejection.  The legacy BBHT budget still counts one new exact
+    evaluation attempt for either path.
+    """
 
     success: bool
     total_cost: float | None
     message: str
     source: str
+    lp_solve_performed: bool = False
+    logic_precheck_rejected: bool = False
 
     def __post_init__(self) -> None:
         if self.success:
             if self.total_cost is None or not np.isfinite(float(self.total_cost)):
                 raise ValueError("成功的 exact evaluation 必须包含有限 total_cost")
+            if self.logic_precheck_rejected:
+                raise ValueError("成功 evaluation 不能同时是 logic precheck rejection")
         elif self.total_cost is not None and not np.isfinite(float(self.total_cost)):
             raise ValueError("失败 evaluation 的 total_cost 必须为 None 或有限数")
+        if self.logic_precheck_rejected and self.lp_solve_performed:
+            raise ValueError("logic precheck rejection 不能同时执行 LP solve")
 
     def as_dict(self) -> dict[str, object]:
         return {
@@ -79,6 +95,8 @@ class ExactCandidateEvaluation:
             "total_cost": float(self.total_cost) if self.total_cost is not None else None,
             "message": str(self.message),
             "source": str(self.source),
+            "lp_solve_performed": bool(self.lp_solve_performed),
+            "logic_precheck_rejected": bool(self.logic_precheck_rejected),
         }
 
 
@@ -112,17 +130,23 @@ class SparseVQCBBHTResult:
     trial_trace: tuple[dict[str, object], ...]
     threshold_history: tuple[dict[str, object], ...]
     exact_cache: dict[int, ExactCandidateEvaluation]
+    marked_candidate_hits: dict[int, int]
     repeated_candidate_hits: dict[int, int]
     circuit_executions: int
     total_shots: int
     total_oracle_calls: int
     total_diffuser_calls: int
+    new_exact_evaluation_attempts: int
+    actual_ed_lp_solves: int
+    logic_precheck_rejections: int
     new_ed_lp_calls: int
     cached_exact_lookups: int
+    auxiliary_syndrome_rejections: int
     threshold_updates: int
     same_encoded_threshold_updates: int
     max_m_reached: int
     bbht_m_cap: int
+    uses_hard_feasibility_oracle: bool
     config: BBHTConfig
 
     def as_dict(self) -> dict[str, object]:
@@ -138,6 +162,10 @@ class SparseVQCBBHTResult:
             "exact_cache": {
                 str(index): record.as_dict() for index, record in sorted(self.exact_cache.items())
             },
+            "marked_candidate_hits": {
+                str(index): int(count)
+                for index, count in sorted(self.marked_candidate_hits.items())
+            },
             "repeated_candidate_hits": {
                 str(index): int(count)
                 for index, count in sorted(self.repeated_candidate_hits.items())
@@ -147,8 +175,16 @@ class SparseVQCBBHTResult:
                 "total_shots": int(self.total_shots),
                 "total_oracle_calls": int(self.total_oracle_calls),
                 "total_diffuser_calls": int(self.total_diffuser_calls),
+                "new_exact_evaluation_attempts": int(
+                    self.new_exact_evaluation_attempts
+                ),
+                "actual_ed_lp_solves": int(self.actual_ed_lp_solves),
+                "logic_precheck_rejections": int(self.logic_precheck_rejections),
                 "new_ed_lp_calls": int(self.new_ed_lp_calls),
                 "cached_exact_lookups": int(self.cached_exact_lookups),
+                "auxiliary_syndrome_rejections": int(
+                    self.auxiliary_syndrome_rejections
+                ),
                 "threshold_updates": int(self.threshold_updates),
                 "same_encoded_threshold_updates": int(
                     self.same_encoded_threshold_updates
@@ -169,11 +205,19 @@ class SparseVQCBBHTResult:
                     self.config.max_same_encoded_threshold_updates
                 ),
                 "shots_per_trial": int(self.config.shots_per_trial),
+                "minimum_auxiliary_zero_probability": float(
+                    self.config.minimum_auxiliary_zero_probability
+                ),
                 "seed": int(self.config.seed),
             },
             "uses_marked_count": False,
             "uses_validation_enumeration": False,
+            "uses_hard_feasibility_oracle": bool(self.uses_hard_feasibility_oracle),
             "threshold_updates_require_true_ed_lp_improvement": True,
+            "legacy_new_ed_lp_calls_semantics": (
+                "alias of new_exact_evaluation_attempts; use actual_ed_lp_solves "
+                "for physical LP-solve count"
+            ),
         }
 
 
@@ -231,6 +275,8 @@ def execute_bbht_trial_mps(
     iterations: int,
     shots: int,
     seed: int,
+    *,
+    feasibility_spec: LogicFeasibilitySpec | None = None,
 ) -> BBHTTrialExecution:
     """Build and execute one actual BBHT trial; no marked-count input is used."""
 
@@ -240,6 +286,7 @@ def execute_bbht_trial_mps(
         model,
         encoded_threshold=int(encoded_threshold),
         iterations=int(iterations),
+        feasibility_spec=feasibility_spec,
     )
     execution = execute_sparse_vqc_grover_mps(
         circuit,
@@ -278,11 +325,14 @@ def run_sparse_vqc_bbht(
     evaluate_candidate: ExactEvaluator,
     config: BBHTConfig = BBHTConfig(),
     trial_executor: TrialExecutor | None = None,
+    feasibility_spec: LogicFeasibilitySpec | None = None,
 ) -> SparseVQCBBHTResult:
     """Run adaptive BBHT without marked-count enumeration.
 
-    A measured candidate updates the incumbent only when its cached or newly
-    evaluated exact ED/LP cost is strictly lower than the current true cost.
+    A candidate is eligible for exact validation only when the actual measured
+    state passes the hard logic-feasibility specification (when supplied) and
+    its sparse integer value is below the current encoded threshold.  The true
+    incumbent changes only after a strict cached/new exact-cost improvement.
     """
 
     cache = {int(index): record for index, record in initial_exact_cache.items()}
@@ -290,8 +340,32 @@ def run_sparse_vqc_bbht(
     initial_record = cache.get(initial_incumbent_index)
     if initial_record is None or not initial_record.success or initial_record.total_cost is None:
         raise ValueError("初始 incumbent 必须存在于成功的 exact cache 中")
+    if feasibility_spec is not None:
+        if feasibility_spec.num_x_qubits != model.num_x_qubits:
+            raise ValueError("feasibility spec 与 value model 的 search register 不一致")
+        initial_bits = _bits_from_index(initial_incumbent_index, model.num_x_qubits)
+        if not feasibility_spec.is_feasible(initial_bits):
+            raise ValueError("初始 incumbent 不满足 hard logic-feasibility spec")
 
-    executor = trial_executor or execute_bbht_trial_mps
+    if trial_executor is None:
+        def executor(
+            value_model: QuantizedSparseValueModel,
+            threshold: int,
+            iterations: int,
+            shots: int,
+            seed: int,
+        ) -> BBHTTrialExecution:
+            return execute_bbht_trial_mps(
+                value_model,
+                threshold,
+                iterations,
+                shots,
+                seed,
+                feasibility_spec=feasibility_spec,
+            )
+    else:
+        executor = trial_executor
+
     rng = np.random.default_rng(int(config.seed))
     dimension = 2 ** int(model.num_x_qubits)
     m_cap = max(1, int(ceil(sqrt(float(dimension)))))
@@ -316,12 +390,16 @@ def run_sparse_vqc_bbht(
         }
     ]
     trace: list[dict[str, object]] = []
+    marked_hits: dict[int, int] = {}
     repeated_hits: dict[int, int] = {}
     circuit_executions = 0
     total_shots = 0
     total_oracle_calls = 0
-    new_ed_lp_calls = 0
+    new_exact_evaluation_attempts = 0
+    actual_ed_lp_solves = 0
+    logic_precheck_rejections = 0
     cached_exact_lookups = 0
+    auxiliary_syndrome_rejections = 0
     threshold_updates = 0
     same_encoded_threshold_updates = 0
     consecutive_nonimproving_marked = 0
@@ -363,7 +441,16 @@ def run_sparse_vqc_bbht(
             raise RuntimeError("trial executor 返回的 measured_index 超出搜索空间")
         bits = _bits_from_index(candidate_index, model.num_x_qubits)
         surrogate_integer_cost = int(model.integer_value(bits))
-        surrogate_marked = bool(surrogate_integer_cost < int(encoded_threshold))
+        surrogate_better = bool(surrogate_integer_cost < int(encoded_threshold))
+        hard_logic_feasible = bool(
+            feasibility_spec is None or feasibility_spec.is_feasible(bits)
+        )
+        joint_marked = bool(hard_logic_feasible and surrogate_better)
+        auxiliary_accepted = bool(
+            float(execution.auxiliary_zero_probability)
+            >= float(config.minimum_auxiliary_zero_probability)
+        )
+
         threshold_before = float(incumbent_true_cost)
         encoded_before = int(encoded_threshold)
         incumbent_before = int(incumbent_index)
@@ -375,22 +462,43 @@ def run_sparse_vqc_bbht(
         encoded_threshold_changed = False
         quantization_stagnation = False
         trial_status = "measured_unmarked"
-        ed_lp_calls_added = 0
+        new_attempts_added = 0
+        actual_lp_solves_added = 0
+        logic_rejections_added = 0
+        candidate_cache_hit = False
+        candidate_marked_hit_count = 0
+        candidate_repeat_count = 0
 
-        if not surrogate_marked:
+        if not auxiliary_accepted:
+            auxiliary_syndrome_rejections += 1
+            trial_status = "auxiliary_syndrome_rejected"
+        elif not hard_logic_feasible:
+            trial_status = "measured_hard_logic_infeasible"
+            m_after = grow_bbht_window(
+                m_before,
+                lambda_factor=config.lambda_factor,
+                m_cap=m_cap,
+            )
+        elif not surrogate_better:
             m_after = grow_bbht_window(
                 m_before,
                 lambda_factor=config.lambda_factor,
                 m_cap=m_cap,
             )
         else:
-            repeated_hits[candidate_index] = repeated_hits.get(candidate_index, 0) + 1
+            candidate_marked_hit_count = marked_hits.get(candidate_index, 0) + 1
+            marked_hits[candidate_index] = candidate_marked_hit_count
+            candidate_repeat_count = max(0, candidate_marked_hit_count - 1)
+            if candidate_repeat_count > 0:
+                repeated_hits[candidate_index] = candidate_repeat_count
+
             if candidate_index in cache:
+                candidate_cache_hit = True
                 cached_exact_lookups += 1
                 exact_record = cache[candidate_index]
                 verification_source = str(exact_record.source)
             else:
-                if new_ed_lp_calls >= int(config.max_new_ed_lp_calls):
+                if new_exact_evaluation_attempts >= int(config.max_new_ed_lp_calls):
                     trial_status = "new_ed_lp_budget_exhausted"
                     stop_reason = "max_new_ed_lp_calls_reached"
                 else:
@@ -401,13 +509,21 @@ def run_sparse_vqc_bbht(
                             success=False,
                             total_cost=None,
                             message=f"exact evaluator raised: {exc}",
-                            source="new_ed_lp_call",
+                            source="new_exact_evaluation_exception",
+                            lp_solve_performed=False,
+                            logic_precheck_rejected=False,
                         )
                     if not isinstance(exact_record, ExactCandidateEvaluation):
                         raise TypeError("evaluate_candidate 必须返回 ExactCandidateEvaluation")
                     cache[candidate_index] = exact_record
-                    new_ed_lp_calls += 1
-                    ed_lp_calls_added = 1
+                    new_exact_evaluation_attempts += 1
+                    new_attempts_added = 1
+                    if exact_record.lp_solve_performed:
+                        actual_ed_lp_solves += 1
+                        actual_lp_solves_added = 1
+                    if exact_record.logic_precheck_rejected:
+                        logic_precheck_rejections += 1
+                        logic_rejections_added = 1
                     verification_source = str(exact_record.source)
 
             if exact_record is not None:
@@ -462,6 +578,8 @@ def run_sparse_vqc_bbht(
                     )
                     if exact_record.success:
                         trial_status = "marked_but_not_true_improvement"
+                    elif exact_record.logic_precheck_rejected:
+                        trial_status = "marked_logic_precheck_rejected"
                     else:
                         trial_status = "marked_exact_evaluation_failed"
                     if (
@@ -490,20 +608,25 @@ def run_sparse_vqc_bbht(
                 "auxiliary_zero_probability": float(
                     execution.auxiliary_zero_probability
                 ),
+                "auxiliary_accepted": bool(auxiliary_accepted),
+                "hard_logic_feasible": bool(hard_logic_feasible),
                 "surrogate_integer_cost": int(surrogate_integer_cost),
-                "surrogate_marked": bool(surrogate_marked),
+                "surrogate_better": bool(surrogate_better),
+                "surrogate_marked": bool(joint_marked),
+                "joint_feasible_and_better": bool(joint_marked),
                 "candidate_status": trial_status,
-                "candidate_cache_hit": bool(
-                    surrogate_marked and candidate_index in initial_exact_cache
-                    or surrogate_marked and ed_lp_calls_added == 0 and exact_record is not None
-                ),
-                "candidate_repeat_count": int(repeated_hits.get(candidate_index, 0)),
+                "candidate_cache_hit": bool(candidate_cache_hit),
+                "candidate_marked_hit_count": int(candidate_marked_hit_count),
+                "candidate_repeat_count": int(candidate_repeat_count),
                 "verification_source": verification_source,
                 "exact_evaluation": (
                     exact_record.as_dict() if exact_record is not None else None
                 ),
                 "exact_cost": exact_cost,
-                "ed_lp_calls_added": int(ed_lp_calls_added),
+                "new_exact_evaluation_attempts_added": int(new_attempts_added),
+                "actual_ed_lp_solves_added": int(actual_lp_solves_added),
+                "logic_precheck_rejections_added": int(logic_rejections_added),
+                "ed_lp_calls_added": int(new_attempts_added),
                 "true_improvement": bool(true_improvement),
                 "incumbent_index_before": int(incumbent_before),
                 "incumbent_index_after": int(incumbent_index),
@@ -539,17 +662,23 @@ def run_sparse_vqc_bbht(
         trial_trace=tuple(trace),
         threshold_history=tuple(threshold_history),
         exact_cache=cache,
+        marked_candidate_hits=marked_hits,
         repeated_candidate_hits=repeated_hits,
         circuit_executions=int(circuit_executions),
         total_shots=int(total_shots),
         total_oracle_calls=int(total_oracle_calls),
         total_diffuser_calls=int(total_oracle_calls),
-        new_ed_lp_calls=int(new_ed_lp_calls),
+        new_exact_evaluation_attempts=int(new_exact_evaluation_attempts),
+        actual_ed_lp_solves=int(actual_ed_lp_solves),
+        logic_precheck_rejections=int(logic_precheck_rejections),
+        new_ed_lp_calls=int(new_exact_evaluation_attempts),
         cached_exact_lookups=int(cached_exact_lookups),
+        auxiliary_syndrome_rejections=int(auxiliary_syndrome_rejections),
         threshold_updates=int(threshold_updates),
         same_encoded_threshold_updates=int(same_encoded_threshold_updates),
         max_m_reached=int(max_m_reached),
         bbht_m_cap=int(m_cap),
+        uses_hard_feasibility_oracle=bool(feasibility_spec is not None),
         config=config,
     )
 
