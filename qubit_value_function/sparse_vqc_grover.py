@@ -21,6 +21,9 @@ from .coherent_phase_value import (
 from .gate_level_oracle import bitstring_from_index
 
 
+DEFAULT_MAX_VALIDATION_QUBITS = 12
+
+
 @dataclass(frozen=True)
 class OrdinaryGroverValidationPlan:
     """Small-instance validation plan; marked-state enumeration is not a builder input."""
@@ -69,16 +72,11 @@ def build_sparse_vqc_grover_circuit(
     encoded_threshold: int,
     iterations: int,
 ) -> QuantumCircuit:
-    """Build ordinary Grover using the coherent sparse-VQC threshold oracle.
-
-    ``iterations`` is explicit so this scalable circuit builder never enumerates
-    the search space to infer a marked-state count.
-    """
+    """Build ordinary Grover without enumerating states or inferring marked count."""
 
     iterations = int(iterations)
     if iterations < 0:
         raise ValueError("iterations 不能为负数")
-
     oracle = build_sparse_vqc_threshold_phase_oracle(
         model,
         encoded_real_threshold=int(encoded_threshold),
@@ -88,7 +86,6 @@ def build_sparse_vqc_grover_circuit(
     circuit = QuantumCircuit(oracle.num_qubits, name="sparse_vqc_ordinary_grover")
     x_qubits = list(circuit.qubits[: model.num_x_qubits])
     all_qubits = list(circuit.qubits)
-
     circuit.h(x_qubits)
     for _ in range(iterations):
         circuit.append(oracle_gate, all_qubits)
@@ -100,7 +97,7 @@ def append_search_register_diffuser(
     circuit: QuantumCircuit,
     x_qubits: Sequence[object],
 ) -> None:
-    """Append the standard inversion-about-the-mean only on the search register."""
+    """Append inversion about the mean only on the search register."""
 
     qubits = list(x_qubits)
     if not qubits:
@@ -123,9 +120,11 @@ def ordinary_grover_validation_plan(
     model: QuantizedSparseValueModel,
     *,
     encoded_threshold: int,
+    max_validation_qubits: int = DEFAULT_MAX_VALIDATION_QUBITS,
 ) -> OrdinaryGroverValidationPlan:
-    """Enumerate only for small-instance validation and iteration selection."""
+    """Enumerate only a guarded small instance for validation and iteration selection."""
 
+    _validate_enumeration_size(model, max_validation_qubits)
     dimension = 2 ** int(model.num_x_qubits)
     marked = tuple(
         index
@@ -156,9 +155,11 @@ def direct_float_marked_indices_for_validation(
     *,
     predict_cost,
     encoded_threshold: int,
+    max_validation_qubits: int = DEFAULT_MAX_VALIDATION_QUBITS,
 ) -> tuple[int, ...]:
     """Diagnostic-only marked set from rounding the complete floating prediction."""
 
+    _validate_enumeration_size(model, max_validation_qubits)
     return tuple(
         index
         for index in range(2 ** model.num_x_qubits)
@@ -191,10 +192,15 @@ def simulate_sparse_vqc_grover_statevector(
     *,
     encoded_threshold: int,
     iterations: int,
+    max_validation_qubits: int = DEFAULT_MAX_VALIDATION_QUBITS,
 ) -> SparseGroverStatevectorProbe:
-    """Exact small-instance validation of the full ordinary-Grover circuit."""
+    """Exact guarded small-instance validation of the full ordinary-Grover circuit."""
 
-    plan = ordinary_grover_validation_plan(model, encoded_threshold=encoded_threshold)
+    plan = ordinary_grover_validation_plan(
+        model,
+        encoded_threshold=encoded_threshold,
+        max_validation_qubits=max_validation_qubits,
+    )
     circuit = build_sparse_vqc_grover_circuit(
         model,
         encoded_threshold=encoded_threshold,
@@ -308,7 +314,6 @@ def select_measured_candidate(
     total = int(sum(int(count) for count in x_counts.values()))
     if total <= 0:
         return None
-
     rows: list[tuple[int, str, int]] = []
     for bitstring, raw_count in x_counts.items():
         count = int(raw_count)
@@ -319,7 +324,6 @@ def select_measured_candidate(
             rows.append((index, str(bitstring), count))
     if not rows:
         return None
-
     unobserved = [row for row in rows if row[0] not in observed]
     pool = unobserved if unobserved else rows
     index, bitstring, count = max(pool, key=lambda row: (row[2], -row[0]))
@@ -330,6 +334,20 @@ def select_measured_candidate(
         probability=float(count / total),
         was_observed=bool(index in observed),
     )
+
+
+def _validate_enumeration_size(
+    model: QuantizedSparseValueModel,
+    max_validation_qubits: int,
+) -> None:
+    max_validation_qubits = int(max_validation_qubits)
+    if max_validation_qubits <= 0:
+        raise ValueError("max_validation_qubits 必须为正整数")
+    if model.num_x_qubits > max_validation_qubits:
+        raise ValueError(
+            "小规模 validation enumeration 被拒绝："
+            f"num_x_qubits={model.num_x_qubits} 超过限制 {max_validation_qubits}"
+        )
 
 
 def _x_marginal_probabilities(
