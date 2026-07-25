@@ -15,9 +15,6 @@ from .logic_feasibility_oracle import (
 from .uc_loader import UCInstance
 
 
-DEFAULT_MAX_SCAN_QUBITS = 12
-
-
 @dataclass(frozen=True)
 class LogicSubspaceScanRow:
     window_start: int
@@ -94,7 +91,11 @@ class LogicSubspaceScanRow:
 
 
 def build_logic_safe_base_commitment(instance: UCInstance) -> np.ndarray:
-    """Build a deterministic high-capacity commitment satisfying Boolean UC logic."""
+    """Build a deterministic high-capacity commitment satisfying Boolean UC logic.
+
+    Unselected generators remain online whenever their initial minimum-down
+    obligation permits it. This uses no load, cost, ED/LP, or hidden optimum.
+    """
 
     horizon = int(instance.time_horizon)
     base = np.zeros((len(instance.generators), horizon), dtype=int)
@@ -136,9 +137,8 @@ def scan_logic_feasibility_subspaces(
     horizons: Iterable[int] = (2, 3),
     selected_generator_count: int = 2,
     window_start: int = 0,
-    max_scan_qubits: int = DEFAULT_MAX_SCAN_QUBITS,
 ) -> tuple[LogicSubspaceScanRow, ...]:
-    """Enumerate guarded small selected subspaces for logic diagnostics only.
+    """Enumerate small selected subspaces for logic diagnostics only.
 
     The scan never evaluates cost, ED/LP, a VQC, BBHT, or a hidden optimum.
     Enumeration is limited to the selected Boolean subspace and is not used by
@@ -146,12 +146,8 @@ def scan_logic_feasibility_subspaces(
     """
 
     selected_generator_count = int(selected_generator_count)
-    max_scan_qubits = int(max_scan_qubits)
     if selected_generator_count <= 0:
         raise ValueError("selected_generator_count 必须为正整数")
-    if max_scan_qubits <= 0:
-        raise ValueError("max_scan_qubits 必须为正整数")
-
     rows: list[LogicSubspaceScanRow] = []
     for raw_horizon in horizons:
         horizon = int(raw_horizon)
@@ -159,15 +155,6 @@ def scan_logic_feasibility_subspaces(
             raise ValueError("horizon 必须为正整数")
         if int(window_start) + horizon > source.time_horizon:
             continue
-
-        num_x_qubits = selected_generator_count * horizon
-        if num_x_qubits > max_scan_qubits:
-            raise ValueError(
-                "logic subspace diagnostic enumeration 被拒绝："
-                f"selected_generator_count*horizon={num_x_qubits} "
-                f"超过 max_scan_qubits={max_scan_qubits}"
-            )
-
         instance = time_window_instance(
             source,
             start=int(window_start),
