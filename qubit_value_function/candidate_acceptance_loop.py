@@ -137,6 +137,10 @@ class CandidateDecision:
             "joint_feasible_and_better": bool(self.surrogate_marked),
             "candidate_status": self.candidate_status,
             "candidate_cache_hit": bool(self.is_cache_hit),
+            "new_exact_evaluation_attempted": bool(
+                self.new_exact_evaluation_attempted
+            ),
+            "new_edlp_solve_performed": bool(self.new_edlp_solve_performed),
             "candidate_marked_hit_count": int(self.candidate_marked_hit_count),
             "candidate_repeat_count": int(self.candidate_repeat_count),
             "is_training_state": bool(self.is_training_state),

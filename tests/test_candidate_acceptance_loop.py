@@ -114,6 +114,8 @@ def test_cache_confirmation_skips_new_edlp_and_uncached_attempt_counts_actual_so
     assert uncached.new_exact_evaluation_attempted is True
     assert uncached.new_edlp_solve_performed is True
     assert uncached.new_edlp_confirmed_improvement is True
+    assert uncached.trace_fields()["new_exact_evaluation_attempted"] is True
+    assert uncached.trace_fields()["new_edlp_solve_performed"] is True
     assert state.new_exact_evaluation_attempts == 1
     assert state.actual_ed_lp_solves == 1
 

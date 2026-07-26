@@ -328,6 +328,7 @@ def run_sparse_vqc_bbht(
             "sampled_grover_iterations": sampled_iterations, "m_after": m_after,
             "execution_seed": execution_seed, "shots": int(execution.shots),
             "oracle_calls_added": sampled_iterations, "measured_index": candidate_index,
+            "candidate_source_method": "bbht",
             "measured_bitstring": execution.measured_bitstring,
             "measured_count": int(execution.measured_count),
             "measured_probability": float(execution.measured_probability),
