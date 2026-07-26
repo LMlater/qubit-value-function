@@ -203,6 +203,7 @@ def _evaluate_window(
         evaluate_candidate=evaluate_candidate,
         config=run_config,
         feasibility_spec=feasibility_spec,
+        training_indices=train_indices,
     )
 
     true_costs, landscape_rows, validation_calls = _validation_only_exact_landscape(

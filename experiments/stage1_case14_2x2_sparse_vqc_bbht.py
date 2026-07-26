@@ -289,6 +289,7 @@ def _evaluate_window(
         initial_exact_cache=training_cache,
         evaluate_candidate=evaluate_candidate,
         config=run_config,
+        training_indices=train_indices,
     )
 
     true_costs, landscape_rows, validation_calls = _validation_only_exact_landscape(

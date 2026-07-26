@@ -223,6 +223,25 @@ def test_conservative_lower_bound_stops_before_any_circuit_execution() -> None:
     assert result.total_oracle_calls == 0
 
 
+def test_same_seed_preserves_bbht_trace_after_shared_acceptance_refactor() -> None:
+    def run_once():
+        return run_sparse_vqc_bbht(
+            _binary_value_model(),
+            initial_incumbent_index=3,
+            initial_exact_cache={3: _evaluation(3.0, "training_exact_cache")},
+            evaluate_candidate=lambda index: _evaluation({2: 2.0, 1: 1.0}[index]),
+            config=BBHTConfig(max_threshold_updates=2, seed=19),
+            trial_executor=SequenceExecutor([2, 1]),
+            training_indices=(3,),
+        )
+
+    first = run_once()
+    second = run_once()
+    assert first.trial_trace == second.trial_trace
+    assert first.threshold_history == second.threshold_history
+    assert first.final_incumbent_index == second.final_incumbent_index == 1
+
+
 def test_bbht_core_does_not_call_marked_count_validation_or_enumerate_states() -> None:
     source = inspect.getsource(run_sparse_vqc_bbht)
     assert "ordinary_grover_validation_plan" not in source

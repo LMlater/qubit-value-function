@@ -431,6 +431,7 @@ def _evaluate_scenario(
         evaluate_candidate=_make_exact_evaluator(instance, commitments),
         config=run_config,
         feasibility_spec=None,
+        training_indices=train_indices,
     )
     joint = run_sparse_vqc_bbht(
         value_model,
@@ -439,6 +440,7 @@ def _evaluate_scenario(
         evaluate_candidate=_make_exact_evaluator(instance, commitments),
         config=run_config,
         feasibility_spec=spec,
+        training_indices=train_indices,
     )
 
     true_costs, landscape_rows, validation_lp_calls = _validation_landscape(
