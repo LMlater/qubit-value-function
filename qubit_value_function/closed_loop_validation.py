@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import json
 import math
 from pathlib import Path
+import statistics
 from time import perf_counter
 from typing import Callable, Mapping, Sequence
 
@@ -169,7 +170,10 @@ def validate_scenario_landscape(
     }
 
 
-def trace_metrics(result: Mapping[str, object], *, wrapper_elapsed_seconds: float | None = None) -> dict[str, object]:
+def trace_metrics(
+    result: Mapping[str, object], *, method: str | None = None,
+    wrapper_elapsed_seconds: float | None = None,
+) -> dict[str, object]:
     trace = result.get("trial_trace", [])
     if not isinstance(trace, list):
         trace = []
@@ -190,10 +194,10 @@ def trace_metrics(result: Mapping[str, object], *, wrapper_elapsed_seconds: floa
         "actual_ed_lp_solves": sum(int(row.get("actual_ed_lp_solves_added", 0)) for row in trace if isinstance(row, Mapping)),
         "new_exact_evaluation_attempts": sum(int(row.get("new_exact_evaluation_attempts_added", 0)) for row in trace if isinstance(row, Mapping)),
         "oracle_calls": sum(int(row.get("oracle_calls_added", 0)) for row in trace if isinstance(row, Mapping)),
-        "grover_iterations": sum(int(row.get("grover_iterations", 0)) for row in trace if isinstance(row, Mapping)),
-        "mps_circuit_executions": sum(bool(row.get("quantum_resources", {}).get("applicable", False)) for row in trace if isinstance(row, Mapping) and isinstance(row.get("quantum_resources"), Mapping)),
+        "grover_iterations": sum(int(row.get("sampled_grover_iterations", row.get("grover_iterations", 0))) for row in trace if isinstance(row, Mapping)),
+        "mps_circuit_executions": len(trace) if method in {"joint_bbht", "cost_only_bbht"} else 0,
         "mps_trial_elapsed_sum": sum(float(row.get("elapsed_seconds", 0.0)) for row in trace if isinstance(row, Mapping)),
-        "method_wrapper_elapsed": wrapper_elapsed_seconds, "maximum_qubits": max(qubits, default=0), "maximum_circuit_depth": max(depths, default=0),
+        "method_wrapper_elapsed": wrapper_elapsed_seconds, "maximum_qubits": max(qubits, default=0), "logical_or_pretranspile_depth": max(depths, default=0),
     }
 
 
@@ -235,7 +239,7 @@ def validate_run_against_landscape(run: Mapping[str, object], landscape: Mapping
         "nontraining_global_optimum_hit": final_index in landscape["true_global_optimum_indices"] and final_index not in training,
         "true_cost_decrease": final_cost < initial_cost and not math.isclose(final_cost, initial_cost, abs_tol=abs_tol, rel_tol=rel_tol),
         "true_cost_decrease_amount": initial_cost - final_cost, "threshold_update_count": int(result.get("counters", {}).get("threshold_updates", 0)),
-        "trace_metrics": trace_metrics(result, wrapper_elapsed_seconds=run.get("timing", {}).get("elapsed_seconds") if isinstance(run.get("timing"), Mapping) else None),
+        "trace_metrics": trace_metrics(result, method=str(run.get("method")), wrapper_elapsed_seconds=run.get("timing", {}).get("elapsed_seconds") if isinstance(run.get("timing"), Mapping) else None),
         "edlp_budget_curve": {str(key): value for key, value in edlp_budget_curve(result).items()},
     }
 
@@ -314,21 +318,36 @@ def validate_source_batch(
 
 
 def summarize_validated(source_output_dir: Path) -> dict[str, object]:
-    root = Path(source_output_dir); rows = [_read_json(path) for path in sorted((root / "validation" / "runs").glob("*.json"))]
+    root = Path(source_output_dir)
+    rows = [_read_json(path) for path in sorted((root / "validation" / "runs").glob("*.json"))]
+    landscapes = {payload["scenario_id"]: payload for payload in (_read_json(path) for path in sorted((root / "validation" / "scenarios").glob("*.json")))}
+    source_runs = {payload["run_id"]: payload for payload in (_read_json(path) for path in sorted((root / "runs" / "completed").glob("*.json")))}
     output = root / "summaries_validated"; output.mkdir(parents=True, exist_ok=True)
-    flat = []
+    metric_names = (
+        "proposal_events", "unique_candidate_events", "repeated_candidate_events", "cache_hits", "cache_confirmed_improvements", "new_edlp_confirmed_improvements",
+        "nontraining_true_improvements", "admission_hard_logic_rejections", "exact_logic_precheck_rejections", "total_logic_rejections", "auxiliary_syndrome_rejections",
+        "surrogate_unmarked_rejections", "cost_marked_events", "joint_marked_events", "actual_ed_lp_solves", "new_exact_evaluation_attempts", "oracle_calls",
+        "grover_iterations", "mps_circuit_executions", "mps_trial_elapsed_sum", "method_wrapper_elapsed", "maximum_qubits", "logical_or_pretranspile_depth",
+    )
+    flat: list[dict[str, object]] = []
     for row in rows:
-        metrics = row.get("trace_metrics", {})
+        source_run = source_runs.get(row["run_id"])
+        if source_run is None or not isinstance(source_run.get("result"), Mapping):
+            raise ValidationConsistencyError("validation run 缺少对应原始 completed JSON")
+        metrics = trace_metrics(
+            source_run["result"], method=str(source_run.get("method")),
+            wrapper_elapsed_seconds=(source_run.get("timing", {}).get("elapsed_seconds") if isinstance(source_run.get("timing"), Mapping) else None),
+        )
+        landscape = landscapes.get(row["scenario_id"])
+        if landscape is None: raise ValidationConsistencyError("validation run 缺少对应 scenario landscape")
         flat.append({
             "run_id": row["run_id"], "scenario_id": row["scenario_id"], "method": row.get("method"), "method_role": row.get("method_role"), "diagnostic_only": row.get("diagnostic_only"),
-            "initial_global_optimum": row.get("initial_incumbent_is_global_optimum"), "initial_true_improvement_exists": row.get("initial_true_improvement_exists"),
-            "initial_gap": row.get("initial_optimality_gap"), "final_gap": row.get("final_optimality_gap"), "gap_reduction": float(row.get("initial_optimality_gap", 0.0)) - float(row.get("final_optimality_gap", 0.0)),
-            "reached_global_optimum": row.get("reached_global_optimum"), "nontraining_global_optimum_hit": row.get("nontraining_global_optimum_hit"), "true_cost_decrease": row.get("true_cost_decrease"),
-            "final_true_cost": row.get("final_incumbent_true_cost"), **{key: metrics.get(key, 0) for key in (
-                "proposal_events", "unique_candidate_events", "repeated_candidate_events", "cache_hits", "cache_confirmed_improvements", "new_edlp_confirmed_improvements",
-                "nontraining_true_improvements", "admission_hard_logic_rejections", "exact_logic_precheck_rejections", "total_logic_rejections", "oracle_calls",
-                "mps_trial_elapsed_sum", "maximum_qubits", "maximum_circuit_depth", "actual_ed_lp_solves",
-            )},
+            "initial_incumbent_is_global_optimum": landscape["initial_incumbent_is_global_optimum"], "initial_true_improvement_exists": landscape["initial_true_improvement_exists"],
+            "initial_surrogate_cost_marked_count": landscape["initial_surrogate_cost_marked_count"], "initial_joint_marked_count": landscape["initial_joint_marked_count"],
+            "real_improvement_exists_but_cost_marked_empty": landscape["real_improvement_exists_but_cost_marked_empty"], "real_improvement_exists_but_joint_marked_empty": landscape["real_improvement_exists_but_joint_marked_empty"],
+            "initial_gap": row["initial_optimality_gap"], "final_gap": row["final_optimality_gap"], "gap_reduction": float(row["initial_optimality_gap"]) - float(row["final_optimality_gap"]),
+            "reached_global_optimum": row["reached_global_optimum"], "nontraining_global_optimum_hit": row["nontraining_global_optimum_hit"], "true_cost_decrease": row["true_cost_decrease"],
+            "final_true_cost": row["final_incumbent_true_cost"], **{key: metrics.get(key, 0) for key in metric_names},
         })
     def write_csv(path: Path, data: list[dict[str, object]]) -> None:
         if not data: path.write_text("\n", encoding="utf-8"); return
@@ -336,35 +355,49 @@ def summarize_validated(source_output_dir: Path) -> dict[str, object]:
             writer = csv.DictWriter(handle, fieldnames=list(data[0])); writer.writeheader(); writer.writerows(data)
     write_csv(output / "validated_run_index.csv", flat)
     def aggregate(group: list[dict[str, object]], label: Mapping[str, object]) -> dict[str, object]:
-        runs = len(group)
+        runs = len(group); eligible = [item for item in group if item["initial_true_improvement_exists"]]
         payload = dict(label)
         payload.update({
             "runs": runs, "at_least_one_true_improvement_probability": sum(bool(r["true_cost_decrease"]) for r in group) / runs,
             "nontraining_improvement_probability": sum(int(r["nontraining_true_improvements"]) > 0 for r in group) / runs,
             "global_optimum_hit_probability": sum(bool(r["reached_global_optimum"]) for r in group) / runs,
+            "conditional_initial_improvement_runs": len(eligible),
+            "conditional_true_improvement_probability": (sum(bool(r["true_cost_decrease"]) for r in eligible) / len(eligible)) if eligible else None,
+            "conditional_global_optimum_hit_probability": (sum(bool(r["reached_global_optimum"]) for r in eligible) / len(eligible)) if eligible else None,
+            "conditional_nontraining_improvement_probability": (sum(int(r["nontraining_true_improvements"]) > 0 for r in eligible) / len(eligible)) if eligible else None,
             "mean_initial_gap": sum(float(r["initial_gap"]) for r in group) / runs, "mean_final_gap": sum(float(r["final_gap"]) for r in group) / runs,
             "mean_gap_reduction": sum(float(r["gap_reduction"]) for r in group) / runs,
-            **{key: sum(float(r[key]) for r in group) for key in ("proposal_events", "unique_candidate_events", "repeated_candidate_events", "cache_confirmed_improvements", "new_edlp_confirmed_improvements", "admission_hard_logic_rejections", "exact_logic_precheck_rejections", "oracle_calls", "mps_trial_elapsed_sum")},
-            "maximum_qubits": max(int(r["maximum_qubits"]) for r in group), "maximum_circuit_depth": max(int(r["maximum_circuit_depth"]) for r in group),
+            **{key: sum(float(r[key]) for r in group if r[key] is not None) for key in metric_names if key not in {"maximum_qubits", "logical_or_pretranspile_depth"}},
+            "maximum_qubits": max(int(r["maximum_qubits"]) for r in group), "logical_or_pretranspile_depth": max(int(r["logical_or_pretranspile_depth"]) for r in group),
         })
         return payload
-    by_method: dict[tuple[object, ...], list[dict[str, object]]] = {}
-    by_scenario: dict[tuple[object, ...], list[dict[str, object]]] = {}
+    by_method: dict[tuple[object, ...], list[dict[str, object]]] = {}; by_scenario: dict[tuple[object, ...], list[dict[str, object]]] = {}
     for row in flat:
         by_method.setdefault((row["method"], row["method_role"], row["diagnostic_only"]), []).append(row)
         by_scenario.setdefault((row["scenario_id"], row["method"], row["method_role"], row["diagnostic_only"]), []).append(row)
     method_rows = [aggregate(group, {"method": key[0], "method_role": key[1], "diagnostic_only": key[2]}) for key, group in sorted(by_method.items(), key=str)]
-    scenario_rows = [aggregate(group, {"scenario_id": key[0], "method": key[1], "method_role": key[2], "diagnostic_only": key[3]}) for key, group in sorted(by_scenario.items(), key=str)]
+    scenario_rows = []
+    for key, group in sorted(by_scenario.items(), key=str):
+        landscape = landscapes[key[0]]
+        scenario_rows.append(aggregate(group, {"scenario_id": key[0], "method": key[1], "method_role": key[2], "diagnostic_only": key[3],
+            "initial_surrogate_cost_marked_count": landscape["initial_surrogate_cost_marked_count"], "initial_joint_marked_count": landscape["initial_joint_marked_count"],
+            "real_improvement_exists_but_cost_marked_empty": landscape["real_improvement_exists_but_cost_marked_empty"], "real_improvement_exists_but_joint_marked_empty": landscape["real_improvement_exists_but_joint_marked_empty"],
+            "initial_incumbent_is_global_optimum": landscape["initial_incumbent_is_global_optimum"], "initial_true_improvement_exists": landscape["initial_true_improvement_exists"]}))
     write_csv(output / "validated_method_summary.csv", method_rows); write_csv(output / "validated_scenario_summary.csv", scenario_rows)
-    curves = [{"run_id": row["run_id"], "actual_edlp_solves": key, "best_true_cost": value} for row in rows for key, value in row.get("edlp_budget_curve", {}).items()]
-    write_csv(output / "edlp_budget_curves.csv", curves)
-    strata = {
-        "all_runs": len(flat), "initial_global_optimum": sum(bool(r["initial_global_optimum"]) for r in flat),
-        "initial_true_improvement_exists": sum(bool(r["initial_true_improvement_exists"]) for r in flat),
-        "cache_improvement": sum(int(r["cache_confirmed_improvements"]) > 0 for r in flat),
-        "new_edlp_improvement": sum(int(r["new_edlp_confirmed_improvements"]) > 0 for r in flat),
-        "nontraining_improvement": sum(int(r["nontraining_true_improvements"]) > 0 for r in flat),
-    }
+    curve_rows: list[dict[str, object]] = []
+    for method_key, group in by_method.items():
+        for budget in range(9):
+            observed = [(float(row["edlp_budget_curve"][str(budget)]), float(row["edlp_budget_curve"][str(budget)]) - float(landscapes[row["scenario_id"]]["true_global_optimum_cost"])) for row in rows if row.get("method") == method_key[0] and str(budget) in row.get("edlp_budget_curve", {})]
+            curve_rows.append({"method": method_key[0], "method_role": method_key[1], "diagnostic_only": method_key[2], "actual_edlp_budget": budget, "available_runs": len(observed),
+                "mean_best_true_cost": statistics.mean(value[0] for value in observed) if observed else None, "median_best_true_cost": statistics.median(value[0] for value in observed) if observed else None,
+                "mean_optimality_gap": statistics.mean(value[1] for value in observed) if observed else None, "median_optimality_gap": statistics.median(value[1] for value in observed) if observed else None})
+    write_csv(output / "edlp_budget_curves.csv", curve_rows)
+    unique_landscapes = list(landscapes.values())
+    strata = {"scenario_units": len(unique_landscapes), "run_records": len(flat),
+        "initial_global_optimum_scenarios": sum(bool(r["initial_incumbent_is_global_optimum"]) for r in unique_landscapes),
+        "initial_true_improvement_scenarios": sum(bool(r["initial_true_improvement_exists"]) for r in unique_landscapes),
+        "real_improvement_cost_marked_empty_scenarios": sum(bool(r["real_improvement_exists_but_cost_marked_empty"]) for r in unique_landscapes),
+        "real_improvement_joint_marked_empty_scenarios": sum(bool(r["real_improvement_exists_but_joint_marked_empty"]) for r in unique_landscapes)}
     summary = {"schema_version": VALIDATION_SCHEMA_VERSION, "validated_runs": len(rows), "formal_runs": sum(not bool(r.get("diagnostic_only")) for r in rows), "diagnostic_only_runs": sum(bool(r.get("diagnostic_only")) for r in rows), "strata": strata, "method_summary": method_rows, "scenario_summary": scenario_rows}
     atomic_write_json(output / "validated_summary.json", summary)
     return summary

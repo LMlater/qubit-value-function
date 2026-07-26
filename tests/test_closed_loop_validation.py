@@ -84,13 +84,17 @@ def test_validation_rejects_conflicting_reused_true_costs() -> None:
 
 def test_trace_metrics_separate_admission_and_exact_logic_rejections_and_budget_curve_is_observed_only() -> None:
     result = _run_payload()["result"]
+    result["trial_trace"][1]["sampled_grover_iterations"] = 5
     metrics = trace_metrics(result, wrapper_elapsed_seconds=1.0)
     assert metrics["proposal_events"] == 2
     assert metrics["admission_hard_logic_rejections"] == 1
     assert metrics["exact_logic_precheck_rejections"] == 0
     assert metrics["total_logic_rejections"] == 1
     assert metrics["mps_trial_elapsed_sum"] == 0.5
-    assert metrics["maximum_qubits"] == 7 and metrics["maximum_circuit_depth"] == 11
+    assert metrics["grover_iterations"] == 5
+    assert metrics["mps_circuit_executions"] == 0
+    assert trace_metrics(result, method="joint_bbht")["mps_circuit_executions"] == 2
+    assert metrics["maximum_qubits"] == 7 and metrics["logical_or_pretranspile_depth"] == 11
     curve = edlp_budget_curve(result)
     assert curve[0] == 10.0 and curve[1] == 8.0 and 2 not in curve
 
@@ -126,6 +130,11 @@ def test_source_validation_builds_each_scenario_once_and_never_rewrites_source_r
     assert (source / "validation" / "scenarios" / "case14-g0g1-w0-s0.json").exists()
     summary = summarize_validated(source)
     assert summary["validated_runs"] == 2
+    assert summary["strata"]["scenario_units"] == 1
+    method_row = summary["method_summary"][0]
+    assert {"actual_ed_lp_solves", "new_exact_evaluation_attempts", "cache_hits", "nontraining_true_improvements", "total_logic_rejections", "auxiliary_syndrome_rejections", "surrogate_unmarked_rejections", "cost_marked_events", "joint_marked_events", "grover_iterations", "mps_circuit_executions", "method_wrapper_elapsed"} <= set(method_row)
+    scenario_row = summary["scenario_summary"][0]
+    assert {"initial_surrogate_cost_marked_count", "initial_joint_marked_count", "real_improvement_exists_but_cost_marked_empty", "real_improvement_exists_but_joint_marked_empty", "initial_incumbent_is_global_optimum", "initial_true_improvement_exists"} <= set(scenario_row)
     assert (source / "summaries_validated" / "edlp_budget_curves.csv").exists()
     assert validate_source_batch(source, scenario_builder=build, validation_code_sha="validation", expected_search_head="search", resume=True)["runs"] == 2
     assert builds == 1
