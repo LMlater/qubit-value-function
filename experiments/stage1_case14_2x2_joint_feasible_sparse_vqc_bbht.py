@@ -36,6 +36,11 @@ from qubit_value_function.sparse_vqc_bbht import (  # noqa: E402
     run_sparse_vqc_bbht,
     select_initial_incumbent,
 )
+from qubit_value_function.candidate_acceptance_loop import ClosedLoopBudgets  # noqa: E402
+from qubit_value_function.closed_loop_scenario import (  # noqa: E402
+    ClosedLoopScenario,
+    run_closed_loop_method,
+)
 from qubit_value_function.sparse_vqc_grover import (  # noqa: E402
     direct_float_marked_indices_for_validation,
     marked_semantics_diagnostics,
@@ -196,15 +201,45 @@ def _evaluate_window(
         ),
         seed=int(seed) + 10_000 * int(window_start),
     )
-    bbht_result = run_sparse_vqc_bbht(
-        value_model,
+    scenario = ClosedLoopScenario(
+        scenario_id=(
+            f"case14-g{selected_generator_indices[0]}g{selected_generator_indices[1]}"
+            f"-w{window_start}-s{seed}"
+        ),
+        generator_pair=selected_generator_indices,
+        window_start=int(window_start),
+        horizon=horizon,
+        training_seed=int(seed),
+        training_indices=tuple(train_indices),
+        training_labels=tuple(zip(train_indices, train_costs)),
+        value_model=value_model,
         initial_incumbent_index=initial_index,
         initial_exact_cache=training_cache,
         evaluate_candidate=evaluate_candidate,
-        config=run_config,
+        hard_logic_is_feasible=feasibility_spec.is_feasible,
+        commitments=commitments,
+        budgets=ClosedLoopBudgets(
+            max_proposals=run_config.max_trials,
+            max_new_exact_evaluations=run_config.max_new_ed_lp_calls,
+            max_actual_ed_lp_solves=None,
+            max_threshold_updates=run_config.max_threshold_updates,
+            max_consecutive_nonimproving_marked=(
+                run_config.max_consecutive_nonimproving_marked
+            ),
+            max_same_encoded_threshold_updates=(
+                run_config.max_same_encoded_threshold_updates
+            ),
+            max_auxiliary_syndrome_rejections=(
+                run_config.max_auxiliary_syndrome_rejections
+            ),
+        ),
+        bbht_config=run_config,
+        reproducibility_metadata={"initialization_policy": initialization_policy},
         feasibility_spec=feasibility_spec,
-        training_indices=train_indices,
     )
+    bbht_result = run_closed_loop_method(
+        scenario, "joint_bbht", run_seed=run_config.seed
+    )["result"]
 
     true_costs, landscape_rows, validation_calls = _validation_only_exact_landscape(
         instance,
