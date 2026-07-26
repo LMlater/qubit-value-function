@@ -1,151 +1,35 @@
-# Small-Sample Gate-Level Max-Affine Grover Adaptive Search for UC
+# Qubit Value Function for Unit Commitment
 
-This repository is now focused on a compact quantum-potential validation path for unit commitment (UC):
+本仓库当前整理完成的是“研究内容1阶段A：固定负荷、commitment-only 的模拟器原型”，并不表示整个研究内容1已经完成。阶段A以固定负荷窗口下的机组开停状态为输入，构建并验证稀疏 VQC 值函数、相干成本寄存器、严格阈值 oracle 和自适应 Grover 搜索的模拟器闭环。
 
-1. sample a small selected-generator commitment subregister,
-2. evaluate only those sampled commitments with exact ED/LP,
-3. learn an integer max-affine surrogate oracle from the samples,
-4. build a Qiskit gate-level value-register comparator oracle,
-5. run BBHT/Grover adaptive search with shot-based circuit execution,
-6. verify measured candidates classically with exact ED/LP before accepting incumbent updates.
+## 当前正式主线
 
-The current experiment does **not** use full-enumeration training. A hidden exact reference may be computed for reporting quality, but it is kept under `hidden_reference_not_used_by_algorithm` and is not used to train the oracle, calibrate thresholds, update incumbents, or stop the search.
+当前正式路径为 sparse-VQC + phase-to-value + joint BBHT：
 
-This is still an integer value-register comparator prototype. It should not be described as a complete QFT-style signed fixed-point encoding, nor as a full 12-bit case14 T=2 global optimum verification. The experiment evaluates whether shot-based gate-level GAS can recover the hidden optimum inside a selected-generator subspace under limited ED/LP supervision.
+- 在固定负荷窗口 u_w 下学习值函数切片 Q_{u_w}(x)；
+- 用稀疏 VQC 输出代理成本，再通过相干 phase-to-value 电路写入固定点整数成本寄存器；
+- 以真实 incumbent 的 ED/LP 成本编码为阈值，只采用严格比较：
 
-The default demonstration is a 4-qubit selected-subregister case:
+    C_hat_integer(x) < tau
 
-```text
-selected generators = 0,5
-search bits = g1_t0, g1_t1, g6_t0, g6_t1
-```
+    tau = encode(C_incumbent_true)
 
-Earlier non-gate-level exploration code is preserved in the Git branch:
+- 将成本阈值条件与可选的硬 UC 启停逻辑可行性条件组成联合 oracle；
+- 用普通 Grover 或 BBHT 从实际门级测量结果中选择候选，并以真实 ED/LP 复核；只有真实成本改善时才更新 incumbent。
 
-```text
-archive/pre-gate-exploration
-```
+阶段A不包含负荷输入泛化、真实量子硬件结果或对量子加速的结论。
 
-## Main Experiment
+## 阶段A范围与主要模块
 
-Run the current main experiment:
+- 稀疏 VQC 代理模型：以低阶、稀疏相位项表示固定负荷下的 commitment-only 成本切片。
+- 训练标签与真实验证：由 ED/LP 求解得到训练标签和候选的真实成本。
+- 相干成本编码：相位编码、phase-to-value、固定点量化、WeightedAdder 和 IntegerComparator。
+- Oracle：严格成本 oracle，以及与 UC 启停逻辑共同工作的 joint oracle。
+- 搜索：完整门级 Grover/BBHT 电路、Aer MPS 测量、候选来源和真实成本闭环诊断。
+- 验证：单元测试、静态电路检查与此前已验收的 case14 模拟器实验。
 
-```powershell
-python experiments/stage1_case14_t2_small_sample_gate_level_max_affine_gas.py `
-  --backend qasm `
-  --shots 2000 `
-  --selected-generators 0,5 `
-  --train-sample-count 8 `
-  --max-rounds 10 `
-  --max-trials-per-threshold 10
-```
+更完整的研究演进、已验收实验口径、资源代价和当前边界见 [RESEARCH_CONTENT_1_SUMMARY.md](RESEARCH_CONTENT_1_SUMMARY.md)。
 
-The result is written to:
+## 历史 max-affine 原型
 
-```text
-results/stage1_case14_t2_small_sample_gate_level_max_affine_gas.json
-```
-
-For diagnostic sweeps, the main experiment also supports:
-
-```powershell
---exclude-hidden-optimum-from-training
---exclude-hidden-optimum-from-initial
-```
-
-These options first compute the hidden subspace optimum for evaluation, then exclude that index from the training sample pool and/or the random initial incumbent. They are diagnostic stress tests, not algorithmic assumptions.
-
-The JSON summary records both algorithmic ED/LP calls and hidden-reference ED/LP calls. Algorithmic calls include only training samples plus measured candidates checked by ED/LP.
-
-If `--save-qasm true` is enabled, a reference QASM/text circuit dump is written to:
-
-```text
-results/stage1_case14_t2_small_sample_gate_level_max_affine_gas.qasm
-```
-
-## Sweep Experiments
-
-Run a smoke sweep:
-
-```powershell
-python experiments/stage1_case14_t2_small_sample_gate_level_gas_sweep.py `
-  --backend qasm `
-  --shots 1000 `
-  --seed-start 0 `
-  --seed-count 3 `
-  --configs "0,5;0,1;0,1,5" `
-  --train-sample-counts "4,8,12" `
-  --max-rounds 8 `
-  --max-trials-per-threshold 8 `
-  --max-candidates-per-shotbatch 1 `
-  --output-json results/stage1_case14_t2_small_sample_gate_level_gas_sweep_smoke.json `
-  --output-csv results/stage1_case14_t2_small_sample_gate_level_gas_sweep_smoke.csv
-```
-
-Run the hidden-optimum-exclusion smoke sweep by adding:
-
-```powershell
---exclude-hidden-optimum-from-training
---exclude-hidden-optimum-from-initial
-```
-
-The sweep output contains individual run rows plus grouped summaries by selected generators, search-qubit count, train sample count, and exclusion mode. `success_rate` and `success_rate_over_ok_runs` use successful executions as the denominator; `success_rate_over_attempted_runs` includes error rows in the denominator. The key diagnostic metrics are `success_rate_when_hidden_optimum_not_in_training` and `success_rate_when_hidden_optimum_not_in_training_and_not_initial`.
-
-## Current Structure
-
-Core package files:
-
-```text
-qubit_value_function/
-  commitment.py
-  ed.py
-  experiment_utils.py
-  gate_level_oracle.py
-  qft_weighted_sum_oracle.py
-  uc_loader.py
-```
-
-Current experiments:
-
-```text
-experiments/
-  stage1_case14_t2_small_sample_gate_level_max_affine_gas.py
-  stage1_case14_t2_small_sample_gate_level_gas_sweep.py
-  stage1_case14_t2_gate_level_grover_oracle.py
-  stage1_case14_t2_gate_level_max_affine_oracle.py
-  stage1_case14_t2_learned_small_max_affine_gate_level_oracle.py
-```
-
-Tests:
-
-```text
-tests/test_stage1.py
-```
-
-Data:
-
-```text
-data/case14.json.gz
-data/aelmp_simple.json.gz
-```
-
-## Validation
-
-Run:
-
-```powershell
-pytest -q
-```
-
-The tests cover:
-
-- UC instance loading and ED/LP evaluation,
-- selected-subregister embedding helpers,
-- Qiskit gate-level affine and max-affine phase oracles,
-- QFT weighted-sum oracle consistency,
-- small-sample integer max-affine learning,
-- qasm shot execution and bitstring mapping,
-- adaptive search incumbent updates only after true ED/LP improvement,
-- hidden reference accounting outside algorithmic ED/LP calls,
-- hidden-optimum exclusion from training samples,
-- sweep config parsing and grouped success-rate metrics.
+max-affine 路线是早期的门级可逆值寄存器与 Grover/GAS 探索。它为后续固定点寄存器、比较器、候选真实验证等工作提供了原型基础，具有阶段性研究意义。该历史原型采用自身的模型、实验设置和阈值语义；它不是当前 sparse-VQC + phase-to-value + joint BBHT 的正式主线，历史结论亦不因此被删除或否定。
