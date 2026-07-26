@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
 import pytest
@@ -22,7 +23,7 @@ def _runner(_scenario, method, _run_seed):
         "method": method,
         "method_role": "diagnostic_only" if method.startswith("direct") else "random_baseline",
         "diagnostic_only": method.startswith("direct"),
-        "scenario": {"scenario_id": "fake"},
+        "scenario": {"scenario_id": "case14-g0g1-w0-s0"},
         "result_schema": {
             "initial_incumbent_true_cost": 12.0,
             "final_incumbent_true_cost": 10.0,
@@ -60,5 +61,36 @@ def test_summary_rejects_completed_fingerprint_not_in_manifest(tmp_path: Path) -
     completed = next((output / "runs" / "completed").glob("*.json"))
     text = completed.read_text(encoding="utf-8").replace('"fingerprint": "', '"fingerprint": "bad', 1)
     completed.write_text(text, encoding="utf-8")
+    with pytest.raises(SummaryValidationError):
+        summarize_batch(output)
+
+
+def test_summary_treats_matching_completed_failed_overlap_as_recovered(tmp_path: Path) -> None:
+    output = tmp_path / "out"
+    executor = ClosedLoopBatchExecutor(output_dir=output, code={"head": "head"}, scenario_builder=lambda _: object(), method_runner=_runner)
+    executor.execute(_specs())
+    completed = next((output / "runs" / "completed").glob("*.json"))
+    payload = json.loads(completed.read_text(encoding="utf-8"))
+    payload["status"] = "failed"
+    payload["error"] = {"type": "Interrupted", "message": "after completed", "traceback": ""}
+    failed = output / "runs" / "failed" / completed.name
+    failed.parent.mkdir(parents=True, exist_ok=True)
+    failed.write_text(json.dumps(payload), encoding="utf-8")
+    summary = summarize_batch(output)
+    assert summary["failed_runs"] == 0
+    assert summary["recovered_failed_runs"] == 1
+
+
+def test_summary_rejects_fingerprint_mismatched_completed_failed_overlap(tmp_path: Path) -> None:
+    output = tmp_path / "out"
+    executor = ClosedLoopBatchExecutor(output_dir=output, code={"head": "head"}, scenario_builder=lambda _: object(), method_runner=_runner)
+    executor.execute(_specs())
+    completed = next((output / "runs" / "completed").glob("*.json"))
+    payload = json.loads(completed.read_text(encoding="utf-8"))
+    payload["status"] = "failed"
+    payload["fingerprint"] = "incompatible"
+    failed = output / "runs" / "failed" / completed.name
+    failed.parent.mkdir(parents=True, exist_ok=True)
+    failed.write_text(json.dumps(payload), encoding="utf-8")
     with pytest.raises(SummaryValidationError):
         summarize_batch(output)

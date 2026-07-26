@@ -44,8 +44,13 @@ def _completed_rows(output_dir: Path, expected_fingerprints: Mapping[str, object
     return rows
 
 
-def _failed_ids(output_dir: Path, expected_fingerprints: Mapping[str, object]) -> set[str]:
+def _failed_ids(
+    output_dir: Path,
+    expected_fingerprints: Mapping[str, object],
+    completed_ids: set[str],
+) -> tuple[set[str], set[str]]:
     failed: set[str] = set()
+    recovered: set[str] = set()
     for path in sorted((output_dir / "runs" / "failed").glob("*.json")):
         payload = _load(path)
         run_id = payload.get("run_id")
@@ -55,8 +60,11 @@ def _failed_ids(output_dir: Path, expected_fingerprints: Mapping[str, object]) -
             raise SummaryValidationError(f"failed 结果 schema/status 无效: {path}")
         if expected_fingerprints.get(run_id) != payload.get("fingerprint"):
             raise SummaryValidationError(f"failed 结果 fingerprint 与 manifest 不一致: {path}")
-        failed.add(run_id)
-    return failed
+        if run_id in completed_ids:
+            recovered.add(run_id)
+        else:
+            failed.add(run_id)
+    return failed, recovered
 
 
 def _counter(result: Mapping[str, object], name: str) -> int:
@@ -164,11 +172,8 @@ def summarize_batch(output_dir: Path) -> dict[str, object]:
     if not isinstance(expected_fingerprints, Mapping) or not isinstance(planned_ids, list):
         raise SummaryValidationError("manifest 缺少计划 fingerprint/run_id 清单")
     completed = _completed_rows(output_dir, expected_fingerprints)
-    failed = _failed_ids(output_dir, expected_fingerprints)
     completed_ids = {str(payload["run_id"]) for payload in completed}
-    overlap = completed_ids & failed
-    if overlap:
-        raise SummaryValidationError(f"同一 run 同时存在 completed 和 failed: {sorted(overlap)}")
+    failed, recovered = _failed_ids(output_dir, expected_fingerprints, completed_ids)
     missing = sorted(set(str(value) for value in planned_ids) - completed_ids - failed)
     run_rows = [_run_row(payload) for payload in completed]
     method_rows = _group_summary(run_rows, ("method", "method_role", "diagnostic_only"))
@@ -179,6 +184,7 @@ def summarize_batch(output_dir: Path) -> dict[str, object]:
         "planned_runs": len(planned_ids),
         "completed_runs": len(completed),
         "failed_runs": len(failed),
+        "recovered_failed_runs": len(recovered),
         "missing_runs": len(missing),
         "missing_run_ids": missing,
         "diagnostic_only_runs": sum(bool(row["diagnostic_only"]) for row in run_rows),

@@ -23,7 +23,6 @@ from qubit_value_function.closed_loop_batch import (  # noqa: E402
     BatchConfigurationError,
     ClosedLoopBatchExecutor,
     build_run_specs,
-    derive_seed,
     preset_selection,
 )
 from qubit_value_function.closed_loop_result_summary import summarize_batch  # noqa: E402
@@ -110,6 +109,17 @@ def _require_clean() -> None:
         raise RuntimeError("--require-clean 拒绝已跟踪改动或非 results 未跟踪文件: " + "; ".join(violations))
 
 
+def default_output_dir(preset: str) -> Path:
+    directories = {
+        "smoke": Path("results/stage1_closed_loop_baseline_smoke"),
+        "pilot": Path("results/stage1_closed_loop_baseline_pilot"),
+        "formal": Path("results/stage1_closed_loop_baseline_formal"),
+    }
+    if preset not in directories:
+        raise BatchConfigurationError("custom preset 必须显式提供 --output-dir")
+    return directories[preset]
+
+
 def build_argument_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="阶段 A 可恢复闭环基线批量 CLI（Windows workers=1）")
     parser.add_argument("--preset", choices=("smoke", "pilot", "formal", "custom"), default="smoke")
@@ -118,7 +128,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--windows", type=_csv_ints)
     parser.add_argument("--training-seeds", type=_csv_ints)
     parser.add_argument("--run-seeds", type=_csv_ints)
-    parser.add_argument("--output-dir", type=Path, default=Path("results/stage1_closed_loop_baseline"))
+    parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--batch-id")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--skip-failed", action="store_true")
@@ -158,8 +168,11 @@ def _selection(args: argparse.Namespace) -> dict[str, Sequence[object]]:
 
 def main() -> int:
     args = build_argument_parser().parse_args()
+    output_dir = args.output_dir
+    if output_dir is None:
+        output_dir = default_output_dir(args.preset)
     if args.summarize_only:
-        print(json.dumps(summarize_batch(args.output_dir), ensure_ascii=False, indent=2))
+        print(json.dumps(summarize_batch(output_dir), ensure_ascii=False, indent=2))
         return 0
     if args.workers != 1:
         raise BatchConfigurationError("当前版本只支持 --workers 1，不传递 ClosedLoopScenario 给 ProcessPool")
@@ -182,7 +195,11 @@ def main() -> int:
         fixed_point_config=fixed_point, initialization_policy=args.initialization_policy,
         expected_code_sha=head, **selected,
     )
-    plan = {"batch_id": batch_id, "runs": len(specs), "mps_runs": sum(spec.method in MPS_METHODS for spec in specs), "methods": list(args.methods)}
+    plan = {
+        "batch_id": batch_id, "output_dir": str(output_dir), "runs": len(specs),
+        "mps_runs": sum(spec.method in MPS_METHODS for spec in specs), "methods": list(args.methods),
+        "budget": budget, "fixed_point": fixed_point, "initialization_policy": args.initialization_policy,
+    }
     if args.dry_run:
         print(json.dumps(plan, ensure_ascii=False, indent=2))
         return 0
@@ -202,17 +219,17 @@ def main() -> int:
         )
 
     def method_runner(scenario, method: str, run_seed: int):
-        stable_seed = derive_seed(run_seed, scenario.scenario_id, method, "bbht")
-        return run_closed_loop_method(scenario, method, run_seed=stable_seed)
+        return run_closed_loop_method(scenario, method, run_seed=run_seed)
 
     def progress(row):
         done = row["completed"] + row["skipped"] + row["failed"]
         print(f"[{done}/{row['total']}] run_id={row['run_id']} method={row['method']} completed={row['completed']} skipped={row['skipped']} failed={row['failed']} remaining={row['pending']}", flush=True)
 
     executor = ClosedLoopBatchExecutor(
-        output_dir=args.output_dir, code=_environment(expected_head, args.workers),
+        output_dir=output_dir, code=_environment(expected_head, args.workers),
         scenario_builder=scenario_builder, method_runner=method_runner, workers=args.workers,
     )
+    print(json.dumps({"batch_id": batch_id, "budget": budget, "output_dir": str(output_dir)}, ensure_ascii=False), flush=True)
     try:
         counts = executor.execute(specs, resume=args.resume, skip_failed=args.skip_failed, continue_on_error=args.continue_on_error, progress=progress)
     except KeyboardInterrupt:

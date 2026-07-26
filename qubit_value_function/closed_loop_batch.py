@@ -83,12 +83,23 @@ class RunSpec:
             f"_train{int(self.training_seed)}_{self.method}_run{int(self.run_seed)}"
         )
 
+    @property
+    def scenario_id(self) -> str:
+        left, right = self.generator_pair
+        return f"case14-g{int(left)}g{int(right)}-w{int(self.window_start)}-s{int(self.training_seed)}"
+
+    @property
+    def method_seed(self) -> int:
+        return derive_seed(self.run_seed, self.scenario_id, self.method, "bbht")
+
     def semantic_config(self) -> dict[str, object]:
         payload = asdict(self)
         payload["generator_pair"] = list(self.generator_pair)
         payload["budget_config"] = dict(self.budget_config)
         payload["fixed_point_config"] = dict(self.fixed_point_config)
         payload["run_id"] = self.run_id
+        payload["scenario_id"] = self.scenario_id
+        payload["method_seed"] = self.method_seed
         return payload
 
     @property
@@ -104,19 +115,17 @@ class RunSpec:
     def scenario_group_key(self) -> tuple[tuple[int, int], int, int]:
         return (self.generator_pair, int(self.window_start), int(self.training_seed))
 
-    def seed_metadata(self) -> dict[str, int]:
-        scenario_id = (
-            f"case14-g{self.generator_pair[0]}g{self.generator_pair[1]}"
-            f"-w{self.window_start}-train{self.training_seed}"
-        )
+    def seed_metadata(self) -> dict[str, object]:
         return {
             "training_seed": int(self.training_seed),
-            "run_seed": int(self.run_seed),
-            "bbht_seed": derive_seed(self.run_seed, scenario_id, self.method, "bbht"),
-            "execution_seed": derive_seed(self.run_seed, scenario_id, self.method, "execution"),
-            "simulator_seed": derive_seed(self.run_seed, scenario_id, self.method, "simulator"),
-            "transpiler_seed": derive_seed(self.run_seed, scenario_id, self.method, "transpiler"),
-            "random_baseline_seed": derive_seed(self.run_seed, scenario_id, self.method, "random"),
+            "master_run_seed": int(self.run_seed),
+            "scenario_id": self.scenario_id,
+            "method_seed": self.method_seed,
+            "method_seed_derivation": {
+                "algorithm": "sha256",
+                "inputs": [int(self.run_seed), self.scenario_id, self.method, "bbht"],
+            },
+            "per_trial_execution_seeds_location": "result.trial_trace[*].execution_seed",
         }
 
 
@@ -246,7 +255,7 @@ def _read_json(path: Path) -> dict[str, object]:
 
 
 def _validate_completed_payload(payload: Mapping[str, object], spec: RunSpec) -> None:
-    required = {"schema_version", "status", "run_id", "fingerprint", "code", "run_spec", "scenario", "result", "timing"}
+    required = {"schema_version", "status", "run_id", "fingerprint", "code", "run_spec", "seeds", "scenario", "result", "timing"}
     absent = sorted(required - set(payload))
     if absent:
         raise ResumeConflictError(f"completed JSON 缺少关键字段: {', '.join(absent)}")
@@ -261,6 +270,12 @@ def _validate_completed_payload(payload: Mapping[str, object], spec: RunSpec) ->
         raise ResumeConflictError("已有 completed 文件 code SHA 不一致；请使用新的 output-dir/batch-id")
     if not isinstance(payload["result"], Mapping):
         raise ResumeConflictError("已有 completed 文件 result 不是可汇总 JSON object")
+    seeds = payload["seeds"]
+    if not isinstance(seeds, Mapping) or seeds.get("method_seed") != spec.method_seed:
+        raise ResumeConflictError("已有 completed 文件 method_seed 不匹配")
+    scenario = payload["scenario"]
+    if not isinstance(scenario, Mapping) or scenario.get("scenario_id") != spec.scenario_id:
+        raise ResumeConflictError("已有 completed 文件 scenario_id 不匹配")
 
 
 def _validate_failed_payload(payload: Mapping[str, object], spec: RunSpec) -> None:
@@ -271,6 +286,7 @@ def _validate_failed_payload(payload: Mapping[str, object], spec: RunSpec) -> No
 
 
 ScenarioBuilder = Callable[[RunSpec], object]
+# 第三个参数是实际传给 run_closed_loop_method / numpy RNG 的 method_seed。
 MethodRunner = Callable[[object, str, int], Mapping[str, object]]
 ProgressReporter = Callable[[Mapping[str, object]], None]
 
@@ -313,6 +329,8 @@ class ClosedLoopBatchExecutor:
         if completed.exists():
             payload = _read_json(completed)
             _validate_completed_payload(payload, spec)
+            if failed.exists():
+                _validate_failed_payload(_read_json(failed), spec)
             if not resume:
                 raise ResumeConflictError(f"结果已存在: {completed}；请使用 --resume 或新的 output-dir")
             return "skip_completed"
@@ -351,6 +369,9 @@ class ClosedLoopBatchExecutor:
             ],
             "run_seeds": sorted({spec.run_seed for spec in specs}),
             "expected_head": specs[0].expected_code_sha if specs else "",
+            "budget_config": dict(specs[0].budget_config) if specs else {},
+            "fixed_point_config": dict(specs[0].fixed_point_config) if specs else {},
+            "initialization_policy": specs[0].initialization_policy if specs else "",
             "config_fingerprint": batch_config_fingerprint(specs),
             "counts": dict(counts),
             "interrupted": bool(interrupted),
@@ -410,7 +431,10 @@ class ClosedLoopBatchExecutor:
                     started = utc_now()
                     timer = datetime.now(timezone.utc)
                     try:
-                        envelope = self.method_runner(scenario, spec.method, spec.run_seed)
+                        scenario_id = getattr(scenario, "scenario_id", spec.scenario_id)
+                        if scenario_id != spec.scenario_id:
+                            raise RuntimeError("场景构建器返回的 scenario_id 与 RunSpec 不一致")
+                        envelope = self.method_runner(scenario, spec.method, spec.method_seed)
                         result = envelope.get("result_schema")
                         if not isinstance(result, Mapping):
                             raise TypeError("方法执行器未返回 JSON result_schema")
@@ -434,8 +458,18 @@ class ClosedLoopBatchExecutor:
                                 "elapsed_seconds": (datetime.now(timezone.utc) - timer).total_seconds(),
                             },
                         }
+                        if payload["scenario"].get("scenario_id") != spec.scenario_id:
+                            raise RuntimeError("方法执行器返回的 scenario_id 与 RunSpec 不一致")
                         json.dumps(payload, ensure_ascii=False)
                         atomic_write_json(self._completed_path(spec), payload)
+                        failed_path = self._failed_path(spec)
+                        if failed_path.exists():
+                            _validate_failed_payload(_read_json(failed_path), spec)
+                            try:
+                                failed_path.unlink()
+                            except OSError:
+                                # completed 已是权威结果；下一次 resume/summary 会将旧 failed 视为 recovered。
+                                pass
                         counts["completed"] += 1
                     except KeyboardInterrupt:
                         raise

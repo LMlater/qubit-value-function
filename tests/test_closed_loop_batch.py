@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from qubit_value_function.closed_loop_batch import (
@@ -14,6 +15,7 @@ from qubit_value_function.closed_loop_batch import (
     derive_seed,
     preset_selection,
 )
+from qubit_value_function.closed_loop_result_summary import summarize_batch
 
 
 def _specs(*, methods=("full_space_random",), run_seeds=(0,), batch_id="test"):
@@ -37,7 +39,7 @@ def _runner(_scenario, method, run_seed):
         "method": method,
         "method_role": "random_baseline",
         "diagnostic_only": False,
-        "scenario": {"scenario_id": "fake", "training_indices": [1]},
+        "scenario": {"scenario_id": "case14-g0g1-w0-s0", "training_indices": [1]},
         "result": object(),
         "result_schema": {
             "method": method,
@@ -168,3 +170,55 @@ def test_interrupt_preserves_completed_records_and_marks_manifest(tmp_path: Path
     assert len(list((tmp_path / "out" / "runs" / "completed").glob("*.json"))) == 1
     manifest = json.loads((tmp_path / "out" / "batch_manifest.json").read_text(encoding="utf-8"))
     assert manifest["interrupted"] is True
+
+
+def test_completed_seed_metadata_matches_actual_runner_seed_and_replays_random_candidates(tmp_path: Path) -> None:
+    received: list[int] = []
+
+    def runner(_scenario, method, method_seed):
+        received.append(method_seed)
+        candidates = np.random.default_rng(method_seed).integers(0, 16, size=4).tolist()
+        return {
+            "method": method,
+            "method_role": "random_baseline",
+            "scenario": {"scenario_id": "case14-g0g1-w0-s0"},
+            "result_schema": {
+                "trial_trace": [{"candidate_index": value} for value in candidates],
+                "counters": {}, "stop_reason": "done",
+            },
+        }
+
+    specs = _specs()
+    executor = _executor(tmp_path / "out", runner=runner)
+    executor.execute(specs)
+    payload = json.loads(next((tmp_path / "out" / "runs" / "completed").glob("*.json")).read_text(encoding="utf-8"))
+    seeds = payload["seeds"]
+    assert seeds["scenario_id"] == specs[0].scenario_id == payload["scenario"]["scenario_id"]
+    assert seeds["method_seed"] == specs[0].method_seed
+    assert received == [specs[0].method_seed]
+    assert set(seeds) == {
+        "training_seed", "master_run_seed", "scenario_id", "method_seed",
+        "method_seed_derivation", "per_trial_execution_seeds_location",
+    }
+    assert seeds["method_seed_derivation"]["algorithm"] == "sha256"
+    assert [row["candidate_index"] for row in payload["result"]["trial_trace"]] == (
+        np.random.default_rng(seeds["method_seed"]).integers(0, 16, size=4).tolist()
+    )
+
+
+def test_completed_result_retires_matching_failed_record_after_resume(tmp_path: Path) -> None:
+    attempts = 0
+
+    def runner(_scenario, method, method_seed):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise RuntimeError("temporary failure")
+        return _runner(_scenario, method, method_seed)
+
+    specs = _specs()
+    executor = _executor(tmp_path / "out", runner=runner)
+    assert executor.execute(specs)["failed"] == 1
+    assert executor.execute(specs, resume=True)["completed"] == 1
+    assert not list((tmp_path / "out" / "runs" / "failed").glob("*.json"))
+    assert summarize_batch(tmp_path / "out")["failed_runs"] == 0
