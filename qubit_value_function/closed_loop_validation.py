@@ -319,18 +319,52 @@ def summarize_validated(source_output_dir: Path) -> dict[str, object]:
     flat = []
     for row in rows:
         metrics = row.get("trace_metrics", {})
-        flat.append({"run_id": row["run_id"], "scenario_id": row["scenario_id"], "method": row.get("method"), "method_role": row.get("method_role"), "diagnostic_only": row.get("diagnostic_only"), "reached_global_optimum": row.get("reached_global_optimum"), "final_optimality_gap": row.get("final_optimality_gap"), "true_cost_decrease": row.get("true_cost_decrease"), "actual_ed_lp_solves": metrics.get("actual_ed_lp_solves", 0), "proposals": metrics.get("proposal_events", 0)})
+        flat.append({
+            "run_id": row["run_id"], "scenario_id": row["scenario_id"], "method": row.get("method"), "method_role": row.get("method_role"), "diagnostic_only": row.get("diagnostic_only"),
+            "initial_global_optimum": row.get("initial_incumbent_is_global_optimum"), "initial_true_improvement_exists": row.get("initial_true_improvement_exists"),
+            "initial_gap": row.get("initial_optimality_gap"), "final_gap": row.get("final_optimality_gap"), "gap_reduction": float(row.get("initial_optimality_gap", 0.0)) - float(row.get("final_optimality_gap", 0.0)),
+            "reached_global_optimum": row.get("reached_global_optimum"), "nontraining_global_optimum_hit": row.get("nontraining_global_optimum_hit"), "true_cost_decrease": row.get("true_cost_decrease"),
+            "final_true_cost": row.get("final_incumbent_true_cost"), **{key: metrics.get(key, 0) for key in (
+                "proposal_events", "unique_candidate_events", "repeated_candidate_events", "cache_hits", "cache_confirmed_improvements", "new_edlp_confirmed_improvements",
+                "nontraining_true_improvements", "admission_hard_logic_rejections", "exact_logic_precheck_rejections", "total_logic_rejections", "oracle_calls",
+                "mps_trial_elapsed_sum", "maximum_qubits", "maximum_circuit_depth", "actual_ed_lp_solves",
+            )},
+        })
     def write_csv(path: Path, data: list[dict[str, object]]) -> None:
         if not data: path.write_text("\n", encoding="utf-8"); return
         with path.open("w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=list(data[0])); writer.writeheader(); writer.writerows(data)
     write_csv(output / "validated_run_index.csv", flat)
+    def aggregate(group: list[dict[str, object]], label: Mapping[str, object]) -> dict[str, object]:
+        runs = len(group)
+        payload = dict(label)
+        payload.update({
+            "runs": runs, "at_least_one_true_improvement_probability": sum(bool(r["true_cost_decrease"]) for r in group) / runs,
+            "nontraining_improvement_probability": sum(int(r["nontraining_true_improvements"]) > 0 for r in group) / runs,
+            "global_optimum_hit_probability": sum(bool(r["reached_global_optimum"]) for r in group) / runs,
+            "mean_initial_gap": sum(float(r["initial_gap"]) for r in group) / runs, "mean_final_gap": sum(float(r["final_gap"]) for r in group) / runs,
+            "mean_gap_reduction": sum(float(r["gap_reduction"]) for r in group) / runs,
+            **{key: sum(float(r[key]) for r in group) for key in ("proposal_events", "unique_candidate_events", "repeated_candidate_events", "cache_confirmed_improvements", "new_edlp_confirmed_improvements", "admission_hard_logic_rejections", "exact_logic_precheck_rejections", "oracle_calls", "mps_trial_elapsed_sum")},
+            "maximum_qubits": max(int(r["maximum_qubits"]) for r in group), "maximum_circuit_depth": max(int(r["maximum_circuit_depth"]) for r in group),
+        })
+        return payload
     by_method: dict[tuple[object, ...], list[dict[str, object]]] = {}
-    for row in flat: by_method.setdefault((row["method"], row["method_role"], row["diagnostic_only"]), []).append(row)
-    method_rows = [{"method": key[0], "method_role": key[1], "diagnostic_only": key[2], "runs": len(group), "global_optimum_hits": sum(bool(r["reached_global_optimum"]) for r in group), "true_cost_decreases": sum(bool(r["true_cost_decrease"]) for r in group)} for key, group in sorted(by_method.items(), key=str)]
-    write_csv(output / "validated_method_summary.csv", method_rows); write_csv(output / "validated_scenario_summary.csv", flat)
+    by_scenario: dict[tuple[object, ...], list[dict[str, object]]] = {}
+    for row in flat:
+        by_method.setdefault((row["method"], row["method_role"], row["diagnostic_only"]), []).append(row)
+        by_scenario.setdefault((row["scenario_id"], row["method"], row["method_role"], row["diagnostic_only"]), []).append(row)
+    method_rows = [aggregate(group, {"method": key[0], "method_role": key[1], "diagnostic_only": key[2]}) for key, group in sorted(by_method.items(), key=str)]
+    scenario_rows = [aggregate(group, {"scenario_id": key[0], "method": key[1], "method_role": key[2], "diagnostic_only": key[3]}) for key, group in sorted(by_scenario.items(), key=str)]
+    write_csv(output / "validated_method_summary.csv", method_rows); write_csv(output / "validated_scenario_summary.csv", scenario_rows)
     curves = [{"run_id": row["run_id"], "actual_edlp_solves": key, "best_true_cost": value} for row in rows for key, value in row.get("edlp_budget_curve", {}).items()]
     write_csv(output / "edlp_budget_curves.csv", curves)
-    summary = {"schema_version": VALIDATION_SCHEMA_VERSION, "validated_runs": len(rows), "formal_runs": sum(not bool(r.get("diagnostic_only")) for r in rows), "diagnostic_only_runs": sum(bool(r.get("diagnostic_only")) for r in rows), "method_summary": method_rows}
+    strata = {
+        "all_runs": len(flat), "initial_global_optimum": sum(bool(r["initial_global_optimum"]) for r in flat),
+        "initial_true_improvement_exists": sum(bool(r["initial_true_improvement_exists"]) for r in flat),
+        "cache_improvement": sum(int(r["cache_confirmed_improvements"]) > 0 for r in flat),
+        "new_edlp_improvement": sum(int(r["new_edlp_confirmed_improvements"]) > 0 for r in flat),
+        "nontraining_improvement": sum(int(r["nontraining_true_improvements"]) > 0 for r in flat),
+    }
+    summary = {"schema_version": VALIDATION_SCHEMA_VERSION, "validated_runs": len(rows), "formal_runs": sum(not bool(r.get("diagnostic_only")) for r in rows), "diagnostic_only_runs": sum(bool(r.get("diagnostic_only")) for r in rows), "strata": strata, "method_summary": method_rows, "scenario_summary": scenario_rows}
     atomic_write_json(output / "validated_summary.json", summary)
     return summary

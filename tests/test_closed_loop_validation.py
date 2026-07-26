@@ -11,6 +11,7 @@ from qubit_value_function.closed_loop_validation import (
     ValidationConsistencyError,
     edlp_budget_curve,
     trace_metrics,
+    summarize_validated,
     validate_run_against_landscape,
     validate_scenario_landscape,
     validate_source_batch,
@@ -123,6 +124,9 @@ def test_source_validation_builds_each_scenario_once_and_never_rewrites_source_r
     assert result["scenarios"] == 1 and result["runs"] == 2 and builds == 1
     assert (completed / "run0.json").read_text(encoding="utf-8") == original
     assert (source / "validation" / "scenarios" / "case14-g0g1-w0-s0.json").exists()
+    summary = summarize_validated(source)
+    assert summary["validated_runs"] == 2
+    assert (source / "summaries_validated" / "edlp_budget_curves.csv").exists()
     assert validate_source_batch(source, scenario_builder=build, validation_code_sha="validation", expected_search_head="search", resume=True)["runs"] == 2
     assert builds == 1
     scenario_path = source / "validation" / "scenarios" / "case14-g0g1-w0-s0.json"
