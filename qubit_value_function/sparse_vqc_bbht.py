@@ -8,9 +8,11 @@ import numpy as np
 
 from .candidate_acceptance_loop import (
     CandidateProposal,
+    CandidateAdmissionPolicy,
     ClosedLoopBudgets,
     ExactCandidateEvaluation,
     ExactEvaluator,
+    JOINT_BBHT_ADMISSION_POLICY,
     accept_candidate_proposal,
     create_closed_loop_state,
 )
@@ -116,6 +118,7 @@ class SparseVQCBBHTResult:
     max_m_reached: int
     bbht_m_cap: int
     uses_hard_feasibility_oracle: bool
+    admission_policy: CandidateAdmissionPolicy
     config: BBHTConfig
 
     def as_dict(self) -> dict[str, object]:
@@ -151,6 +154,12 @@ class SparseVQCBBHTResult:
             "uses_marked_count": False,
             "uses_validation_enumeration": False,
             "uses_hard_feasibility_oracle": bool(self.uses_hard_feasibility_oracle),
+            "admission_policy": {
+                "name": self.admission_policy.name,
+                "require_auxiliary_accepted": self.admission_policy.require_auxiliary_accepted,
+                "require_hard_logic_feasible": self.admission_policy.require_hard_logic_feasible,
+                "require_surrogate_better": self.admission_policy.require_surrogate_better,
+            },
             "threshold_updates_require_true_ed_lp_improvement": True,
             "legacy_new_ed_lp_calls_semantics": "alias of new_exact_evaluation_attempts; use actual_ed_lp_solves for physical LP-solve count",
         }
@@ -253,6 +262,7 @@ def run_sparse_vqc_bbht(
             max_same_encoded_threshold_updates=config.max_same_encoded_threshold_updates,
             max_auxiliary_syndrome_rejections=config.max_auxiliary_syndrome_rejections,
         ),
+        admission_policy=JOINT_BBHT_ADMISSION_POLICY,
     )
     if trial_executor is None:
         def executor(value_model: QuantizedSparseValueModel, threshold: int, iterations: int, shots: int, seed: int) -> BBHTTrialExecution:
@@ -370,7 +380,9 @@ def run_sparse_vqc_bbht(
         threshold_updates=state.threshold_updates,
         same_encoded_threshold_updates=state.same_encoded_threshold_updates,
         max_m_reached=max_m_reached, bbht_m_cap=m_cap,
-        uses_hard_feasibility_oracle=bool(feasibility_spec is not None), config=config,
+        uses_hard_feasibility_oracle=bool(feasibility_spec is not None),
+        admission_policy=JOINT_BBHT_ADMISSION_POLICY,
+        config=config,
     )
 
 

@@ -131,6 +131,7 @@ def test_true_ed_improvements_repeatedly_shrink_threshold_until_lower_bound_stop
     assert [row["encoded_threshold"] for row in result.threshold_history] == [3, 2, 1, 0]
     assert result.stop_reason == "no_surrogate_marked_state_by_conservative_lower_bound"
     assert all(row["threshold_updated"] for row in result.trial_trace)
+    assert result.as_dict()["admission_policy"]["name"] == "joint_bbht"
 
 
 def test_marked_false_positive_does_not_update_threshold_and_grows_m() -> None:

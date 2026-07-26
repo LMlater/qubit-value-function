@@ -8,6 +8,7 @@ from qubit_value_function.candidate_acceptance_loop import (
     CandidateProposal,
     ClosedLoopBudgets,
     ExactCandidateEvaluation,
+    JOINT_BBHT_ADMISSION_POLICY,
     accept_candidate_proposal,
     create_closed_loop_state,
 )
@@ -193,6 +194,14 @@ def test_failed_exact_evaluation_is_charged_without_updating_incumbent() -> None
 
 def test_shared_acceptance_api_has_no_validation_landscape_input() -> None:
     assert "validation" not in inspect.signature(accept_candidate_proposal).parameters
+
+
+def test_default_closed_loop_policy_preserves_all_joint_bbht_gates() -> None:
+    state = _state()
+    assert state.admission_policy == JOINT_BBHT_ADMISSION_POLICY
+    assert state.admission_policy.require_auxiliary_accepted is True
+    assert state.admission_policy.require_hard_logic_feasible is True
+    assert state.admission_policy.require_surrogate_better is True
 
 
 def test_bbht_delegates_incumbent_mutation_to_shared_acceptance_loop() -> None:
