@@ -115,7 +115,8 @@ def _evaluate_window(
     regularization: float,
     maxiter: int,
     bbht_config: BBHTConfig,
-) -> dict[str, object]:
+    build_only: bool = False,
+) -> dict[str, object] | ClosedLoopScenario:
     horizon = 2
     num_x_qubits = len(selected_generator_indices) * horizon
     instance = time_window_instance(source, start=int(window_start), horizon=horizon)
@@ -237,6 +238,8 @@ def _evaluate_window(
         reproducibility_metadata={"initialization_policy": initialization_policy},
         feasibility_spec=feasibility_spec,
     )
+    if build_only:
+        return scenario
     bbht_result = run_closed_loop_method(
         scenario, "joint_bbht", run_seed=run_config.seed
     )["result"]
@@ -348,6 +351,39 @@ def _evaluate_window(
         "uses_adaptive_threshold": True,
         "uses_bbht": True,
     }
+
+
+def build_case14_closed_loop_scenario(
+    *,
+    source,
+    window_start: int,
+    selected_generator_indices: tuple[int, int],
+    train_sample_count: int,
+    fixed_point: FixedPointConfig,
+    initialization_policy: str,
+    seed: int,
+    regularization: float,
+    maxiter: int,
+    bbht_config: BBHTConfig,
+) -> ClosedLoopScenario:
+    """复用既有 Case14 训练、量化和初始缓存构建；不执行搜索或验证。"""
+
+    scenario = _evaluate_window(
+        source=source,
+        window_start=window_start,
+        selected_generator_indices=selected_generator_indices,
+        train_sample_count=train_sample_count,
+        fixed_point=fixed_point,
+        initialization_policy=initialization_policy,
+        seed=seed,
+        regularization=regularization,
+        maxiter=maxiter,
+        bbht_config=bbht_config,
+        build_only=True,
+    )
+    if not isinstance(scenario, ClosedLoopScenario):
+        raise RuntimeError("Case14 scenario builder 未返回 ClosedLoopScenario")
+    return scenario
 
 
 def run(
