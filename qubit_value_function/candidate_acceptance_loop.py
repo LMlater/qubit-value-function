@@ -106,6 +106,24 @@ LOGIC_REJECTION_RANDOM_ADMISSION_POLICY = CandidateAdmissionPolicy(
     require_hard_logic_feasible=True,
     require_surrogate_better=False,
 )
+COST_ONLY_BBHT_ADMISSION_POLICY = CandidateAdmissionPolicy(
+    name="cost_only_bbht",
+    require_auxiliary_accepted=True,
+    require_hard_logic_feasible=False,
+    require_surrogate_better=True,
+)
+DIRECT_LOGIC_FEASIBLE_RANDOM_ADMISSION_POLICY = CandidateAdmissionPolicy(
+    name="direct_logic_feasible_random",
+    require_auxiliary_accepted=False,
+    require_hard_logic_feasible=True,
+    require_surrogate_better=False,
+)
+CLASSICAL_JOINT_MARKED_RANDOM_ADMISSION_POLICY = CandidateAdmissionPolicy(
+    name="classical_joint_marked_random",
+    require_auxiliary_accepted=False,
+    require_hard_logic_feasible=True,
+    require_surrogate_better=True,
+)
 
 
 @dataclass(frozen=True)

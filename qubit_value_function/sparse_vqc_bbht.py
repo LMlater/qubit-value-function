@@ -92,6 +92,7 @@ class BBHTTrialExecution:
 
 @dataclass(frozen=True)
 class SparseVQCBBHTResult:
+    method: str
     initial_incumbent_index: int
     initial_incumbent_true_cost: float
     final_incumbent_index: int
@@ -123,6 +124,7 @@ class SparseVQCBBHTResult:
 
     def as_dict(self) -> dict[str, object]:
         return {
+            "method": self.method,
             "initial_incumbent_index": int(self.initial_incumbent_index),
             "initial_incumbent_true_cost": float(self.initial_incumbent_true_cost),
             "final_incumbent_index": int(self.final_incumbent_index),
@@ -237,6 +239,8 @@ def run_sparse_vqc_bbht(
     trial_executor: TrialExecutor | None = None,
     feasibility_spec: LogicFeasibilitySpec | None = None,
     training_indices: Sequence[int] | None = None,
+    method: str = "joint_bbht",
+    admission_policy: CandidateAdmissionPolicy = JOINT_BBHT_ADMISSION_POLICY,
 ) -> SparseVQCBBHTResult:
     """Run BBHT; all candidate acceptance occurs in the shared closed loop."""
 
@@ -262,7 +266,7 @@ def run_sparse_vqc_bbht(
             max_same_encoded_threshold_updates=config.max_same_encoded_threshold_updates,
             max_auxiliary_syndrome_rejections=config.max_auxiliary_syndrome_rejections,
         ),
-        admission_policy=JOINT_BBHT_ADMISSION_POLICY,
+        admission_policy=admission_policy,
     )
     if trial_executor is None:
         def executor(value_model: QuantizedSparseValueModel, threshold: int, iterations: int, shots: int, seed: int) -> BBHTTrialExecution:
@@ -314,7 +318,7 @@ def run_sparse_vqc_bbht(
             state,
             CandidateProposal(
                 candidate_index=candidate_index,
-                source_method="bbht",
+                source_method=method,
                 auxiliary_accepted=auxiliary_accepted,
                 surrogate_integer_cost=surrogate_integer_cost,
                 grover_iterations=sampled_iterations,
@@ -338,7 +342,7 @@ def run_sparse_vqc_bbht(
             "sampled_grover_iterations": sampled_iterations, "m_after": m_after,
             "execution_seed": execution_seed, "shots": int(execution.shots),
             "oracle_calls_added": sampled_iterations, "measured_index": candidate_index,
-            "candidate_source_method": "bbht",
+            "candidate_source_method": method,
             "measured_bitstring": execution.measured_bitstring,
             "measured_count": int(execution.measured_count),
             "measured_probability": float(execution.measured_probability),
@@ -360,6 +364,7 @@ def run_sparse_vqc_bbht(
     if stop_reason not in STOP_REASONS:
         raise RuntimeError("BBHT 结束时缺少受支持的 stop_reason")
     return SparseVQCBBHTResult(
+        method=str(method),
         initial_incumbent_index=state.initial_incumbent_index,
         initial_incumbent_true_cost=state.initial_incumbent_true_cost,
         final_incumbent_index=state.incumbent_index,
@@ -381,7 +386,7 @@ def run_sparse_vqc_bbht(
         same_encoded_threshold_updates=state.same_encoded_threshold_updates,
         max_m_reached=max_m_reached, bbht_m_cap=m_cap,
         uses_hard_feasibility_oracle=bool(feasibility_spec is not None),
-        admission_policy=JOINT_BBHT_ADMISSION_POLICY,
+        admission_policy=admission_policy,
         config=config,
     )
 
