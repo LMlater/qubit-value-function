@@ -1,0 +1,29 @@
+{
+  "experiment_name": "stage1_targeted_best_training_multiseed_pilot",
+  "diagnostic_only": true,
+  "formal": false,
+  "selection_note": "Targeted diagnostic selection, not random sampling and not evidence of quantum advantage. The preflight must reject this manifest until a saved best-training nontraining-joint-marked candidate is available.",
+  "initial_incumbent_policy": "best_training",
+  "persist_dynamic_oracle_metadata": true,
+  "methods": [
+    "joint_bbht",
+    "cost_only_bbht",
+    "full_space_random",
+    "logic_rejection_random"
+  ],
+  "run_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+  "scenarios": [
+    {
+      "scenario_id": "case14-g0g5-w2-s0",
+      "role": "grover_calibration_training_marked",
+      "snapshot": "results/stage1_dynamic_oracle_metadata_smoke_v3/scenario_snapshots/case14-g0g5-w2-s0.json",
+      "reason": "Best-training M_joint=1 calibration and marked training-cache control; it is not a nontraining-improvement candidate."
+    },
+    {
+      "scenario_id": "case14-g1g3-w0-s0",
+      "role": "joint_marked_empty_control",
+      "snapshot": "results/stage1_dynamic_oracle_metadata_smoke_v3/scenario_snapshots/case14-g1g3-w0-s0.json",
+      "reason": "Best-training joint-marked-empty safety-stop control."
+    }
+  ]
+}

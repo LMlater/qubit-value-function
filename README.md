@@ -4,6 +4,19 @@
 
 ## 当前正式主线
 
+## Targeted best-training pilot preflight
+
+`experiments/stage1_targeted_best_training_pilot_cli.py` is a diagnostic-only
+preflight for the proposed 20-seed pilot.  It uses the actual oracle's marked
+set for each probability calibration (`M_joint` for joint BBHT and `M_cost` for
+cost-only BBHT), requires a brand-new output directory, and refuses to
+overwrite prior results.  It neither proves quantum advantage nor treats Aer
+MPS as quantum hardware.  The checked-in manifest currently preserves the
+M=1 training-cache calibration and the empty-joint control, while preflight
+correctly rejects scheduling until a saved best-training scenario has an
+initial nontraining joint-marked state.  Do not run a complete pilot from this
+task.
+
 当前正式路径为 sparse-VQC + phase-to-value + joint BBHT：
 
 - 在固定负荷窗口 u_w 下学习值函数切片 Q_{u_w}(x)；
