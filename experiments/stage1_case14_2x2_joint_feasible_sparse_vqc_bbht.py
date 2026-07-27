@@ -33,8 +33,10 @@ from qubit_value_function.sparse_phase_vqc import fit_sparse_phase_vqc  # noqa: 
 from qubit_value_function.sparse_vqc_bbht import (  # noqa: E402
     BBHTConfig,
     ExactCandidateEvaluation,
+    InitialIncumbentSelection,
     run_sparse_vqc_bbht,
     select_initial_incumbent,
+    select_training_initial_incumbent,
 )
 from qubit_value_function.candidate_acceptance_loop import ClosedLoopBudgets  # noqa: E402
 from qubit_value_function.closed_loop_scenario import (  # noqa: E402
@@ -154,12 +156,41 @@ def _evaluate_window(
     )
     phase_model = fit.model
     value_model = quantize_sparse_phase_model(phase_model, fixed_point)
-    initial_index = select_initial_incumbent(
-        train_indices,
-        training_cache,
-        policy=initialization_policy,
-        seed=int(seed) + int(window_start),
-    )
+    normalized_policy = {
+        "first": "first_training",
+        "best-training": "best_training",
+    }.get(str(initialization_policy), str(initialization_policy))
+    if normalized_policy in {"first_training", "best_training"}:
+        initial_selection = select_training_initial_incumbent(
+            train_indices,
+            training_cache,
+            policy=normalized_policy,
+        )
+        initial_index = int(initial_selection.index)
+    else:
+        initial_index = select_initial_incumbent(
+            train_indices,
+            training_cache,
+            policy=initialization_policy,
+            seed=int(seed) + int(window_start),
+        )
+        best_training_selection = select_training_initial_incumbent(
+            train_indices,
+            training_cache,
+            policy="best_training",
+        )
+        initial_selection = InitialIncumbentSelection(
+            policy=str(initialization_policy),
+            index=int(initial_index),
+            true_cost=float(training_cache[initial_index].total_cost),
+            best_training_candidate_indices=(
+                best_training_selection.best_training_candidate_indices
+            ),
+            best_training_tie_count=best_training_selection.best_training_tie_count,
+            best_training_tie_break_rule=(
+                best_training_selection.best_training_tie_break_rule
+            ),
+        )
     evaluator = FixedCommitmentEvaluator(instance)
 
     def evaluate_candidate(index: int) -> ExactCandidateEvaluation:
@@ -237,6 +268,23 @@ def _evaluate_window(
         bbht_config=run_config,
         reproducibility_metadata={
             "initialization_policy": initialization_policy,
+            "initial_incumbent_policy": initial_selection.policy,
+            "initial_incumbent_index": int(initial_selection.index),
+            "initial_incumbent_bitstring": bitstring_from_index(
+                initial_selection.index, num_x_qubits
+            ),
+            "initial_incumbent_true_cost": float(initial_selection.true_cost),
+            "best_training_candidate_indices": [
+                int(index)
+                for index in initial_selection.best_training_candidate_indices
+            ],
+            "best_training_tie_count": int(initial_selection.best_training_tie_count),
+            "best_training_tie_break_rule": (
+                initial_selection.best_training_tie_break_rule
+            ),
+            "training_selection_protocol": "random_truth_blind",
+            "global_truth_used_online": False,
+            "global_truth_used_for_posthoc_validation": True,
             "training_actual_ed_lp_solves": int(training_calls),
         },
         feasibility_spec=feasibility_spec,
@@ -311,6 +359,17 @@ def _evaluate_window(
         "quantized_value_model": value_model.as_dict(),
         "hard_logic_feasibility_spec": feasibility_spec.as_dict(),
         "initialization_policy": initialization_policy,
+        "initial_incumbent_policy": initial_selection.policy,
+        "initial_incumbent_index": int(initial_selection.index),
+        "initial_incumbent_bitstring": bitstring_from_index(
+            initial_selection.index, num_x_qubits
+        ),
+        "initial_incumbent_true_cost": float(initial_selection.true_cost),
+        "best_training_candidate_indices": [
+            int(index) for index in initial_selection.best_training_candidate_indices
+        ],
+        "best_training_tie_count": int(initial_selection.best_training_tie_count),
+        "best_training_tie_break_rule": initial_selection.best_training_tie_break_rule,
         "bbht": bbht_result.as_dict(),
         "algorithmic_actual_ed_lp_solves": int(
             training_calls + bbht_result.actual_ed_lp_solves
@@ -331,6 +390,9 @@ def _evaluate_window(
                 true_global_index, num_x_qubits
             ),
             "true_global_optimum_cost": float(true_global_cost),
+            "natural_global_optimum_in_training": bool(
+                true_global_index in set(train_indices)
+            ),
             "final_incumbent_is_true_global_optimum": bool(
                 bbht_result.final_incumbent_index == true_global_index
             ),

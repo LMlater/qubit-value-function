@@ -121,12 +121,14 @@ class DynamicOracleMetadataRecorder:
         initial_true_threshold: float,
         initial_encoded_threshold: int,
         initial_cache_indices: Sequence[int],
+        initial_incumbent_policy: str = "first_training",
     ) -> None:
         self._model = model
         self._hard_logic_is_feasible = hard_logic_is_feasible
         self._true_threshold = float(initial_true_threshold)
         self._encoded_threshold = int(initial_encoded_threshold)
         self._initial_cache_indices = frozenset(int(index) for index in initial_cache_indices)
+        self._initial_incumbent_policy = str(initial_incumbent_policy)
         self._stage_id = 0
         self._trial_in_stage = 0
         self._trials_since_encoded_threshold_change = 0
@@ -218,6 +220,18 @@ class DynamicOracleMetadataRecorder:
         cache_source = "none"
         if cache_hit:
             cache_source = "training_cache" if index in self._initial_cache_indices else "search_cache"
+        candidate_in_training_set = bool(index in self._initial_cache_indices)
+        improvement_is_nontraining = bool(
+            true_strict_improvement and not candidate_in_training_set
+        )
+        if (
+            self._initial_incumbent_policy == "best_training"
+            and bool(true_strict_improvement)
+            and not improvement_is_nontraining
+        ):
+            raise AssertionError(
+                "best_training strict improvement must come from outside the training cache"
+            )
         return {
             "measured_cost_marked": cost_marked,
             "measured_joint_marked": joint_marked,
@@ -227,6 +241,8 @@ class DynamicOracleMetadataRecorder:
             "candidate_admitted": bool(candidate_admitted),
             "cache_hit": bool(cache_hit),
             "cache_source": cache_source,
+            "candidate_in_training_set": candidate_in_training_set,
+            "improvement_is_nontraining": improvement_is_nontraining,
             "new_ed_lp_solve": bool(new_ed_lp_solve),
             "exact_evaluation_success": exact_evaluation_success,
             "candidate_true_cost": candidate_true_cost,

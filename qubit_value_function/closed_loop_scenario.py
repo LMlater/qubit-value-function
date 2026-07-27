@@ -73,7 +73,7 @@ class ClosedLoopScenario:
         )
 
     def metadata(self) -> dict[str, object]:
-        return {
+        metadata = {
             "scenario_id": self.scenario_id,
             "generator_pair": list(self.generator_pair),
             "window_start": int(self.window_start),
@@ -87,6 +87,20 @@ class ClosedLoopScenario:
             },
             "reproducibility_metadata": dict(self.reproducibility_metadata),
         }
+        for key in (
+            "initial_incumbent_policy",
+            "initial_incumbent_bitstring",
+            "initial_incumbent_true_cost",
+            "best_training_candidate_indices",
+            "best_training_tie_count",
+            "best_training_tie_break_rule",
+            "training_selection_protocol",
+            "global_truth_used_online",
+            "global_truth_used_for_posthoc_validation",
+        ):
+            if key in self.reproducibility_metadata:
+                metadata[key] = self.reproducibility_metadata[key]
+        return metadata
 
 
 def run_closed_loop_method(
@@ -114,6 +128,11 @@ def run_closed_loop_method(
             method="joint_bbht",
             persist_dynamic_oracle_metadata=persist_dynamic_oracle_metadata,
             hard_logic_metadata=scenario.hard_logic_is_feasible,
+            initial_incumbent_policy=str(
+                scenario.reproducibility_metadata.get(
+                    "initial_incumbent_policy", "first_training"
+                )
+            ),
             **common,
         )
         return _method_envelope(scenario, method, run_seed, result, "quantum_method", persist_dynamic_oracle_metadata)
@@ -127,6 +146,11 @@ def run_closed_loop_method(
             admission_policy=COST_ONLY_BBHT_ADMISSION_POLICY,
             persist_dynamic_oracle_metadata=persist_dynamic_oracle_metadata,
             hard_logic_metadata=scenario.hard_logic_is_feasible,
+            initial_incumbent_policy=str(
+                scenario.reproducibility_metadata.get(
+                    "initial_incumbent_policy", "first_training"
+                )
+            ),
             **common,
         )
         return _method_envelope(scenario, method, run_seed, result, "quantum_method", persist_dynamic_oracle_metadata)

@@ -114,3 +114,25 @@ def test_cache_source_is_derived_from_existing_cache_hit_without_a_cache_lookup(
     assert recorder.measured_metadata(measured_index=3, cache_hit=True, **common)["cache_source"] == "training_cache"
     assert recorder.measured_metadata(measured_index=1, cache_hit=True, **common)["cache_source"] == "search_cache"
     assert recorder.measured_metadata(measured_index=1, cache_hit=False, **common)["cache_source"] == "none"
+
+
+def test_trial_metadata_labels_training_candidates_and_nontraining_improvements() -> None:
+    recorder = DynamicOracleMetadataRecorder(
+        _model(), hard_logic_is_feasible=lambda bits: True,
+        initial_true_threshold=3.0, initial_encoded_threshold=3,
+        initial_cache_indices=(3,), initial_incumbent_policy="best_training",
+    )
+    metadata = recorder.measured_metadata(
+        measured_index=1,
+        before=recorder.before_trial(threshold_updates_before_trial=0),
+        auxiliary_accepted=True,
+        candidate_admitted=True,
+        cache_hit=False,
+        new_ed_lp_solve=True,
+        exact_evaluation_success=True,
+        candidate_true_cost=1.0,
+        true_strict_improvement=True,
+        incumbent_updated=True,
+    )
+    assert metadata["candidate_in_training_set"] is False
+    assert metadata["improvement_is_nontraining"] is True

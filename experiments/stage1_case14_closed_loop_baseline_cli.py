@@ -144,6 +144,11 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--fractional-bits", type=int, default=2)
     parser.add_argument("--cost-unit", type=float, default=1000.0)
     parser.add_argument("--initialization-policy", choices=("first", "random", "best-training"), default="first")
+    parser.add_argument(
+        "--initial-incumbent-policy",
+        choices=("first_training", "best_training"),
+        default="first_training",
+    )
     parser.add_argument("--regularization", type=float, default=1e-4)
     parser.add_argument("--maxiter", type=int, default=300)
     parser.add_argument("--lambda-factor", type=float, default=1.2)
@@ -153,6 +158,17 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-threshold-updates", type=int, default=8)
     parser.add_argument("--persist-dynamic-oracle-metadata", action="store_true")
     return parser
+
+
+def effective_initial_incumbent_policy(args: argparse.Namespace) -> str:
+    """Resolve the new policy while retaining historical CLI spellings."""
+
+    legacy_policy = str(args.initialization_policy)
+    if legacy_policy == "best-training":
+        return "best_training"
+    if legacy_policy == "random":
+        return "random"
+    return str(args.initial_incumbent_policy)
 
 
 def _selection(args: argparse.Namespace) -> dict[str, Sequence[object]]:
@@ -184,6 +200,7 @@ def main() -> int:
     if head != expected_head:
         raise RuntimeError(f"当前 HEAD {head} 与 --expected-head {expected_head} 不一致")
     selected = _selection(args)
+    initial_incumbent_policy = effective_initial_incumbent_policy(args)
     budget = {
         "max_trials": args.max_trials, "max_oracle_calls": args.max_oracle_calls,
         "max_new_ed_lp_calls": args.max_new_ed_lp_calls, "max_threshold_updates": args.max_threshold_updates,
@@ -193,13 +210,13 @@ def main() -> int:
     batch_id = args.batch_id or f"case14-{args.preset}-{head[:12]}"
     specs = build_run_specs(
         batch_id=batch_id, preset=args.preset, methods=args.methods, budget_config=budget,
-        fixed_point_config=fixed_point, initialization_policy=args.initialization_policy,
+        fixed_point_config=fixed_point, initialization_policy=initial_incumbent_policy,
         expected_code_sha=head, **selected,
     )
     plan = {
         "batch_id": batch_id, "output_dir": str(output_dir), "runs": len(specs),
         "mps_runs": sum(spec.method in MPS_METHODS for spec in specs), "methods": list(args.methods),
-        "budget": budget, "fixed_point": fixed_point, "initialization_policy": args.initialization_policy,
+        "budget": budget, "fixed_point": fixed_point, "initialization_policy": initial_incumbent_policy,
         "persist_dynamic_oracle_metadata": bool(args.persist_dynamic_oracle_metadata),
     }
     if args.dry_run:
@@ -216,7 +233,7 @@ def main() -> int:
         return build_case14_closed_loop_scenario(
             source=source, window_start=spec.window_start, selected_generator_indices=spec.generator_pair,
             train_sample_count=args.train_sample_count, fixed_point=fixed_config,
-            initialization_policy=args.initialization_policy, seed=spec.training_seed,
+            initialization_policy=initial_incumbent_policy, seed=spec.training_seed,
             regularization=args.regularization, maxiter=args.maxiter, bbht_config=template,
         )
 

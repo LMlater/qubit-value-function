@@ -27,6 +27,7 @@ from .sparse_vqc_grover import (
 
 
 INITIALIZATION_POLICIES = ("first", "random", "best-training")
+INITIAL_INCUMBENT_POLICIES = ("first_training", "best_training")
 STOP_REASONS = (
     "no_hard_logic_feasible_state_by_compiled_constraints",
     "no_surrogate_marked_state_by_conservative_lower_bound",
@@ -171,6 +172,61 @@ class SparseVQCBBHTResult:
 TrialExecutor = Callable[[QuantizedSparseValueModel, int, int, int, int], BBHTTrialExecution]
 
 
+@dataclass(frozen=True)
+class InitialIncumbentSelection:
+    """A deterministic initial incumbent selected from cached training labels."""
+
+    policy: str
+    index: int
+    true_cost: float
+    best_training_candidate_indices: tuple[int, ...]
+    best_training_tie_count: int
+    best_training_tie_break_rule: str
+
+
+def select_training_initial_incumbent(
+    training_indices: Sequence[int],
+    exact_cache: Mapping[int, ExactCandidateEvaluation],
+    *,
+    policy: str = "first_training",
+) -> InitialIncumbentSelection:
+    """Choose an incumbent using finite labels already present in the training cache."""
+
+    if policy not in INITIAL_INCUMBENT_POLICIES:
+        raise ValueError(
+            f"initial_incumbent_policy must be one of {INITIAL_INCUMBENT_POLICIES}"
+        )
+    finite_training_rows: list[tuple[int, float]] = []
+    for raw_index in training_indices:
+        index = int(raw_index)
+        record = exact_cache.get(index)
+        if record is None or not record.success or record.total_cost is None:
+            continue
+        cost = float(record.total_cost)
+        if np.isfinite(cost):
+            finite_training_rows.append((index, cost))
+    if not finite_training_rows:
+        raise ValueError("at least one finite training exact-cache label is required")
+
+    best_cost = min(cost for _, cost in finite_training_rows)
+    best_candidates = tuple(
+        index for index, cost in finite_training_rows if cost == best_cost
+    )
+    selected_index, selected_cost = (
+        finite_training_rows[0]
+        if policy == "first_training"
+        else (best_candidates[0], best_cost)
+    )
+    return InitialIncumbentSelection(
+        policy=policy,
+        index=int(selected_index),
+        true_cost=float(selected_cost),
+        best_training_candidate_indices=best_candidates,
+        best_training_tie_count=len(best_candidates),
+        best_training_tie_break_rule="first_in_training_indices_order",
+    )
+
+
 def select_initial_incumbent(
     training_indices: list[int] | tuple[int, ...],
     exact_cache: Mapping[int, ExactCandidateEvaluation],
@@ -244,6 +300,7 @@ def run_sparse_vqc_bbht(
     admission_policy: CandidateAdmissionPolicy = JOINT_BBHT_ADMISSION_POLICY,
     persist_dynamic_oracle_metadata: bool = False,
     hard_logic_metadata: Callable[[Sequence[int]], bool] | None = None,
+    initial_incumbent_policy: str = "first_training",
 ) -> SparseVQCBBHTResult:
     """Run BBHT; all candidate acceptance occurs in the shared closed loop."""
 
@@ -289,6 +346,7 @@ def run_sparse_vqc_bbht(
             initial_true_threshold=state.incumbent_true_cost,
             initial_encoded_threshold=state.encoded_threshold,
             initial_cache_indices=tuple(initial_exact_cache),
+            initial_incumbent_policy=initial_incumbent_policy,
         )
 
     rng = np.random.default_rng(int(config.seed))
