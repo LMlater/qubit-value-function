@@ -1,38 +1,52 @@
-# Stage A VQC oracle–Grover amplification diagnostic design
+# Stage A sparse-VQC oracle semantic validation and fixed-oracle Grover integration
 
 ## Purpose and boundary
 
-This is a proposed small-scale diagnostic, not a completed experiment. It would isolate whether the existing trained sparse-VQC joint phase oracle and the diffuser amplify the states marked by that oracle. It does not claim end-to-end quantum speedup, quadratic speedup, or better ED/LP optimization performance.
+The primary evidence for this stage is deterministic, exact simulation of the
+custom sparse-VQC value, threshold-comparator, hard-logic, and joint phase
+oracle circuits.  Fixed-oracle multi-shot Grover is only an end-to-end
+integration check for one representative marked-set size; it is not a claim of
+quantum speedup or the principal correctness evidence.
 
-No diagnostic described here may run without explicit user approval. It must reuse a persisted formal trained model; it must not retrain VQC or call ED/LP.
+## Primary exact semantic checks
 
-## Fixed-oracle experiment
+For each selected saved scenario, reconstruct the VQC only from its persisted
+training labels and stored training configuration, then use exact statevector
+simulation to check all 16 commitment states:
 
-For representative saved formal scenarios, select one fixed threshold each with joint marked count (M=1,2,3,4), if those models and threshold tables have been persisted. For each fixed oracle, execute full gate-level circuits at (k=0,1,2,3), with 1024 or 4096 shots per circuit.
+- the reversible value register equals the classical quantized VQC integer;
+- the strict predicate is `integer_value < encoded_threshold`, including
+  threshold minus one, threshold, and threshold plus one;
+- the joint relative-phase truth table equals that predicate AND the hard-logic
+  feasibility predicate;
+- after compute--phase-mark--uncompute, every non-search register is zero and
+  unentangled with the search register;
+- the actual output agrees with the theoretical diagonal phase oracle up to one
+  global phase only.
 
-Each run must measure the search register and the auxiliary registers. Report:
+The comparison is deterministic and exact; 1024-shot frequencies are not used
+as evidence for these circuit semantics.
 
-- the search-register distribution;
-- total probability assigned to the precomputed joint-marked set;
-- (M/16) uniform reference;
-- \(\sin^2((2k+1)\arcsin\sqrt{M/16})\) ideal Grover reference;
-- phase-marking, uncomputation, auxiliary-zero syndrome, diffuser, circuit resources, wall time, and memory separately.
+## Fixed-oracle Grover integration check
 
-The marked set is calculated offline from the persisted quantized VQC integer table and identical hard-logic predicate. It is never fed back into online search.
+For one representative natural `M=3` joint-marked scenario, keep the oracle and
+threshold fixed and run the complete circuit at `k=0,1,2,3`.  Report exact
+statevector marked probabilities and an independent 1024-shot Aer-MPS result,
+including a Wilson interval, search-register counts, auxiliary-zero
+probability, circuit resources, and seeds.  Compare the exact result with
+`sin^2((2k+1) asin(sqrt(M/16)))`.
 
-## Required safeguards
+The marked set is calculated offline from the reconstructed quantized VQC
+integer table and identical hard-logic predicate.  It is never fed back into
+the online search procedure.
 
-- Reuse a saved trained model and quantized 16-state value table; do not recreate it by retraining.
-- Do not invoke `FixedCommitmentEvaluator`, ED, LP, or true-cost enumeration.
-- Keep each oracle fixed while varying only (k); BBHT's dynamic threshold/window policy is not part of this fixed-oracle diagnostic.
-- Treat (k=0) as a same-workflow no-amplitude-amplification reference, not as a fully randomized control experiment.
-- Use multiple shots to estimate probabilities. A single-shot 0/1 outcome is not a circuit probability estimate.
-- Report shots, seeds, transpilation/simulator settings, circuit depth/gate counts, elapsed time, and memory.
+## Safeguards
 
-## Interpretation
-
-Agreement with the ideal curve supports only the gate-level oracle/diffuser behavior for that fixed small circuit. A discrepancy can arise from implementation semantics, finite shots, transpilation/simulation details, or an unsuitable (k). It does not itself assess VQC true-cost accuracy. That requires a separately labelled offline validation analysis of marked precision and recall.
-
-## Persistence requirement before approval
-
-The current formal completed traces do not persist each scenario's 16-state quantized VQC integer value table. Future approved diagnostics must first have a read-only source of that already-trained model/table; no audit may infer missing marked counts from sampled candidates.
+- No `FixedCommitmentEvaluator`, ED, LP, true-cost enumeration, closed-loop
+  search, or formal/pilot/smoke batch is invoked.
+- Persisted labels are used only for the stored training indices; all 16-state
+  values come from the reconstructed surrogate circuit/model.
+- Natural fixed thresholds are retained.  If an unavailable marked-set size
+  would require altering a threshold, it is reported as unavailable rather
+  than manufactured.
+- This diagnostic makes no end-to-end optimization or speedup claim.
