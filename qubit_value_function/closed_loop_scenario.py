@@ -12,6 +12,7 @@ from .closed_loop_random_baselines import (
     run_logic_rejection_random,
 )
 from .coherent_phase_value import QuantizedSparseValueModel
+from .closed_loop_metadata import build_quantized_model_snapshot
 from .logic_feasibility_oracle import LogicFeasibilitySpec
 from .sparse_vqc_bbht import (
     BBHTConfig,
@@ -94,6 +95,7 @@ def run_closed_loop_method(
     run_seed: int,
     *,
     trial_executor: Callable[..., BBHTTrialExecution] | None = None,
+    persist_dynamic_oracle_metadata: bool = False,
 ) -> dict[str, object]:
     """Run one isolated method from a frozen scenario; no validation input exists."""
 
@@ -110,9 +112,11 @@ def run_closed_loop_method(
             feasibility_spec=scenario.feasibility_spec,
             trial_executor=trial_executor,
             method="joint_bbht",
+            persist_dynamic_oracle_metadata=persist_dynamic_oracle_metadata,
+            hard_logic_metadata=scenario.hard_logic_is_feasible,
             **common,
         )
-        return _method_envelope(scenario, method, run_seed, result, "quantum_method")
+        return _method_envelope(scenario, method, run_seed, result, "quantum_method", persist_dynamic_oracle_metadata)
     if method == "cost_only_bbht":
         result = run_sparse_vqc_bbht(
             scenario.value_model,
@@ -121,9 +125,11 @@ def run_closed_loop_method(
             trial_executor=trial_executor,
             method="cost_only_bbht",
             admission_policy=COST_ONLY_BBHT_ADMISSION_POLICY,
+            persist_dynamic_oracle_metadata=persist_dynamic_oracle_metadata,
+            hard_logic_metadata=scenario.hard_logic_is_feasible,
             **common,
         )
-        return _method_envelope(scenario, method, run_seed, result, "quantum_method")
+        return _method_envelope(scenario, method, run_seed, result, "quantum_method", persist_dynamic_oracle_metadata)
     random_common = {
         "initial_incumbent_index": scenario.initial_incumbent_index,
         "initial_exact_cache": dict(scenario.initial_exact_cache),
@@ -135,16 +141,16 @@ def run_closed_loop_method(
     }
     if method == "full_space_random":
         result = run_full_space_random(scenario.value_model, **random_common)
-        return _method_envelope(scenario, method, run_seed, result, "random_baseline")
+        return _method_envelope(scenario, method, run_seed, result, "random_baseline", persist_dynamic_oracle_metadata)
     if method == "logic_rejection_random":
         result = run_logic_rejection_random(scenario.value_model, **random_common)
-        return _method_envelope(scenario, method, run_seed, result, "random_baseline")
+        return _method_envelope(scenario, method, run_seed, result, "random_baseline", persist_dynamic_oracle_metadata)
     if method == "direct_logic_feasible_random":
         result = run_direct_logic_feasible_random(scenario.value_model, **random_common)
-        return _method_envelope(scenario, method, run_seed, result, "diagnostic_only")
+        return _method_envelope(scenario, method, run_seed, result, "diagnostic_only", persist_dynamic_oracle_metadata)
     if method == "classical_joint_marked_random":
         result = run_classical_joint_marked_random(scenario.value_model, **random_common)
-        return _method_envelope(scenario, method, run_seed, result, "diagnostic_only")
+        return _method_envelope(scenario, method, run_seed, result, "diagnostic_only", persist_dynamic_oracle_metadata)
     raise ValueError(f"不支持的 closed-loop method: {method}")
 
 
@@ -170,9 +176,10 @@ def _method_envelope(
     run_seed: int,
     result: SparseVQCBBHTResult | object,
     method_role: str,
+    persist_dynamic_oracle_metadata: bool,
 ) -> dict[str, object]:
     diagnostic_only = bool(getattr(result, "diagnostic_only", False))
-    return {
+    envelope = {
         "method": method,
         "method_role": method_role,
         "run_seed": int(run_seed),
@@ -181,3 +188,21 @@ def _method_envelope(
         "result": result,
         "result_schema": result.as_dict(),
     }
+    if persist_dynamic_oracle_metadata:
+        envelope["result_schema_version"] = "stage1_closed_loop_dynamic_oracle_v1"
+        envelope["quantized_model_snapshot"] = build_quantized_model_snapshot(
+            scenario_id=scenario.scenario_id,
+            generator_pair=scenario.generator_pair,
+            window_start=scenario.window_start,
+            training_seed=scenario.training_seed,
+            model=scenario.value_model,
+            hard_logic_is_feasible=scenario.hard_logic_is_feasible,
+            training_indices=scenario.training_indices,
+            training_labels=scenario.training_labels,
+            initial_incumbent_index=scenario.initial_incumbent_index,
+            initial_incumbent_true_cost=float(
+                scenario.initial_exact_cache[scenario.initial_incumbent_index].total_cost
+            ),
+            initial_cache_indices=tuple(scenario.initial_exact_cache),
+        )
+    return envelope

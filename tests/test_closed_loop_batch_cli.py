@@ -16,3 +16,9 @@ def test_preset_default_output_directories_are_isolated_and_dry_run_plan_has_bud
     assert smoke.max_oracle_calls == 128
     assert smoke.max_new_ed_lp_calls == 16
     assert smoke.max_threshold_updates == 8
+
+
+def test_dynamic_oracle_metadata_recording_flag_is_opt_in() -> None:
+    parser = build_argument_parser()
+    assert parser.parse_args(["--preset", "custom", "--generator-pairs", "0,5", "--windows", "2", "--training-seeds", "0", "--run-seeds", "0"]).persist_dynamic_oracle_metadata is False
+    assert parser.parse_args(["--preset", "custom", "--generator-pairs", "0,5", "--windows", "2", "--training-seeds", "0", "--run-seeds", "0", "--persist-dynamic-oracle-metadata"]).persist_dynamic_oracle_metadata is True

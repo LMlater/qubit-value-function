@@ -235,7 +235,10 @@ def _evaluate_window(
             ),
         ),
         bbht_config=run_config,
-        reproducibility_metadata={"initialization_policy": initialization_policy},
+        reproducibility_metadata={
+            "initialization_policy": initialization_policy,
+            "training_actual_ed_lp_solves": int(training_calls),
+        },
         feasibility_spec=feasibility_spec,
     )
     if build_only:

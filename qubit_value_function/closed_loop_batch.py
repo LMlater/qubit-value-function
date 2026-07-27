@@ -230,7 +230,7 @@ def atomic_write_json(path: Path, payload: Mapping[str, object]) -> None:
     """同目录临时文件 + flush/fsync + os.replace，避免半写 completed 文件。"""
 
     path.parent.mkdir(parents=True, exist_ok=True)
-    encoded = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True)
+    encoded = json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True, allow_nan=False)
     temporary = path.parent / f".{path.name}.{os.getpid()}.{uuid4().hex}.tmp"
     try:
         with temporary.open("w", encoding="utf-8", newline="\n") as handle:
@@ -322,6 +322,33 @@ class ClosedLoopBatchExecutor:
 
     def _failed_path(self, spec: RunSpec) -> Path:
         return self.output_dir / "runs" / "failed" / f"{spec.run_id}.json"
+
+    def _persist_quantized_model_snapshot(
+        self,
+        snapshot: Mapping[str, object] | None,
+        *,
+        scenario_id: str,
+    ) -> dict[str, object] | None:
+        """Write one immutable snapshot per scenario, never per method/run."""
+
+        if snapshot is None:
+            return None
+        if str(snapshot.get("scenario_id")) != str(scenario_id):
+            raise RuntimeError("quantized model snapshot scenario_id does not match completed run")
+        relative = Path("scenario_snapshots") / f"{scenario_id}.json"
+        path = self.output_dir / relative
+        snapshot_dict = dict(snapshot)
+        if path.exists():
+            existing = _read_json(path)
+            if _sha256(existing) != _sha256(snapshot_dict):
+                raise ResumeConflictError("same scenario produced a different quantized model snapshot")
+        else:
+            atomic_write_json(path, snapshot_dict)
+        return {
+            "version": snapshot_dict.get("quantized_model_snapshot_version"),
+            "path": relative.as_posix(),
+            "sha256": _sha256(snapshot_dict),
+        }
 
     def _existing_action(self, spec: RunSpec, *, resume: bool, skip_failed: bool) -> str:
         completed = self._completed_path(spec)
@@ -438,6 +465,16 @@ class ClosedLoopBatchExecutor:
                         result = envelope.get("result_schema")
                         if not isinstance(result, Mapping):
                             raise TypeError("方法执行器未返回 JSON result_schema")
+                        scenario_payload = dict(envelope.get("scenario", {}))
+                        snapshot = envelope.get("quantized_model_snapshot")
+                        if snapshot is not None and not isinstance(snapshot, Mapping):
+                            raise TypeError("quantized_model_snapshot must be a JSON mapping")
+                        snapshot_reference = self._persist_quantized_model_snapshot(
+                            snapshot,
+                            scenario_id=str(scenario_payload.get("scenario_id", "")),
+                        )
+                        if snapshot_reference is not None:
+                            scenario_payload["quantized_model_snapshot"] = snapshot_reference
                         payload: dict[str, object] = {
                             "schema_version": BATCH_SCHEMA_VERSION,
                             "status": "completed",
@@ -450,7 +487,7 @@ class ClosedLoopBatchExecutor:
                             "method": str(envelope.get("method", spec.method)),
                             "method_role": str(envelope.get("method_role", "unknown")),
                             "diagnostic_only": bool(envelope.get("diagnostic_only", False)),
-                            "scenario": dict(envelope.get("scenario", {})),
+                            "scenario": scenario_payload,
                             "result": dict(result),
                             "timing": {
                                 "started_at": started,
@@ -458,6 +495,8 @@ class ClosedLoopBatchExecutor:
                                 "elapsed_seconds": (datetime.now(timezone.utc) - timer).total_seconds(),
                             },
                         }
+                        if "result_schema_version" in envelope:
+                            payload["result_schema_version"] = str(envelope["result_schema_version"])
                         if payload["scenario"].get("scenario_id") != spec.scenario_id:
                             raise RuntimeError("方法执行器返回的 scenario_id 与 RunSpec 不一致")
                         json.dumps(payload, ensure_ascii=False)

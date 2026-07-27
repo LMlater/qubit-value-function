@@ -17,6 +17,7 @@ from .candidate_acceptance_loop import (
     create_closed_loop_state,
 )
 from .coherent_phase_value import QuantizedSparseValueModel
+from .closed_loop_metadata import DynamicOracleMetadataRecorder
 from .gate_level_oracle import circuit_resource_summary
 from .logic_feasibility_oracle import LogicFeasibilitySpec
 from .sparse_vqc_grover import (
@@ -241,6 +242,8 @@ def run_sparse_vqc_bbht(
     training_indices: Sequence[int] | None = None,
     method: str = "joint_bbht",
     admission_policy: CandidateAdmissionPolicy = JOINT_BBHT_ADMISSION_POLICY,
+    persist_dynamic_oracle_metadata: bool = False,
+    hard_logic_metadata: Callable[[Sequence[int]], bool] | None = None,
 ) -> SparseVQCBBHTResult:
     """Run BBHT; all candidate acceptance occurs in the shared closed loop."""
 
@@ -274,6 +277,20 @@ def run_sparse_vqc_bbht(
     else:
         executor = trial_executor
 
+    metadata_recorder = None
+    if persist_dynamic_oracle_metadata:
+        metadata_recorder = DynamicOracleMetadataRecorder(
+            model,
+            hard_logic_is_feasible=(
+                hard_logic_metadata
+                if hard_logic_metadata is not None
+                else (lambda _bits: True)
+            ),
+            initial_true_threshold=state.incumbent_true_cost,
+            initial_encoded_threshold=state.encoded_threshold,
+            initial_cache_indices=tuple(initial_exact_cache),
+        )
+
     rng = np.random.default_rng(int(config.seed))
     dimension = 2 ** int(model.num_x_qubits)
     m_cap = max(1, int(ceil(sqrt(float(dimension)))))
@@ -304,6 +321,13 @@ def run_sparse_vqc_bbht(
             stop_reason = "max_oracle_calls_reached"
             break
         execution_seed = int(rng.integers(0, np.iinfo(np.int32).max))
+        metadata_before = (
+            None
+            if metadata_recorder is None
+            else metadata_recorder.before_trial(
+                threshold_updates_before_trial=state.threshold_updates,
+            )
+        )
         execution = executor(model, int(state.encoded_threshold), sampled_iterations, int(config.shots_per_trial), execution_seed)
         circuit_executions += 1
         total_shots += int(execution.shots)
@@ -337,6 +361,40 @@ def run_sparse_vqc_bbht(
         stop_reason = decision.stop_reason
         shared_trace = decision.trace_fields()
         shared_trace["auxiliary_accepted"] = auxiliary_accepted
+        dynamic_metadata: dict[str, object] = {}
+        if metadata_recorder is not None and metadata_before is not None:
+            measured_metadata = metadata_recorder.measured_metadata(
+                measured_index=candidate_index,
+                before=metadata_before,
+                auxiliary_accepted=auxiliary_accepted,
+                candidate_admitted=decision.admission_passed,
+                cache_hit=decision.is_cache_hit,
+                new_ed_lp_solve=decision.new_edlp_solve_performed,
+                exact_evaluation_success=(
+                    None if decision.exact_record is None else bool(decision.exact_record.success)
+                ),
+                candidate_true_cost=decision.candidate_true_cost,
+                true_strict_improvement=decision.true_improvement,
+                incumbent_updated=decision.accepted_update,
+            )
+            if bool(measured_metadata["measured_cost_marked"]) != bool(decision.cost_marked):
+                raise AssertionError("measured cost-marked metadata disagrees with shared decision")
+            if (
+                feasibility_spec is not None
+                and bool(measured_metadata["measured_joint_marked"]) != bool(decision.joint_marked)
+            ):
+                raise AssertionError("measured joint-marked metadata disagrees with shared decision")
+            dynamic_metadata = {
+                **metadata_before,
+                **measured_metadata,
+                **metadata_recorder.after_trial(
+                    true_threshold_after_trial=decision.threshold_after,
+                    encoded_threshold_after_trial=decision.encoded_threshold_after,
+                    true_strict_improvement=decision.true_improvement,
+                    encoded_threshold_changed=decision.encoded_threshold_changed,
+                    stop_reason_after_trial=stop_reason,
+                ),
+            }
         trace.append({
             "trial_number": circuit_executions, "m_before": m_before,
             "sampled_grover_iterations": sampled_iterations, "m_after": m_after,
@@ -358,6 +416,7 @@ def run_sparse_vqc_bbht(
             "estimated_statevector_memory_gb": float(execution.estimated_statevector_memory_gb),
             "circuit_resources": execution.circuit_resources,
             **shared_trace,
+            **dynamic_metadata,
             "stop_reason_after_trial": stop_reason,
         })
 

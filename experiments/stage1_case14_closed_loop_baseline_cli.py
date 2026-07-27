@@ -151,6 +151,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--max-oracle-calls", type=int, default=128)
     parser.add_argument("--max-new-ed-lp-calls", type=int, default=16)
     parser.add_argument("--max-threshold-updates", type=int, default=8)
+    parser.add_argument("--persist-dynamic-oracle-metadata", action="store_true")
     return parser
 
 
@@ -199,6 +200,7 @@ def main() -> int:
         "batch_id": batch_id, "output_dir": str(output_dir), "runs": len(specs),
         "mps_runs": sum(spec.method in MPS_METHODS for spec in specs), "methods": list(args.methods),
         "budget": budget, "fixed_point": fixed_point, "initialization_policy": args.initialization_policy,
+        "persist_dynamic_oracle_metadata": bool(args.persist_dynamic_oracle_metadata),
     }
     if args.dry_run:
         print(json.dumps(plan, ensure_ascii=False, indent=2))
@@ -219,7 +221,12 @@ def main() -> int:
         )
 
     def method_runner(scenario, method: str, run_seed: int):
-        return run_closed_loop_method(scenario, method, run_seed=run_seed)
+        return run_closed_loop_method(
+            scenario,
+            method,
+            run_seed=run_seed,
+            persist_dynamic_oracle_metadata=bool(args.persist_dynamic_oracle_metadata),
+        )
 
     def progress(row):
         done = row["completed"] + row["skipped"] + row["failed"]

@@ -222,3 +222,30 @@ def test_completed_result_retires_matching_failed_record_after_resume(tmp_path: 
     assert executor.execute(specs, resume=True)["completed"] == 1
     assert not list((tmp_path / "out" / "runs" / "failed").glob("*.json"))
     assert summarize_batch(tmp_path / "out")["failed_runs"] == 0
+
+
+def test_batch_persists_deduplicated_dynamic_snapshot_and_stable_reference(tmp_path: Path) -> None:
+    snapshot = {
+        "quantized_model_snapshot_version": "v1",
+        "scenario_id": "case14-g0g1-w0-s0",
+        "state_proxy_table": [{"state_index": index, "integer_vqc_value": index} for index in range(16)],
+    }
+
+    def runner(_scenario, method, run_seed):
+        payload = _runner(_scenario, method, run_seed)
+        payload["result_schema_version"] = "stage1_closed_loop_dynamic_oracle_v1"
+        payload["quantized_model_snapshot"] = snapshot
+        return payload
+
+    specs = _specs(methods=("joint_bbht", "cost_only_bbht"))
+    output = tmp_path / "out"
+    _executor(output, runner=runner).execute(specs)
+    snapshot_path = output / "scenario_snapshots" / "case14-g0g1-w0-s0.json"
+    saved = json.loads(snapshot_path.read_text(encoding="utf-8"))
+    assert saved == snapshot
+    for completed in (output / "runs" / "completed").glob("*.json"):
+        payload = json.loads(completed.read_text(encoding="utf-8"))
+        reference = payload["scenario"]["quantized_model_snapshot"]
+        assert reference["path"] == "scenario_snapshots/case14-g0g1-w0-s0.json"
+        assert reference["sha256"]
+        assert payload["result_schema_version"] == "stage1_closed_loop_dynamic_oracle_v1"
