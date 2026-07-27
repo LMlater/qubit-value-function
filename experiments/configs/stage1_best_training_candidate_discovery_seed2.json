@@ -1,0 +1,11 @@
+{
+  "experiment_name": "stage1_best_training_candidate_discovery_seed2",
+  "batch_id": "stage1_best_training_candidate_discovery_seed2_v1",
+  "selection_rationale": "The 24 pre-registered seed-0 and seed-1 scenarios had no initial nontraining joint-marked candidate. Training seed 2 is the third and final sequential pre-registered discovery batch. Scenario selection does not use a global optimum or any nontraining true ED/LP cost. This is not formal and is not evidence of quantum advantage. The candidate condition remains strictly initial_nontraining_joint_marked_count > 0.",
+  "scenarios": [
+    {"generator_pair": [0, 1], "window_start": 0, "training_seed": 2}, {"generator_pair": [0, 1], "window_start": 1, "training_seed": 2}, {"generator_pair": [0, 1], "window_start": 2, "training_seed": 2},
+    {"generator_pair": [0, 5], "window_start": 0, "training_seed": 2}, {"generator_pair": [0, 5], "window_start": 1, "training_seed": 2}, {"generator_pair": [0, 5], "window_start": 2, "training_seed": 2},
+    {"generator_pair": [1, 3], "window_start": 0, "training_seed": 2}, {"generator_pair": [1, 3], "window_start": 1, "training_seed": 2}, {"generator_pair": [1, 3], "window_start": 2, "training_seed": 2},
+    {"generator_pair": [1, 5], "window_start": 0, "training_seed": 2}, {"generator_pair": [1, 5], "window_start": 1, "training_seed": 2}, {"generator_pair": [1, 5], "window_start": 2, "training_seed": 2}
+  ]
+}
