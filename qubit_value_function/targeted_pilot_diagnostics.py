@@ -7,6 +7,8 @@ import math
 from statistics import median, stdev
 from typing import Mapping, Sequence
 
+import numpy as np
+
 
 QUANTUM_METHODS = frozenset(("joint_bbht", "cost_only_bbht"))
 
@@ -57,6 +59,41 @@ def initial_marked_counts(
         "initial_training_joint_marked_count": len(training_joint),
         "initial_cost_marked_indices": cost,
         "initial_joint_marked_indices": joint,
+    }
+
+
+def build_candidate_discovery_snapshot(snapshot: Mapping[str, object]) -> dict[str, object]:
+    """Add best-training marked-set facts without any nontraining ED/LP call."""
+
+    unit = float(snapshot["cost_unit"])
+    scale = int(snapshot["encoded_cost_scale"])
+    threshold = int(np.rint(float(snapshot["initial_incumbent_true_cost"]) * scale / unit))
+    counts = initial_marked_counts(snapshot, encoded_threshold=threshold)
+    rows = {int(row["state_index"]): row for row in snapshot["state_proxy_table"]}  # type: ignore[index]
+    nontraining_joint = [
+        index for index in counts["initial_joint_marked_indices"]
+        if index not in set(int(value) for value in snapshot["training_indices"])  # type: ignore[index]
+    ]
+    candidates = [
+        {
+            "state_index": int(index),
+            "proxy_integer_value": int(rows[int(index)]["integer_vqc_value"]),
+            "tau_minus_proxy_margin": int(threshold - int(rows[int(index)]["integer_vqc_value"])),
+        }
+        for index in nontraining_joint
+    ]
+    return {
+        **dict(snapshot),
+        "candidate_discovery_snapshot_schema_version": "stage1_best_training_candidate_discovery_v1",
+        "best_training_encoded_threshold": threshold,
+        **counts,
+        "initial_nontraining_cost_marked_indices": [
+            index for index in counts["initial_cost_marked_indices"]
+            if index not in set(int(value) for value in snapshot["training_indices"])  # type: ignore[index]
+        ],
+        "initial_nontraining_joint_marked_indices": nontraining_joint,
+        "has_nontraining_joint_marked_candidate": bool(nontraining_joint),
+        "nontraining_joint_marked_candidates": candidates,
     }
 
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from qubit_value_function.targeted_pilot_diagnostics import (
+    build_candidate_discovery_snapshot,
     classify_quantum_trial,
     grover_theoretical_probability,
     initial_marked_counts,
@@ -39,6 +40,26 @@ def test_initial_counts_distinguish_training_and_nontraining_joint_marks() -> No
         "initial_cost_marked_indices": [0, 2, 3],
         "initial_joint_marked_indices": [0, 2],
     }
+
+
+def test_candidate_snapshot_uses_strict_proxy_and_never_requires_truth_outside_training() -> None:
+    snapshot = {
+        "scenario_id": "fixture", "training_indices": [0],
+        "initial_incumbent_index": 0, "initial_incumbent_true_cost": 1.0,
+        "cost_unit": 1.0, "encoded_cost_scale": 1,
+        "state_proxy_table": [
+            {"state_index": 0, "integer_vqc_value": 1, "hard_logic_feasible": True},
+            {"state_index": 1, "integer_vqc_value": 0, "hard_logic_feasible": True},
+            {"state_index": 2, "integer_vqc_value": 2, "hard_logic_feasible": True},
+        ],
+    }
+    result = build_candidate_discovery_snapshot(snapshot)
+    assert result["best_training_encoded_threshold"] == 1
+    assert result["initial_nontraining_joint_marked_indices"] == [1]
+    assert result["has_nontraining_joint_marked_candidate"] is True
+    assert result["nontraining_joint_marked_candidates"] == [
+        {"state_index": 1, "proxy_integer_value": 0, "tau_minus_proxy_margin": 1}
+    ]
 
 
 @pytest.mark.parametrize(
