@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
-from typing import Any
+from typing import Any, Sequence
 
 import numpy as np
 
@@ -53,6 +53,7 @@ def _collect_training_data(
     *,
     train_sample_count: int,
     num_x_qubits: int,
+    training_indices: Sequence[int] | None = None,
 ) -> tuple[
     list[int],
     list[str],
@@ -68,7 +69,12 @@ def _collect_training_data(
     cache: dict[int, ExactCandidateEvaluation] = {}
     trace: list[dict[str, object]] = []
     calls = 0
-    for raw_index in REPRESENTATIVE_INDEX_ORDER:
+    index_order = (
+        REPRESENTATIVE_INDEX_ORDER
+        if training_indices is None
+        else tuple(int(index) for index in training_indices)
+    )
+    for raw_index in index_order:
         index = int(raw_index)
         commitment = commitments[index]
         if not is_logic_feasible(instance, commitment):

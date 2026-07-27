@@ -48,6 +48,9 @@ def test_snapshot_persists_complete_16_state_quantized_model_without_truth() -> 
         initial_incumbent_index=3,
         initial_incumbent_true_cost=8.0,
         initial_cache_indices=(1, 3),
+        training_index_policy="seeded_without_replacement_v1",
+        training_data_seed=2,
+        model_seed=0,
     )
 
     rows = snapshot["state_proxy_table"]
@@ -58,6 +61,12 @@ def test_snapshot_persists_complete_16_state_quantized_model_without_truth() -> 
     assert rows[3]["in_training_set"] is True
     assert rows[2]["initially_in_cache"] is False
     assert all("true_cost" not in row for row in rows)
+    assert snapshot["training_index_policy"] == "seeded_without_replacement_v1"
+    assert snapshot["training_data_seed"] == 2
+    assert snapshot["model_seed"] == 0
+    assert snapshot["training_indices"] == [1, 3]
+    assert snapshot["training_sample_count"] == 2
+    assert len(snapshot["training_indices_hash"]) == 64
 
 
 def test_trial_metadata_uses_strict_marked_sets_and_encoded_threshold_stages() -> None:

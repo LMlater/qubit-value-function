@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
-from typing import Any
+from typing import Any, Sequence
 
 import numpy as np
 
@@ -39,6 +39,10 @@ from qubit_value_function.sparse_vqc_bbht import (  # noqa: E402
     select_training_initial_incumbent,
 )
 from qubit_value_function.candidate_acceptance_loop import ClosedLoopBudgets  # noqa: E402
+from qubit_value_function.candidate_discovery_training_splits import (  # noqa: E402
+    resolve_candidate_discovery_training_indices,
+    training_indices_hash,
+)
 from qubit_value_function.closed_loop_scenario import (  # noqa: E402
     ClosedLoopScenario,
     run_closed_loop_method,
@@ -117,6 +121,10 @@ def _evaluate_window(
     regularization: float,
     maxiter: int,
     bbht_config: BBHTConfig,
+    training_index_policy: str | None = None,
+    training_data_seed: int | None = None,
+    frozen_seed0_training_indices: Sequence[int] | None = None,
+    model_seed: int | None = None,
     build_only: bool = False,
 ) -> dict[str, object] | ClosedLoopScenario:
     horizon = 2
@@ -129,6 +137,32 @@ def _evaluate_window(
         selected_generator_indices=selected_generator_indices,
         base_commitment=base_commitment,
     )
+    base_scenario_id = (
+        f"case14-g{selected_generator_indices[0]}g{selected_generator_indices[1]}"
+        f"-w{window_start}"
+    )
+    effective_training_data_seed = (
+        int(seed) if training_data_seed is None else int(training_data_seed)
+    )
+    selected_training_indices: tuple[int, ...] | None = None
+    if training_index_policy is not None:
+        if frozen_seed0_training_indices is None:
+            raise ValueError("candidate discovery split policy requires frozen seed-0 indices")
+        eligible_indices = tuple(
+            index
+            for index in range(2**num_x_qubits)
+            if feasibility_spec.is_feasible(
+                tuple((index >> offset) & 1 for offset in range(num_x_qubits))
+            )
+        )
+        selected_training_indices = resolve_candidate_discovery_training_indices(
+            base_scenario_id=base_scenario_id,
+            training_data_seed=effective_training_data_seed,
+            training_index_policy=training_index_policy,
+            eligible_indices=eligible_indices,
+            frozen_seed0_training_indices=frozen_seed0_training_indices,
+            sample_count=int(train_sample_count),
+        )
 
     (
         train_indices,
@@ -142,15 +176,17 @@ def _evaluate_window(
         commitments,
         train_sample_count=int(train_sample_count),
         num_x_qubits=num_x_qubits,
+        training_indices=selected_training_indices,
     )
 
+    effective_model_seed = int(seed) if model_seed is None else int(model_seed)
     fit = fit_sparse_phase_vqc(
         bitstrings=train_bitstrings,
         costs=train_costs,
         num_generators=2,
         num_periods=2,
         generator_edges=((0, 1),),
-        seed=int(seed) + int(window_start),
+        seed=effective_model_seed + int(window_start),
         regularization=float(regularization),
         maxiter=int(maxiter),
     )
@@ -283,6 +319,14 @@ def _evaluate_window(
                 initial_selection.best_training_tie_break_rule
             ),
             "training_selection_protocol": "random_truth_blind",
+            "training_index_policy": (
+                "legacy_representative_index_order_v1"
+                if training_index_policy is None
+                else str(training_index_policy)
+            ),
+            "training_data_seed": int(effective_training_data_seed),
+            "model_seed": int(effective_model_seed),
+            "training_indices_hash": training_indices_hash(train_indices),
             "global_truth_used_online": False,
             "global_truth_used_for_posthoc_validation": True,
             "training_actual_ed_lp_solves": int(training_calls),
@@ -430,6 +474,10 @@ def build_case14_closed_loop_scenario(
     regularization: float,
     maxiter: int,
     bbht_config: BBHTConfig,
+    training_index_policy: str | None = None,
+    training_data_seed: int | None = None,
+    frozen_seed0_training_indices: Sequence[int] | None = None,
+    model_seed: int | None = None,
 ) -> ClosedLoopScenario:
     """复用既有 Case14 训练、量化和初始缓存构建；不执行搜索或验证。"""
 
@@ -444,6 +492,10 @@ def build_case14_closed_loop_scenario(
         regularization=regularization,
         maxiter=maxiter,
         bbht_config=bbht_config,
+        training_index_policy=training_index_policy,
+        training_data_seed=training_data_seed,
+        frozen_seed0_training_indices=frozen_seed0_training_indices,
+        model_seed=model_seed,
         build_only=True,
     )
     if not isinstance(scenario, ClosedLoopScenario):

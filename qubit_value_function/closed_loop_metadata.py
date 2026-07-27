@@ -14,6 +14,7 @@ from typing import Callable, Mapping, Sequence
 import numpy as np
 
 from .coherent_phase_value import QuantizedSparseValueModel
+from .candidate_discovery_training_splits import training_indices_hash
 
 
 QUANTIZED_MODEL_SNAPSHOT_VERSION = "v1"
@@ -45,13 +46,17 @@ def build_quantized_model_snapshot(
     initial_incumbent_index: int,
     initial_incumbent_true_cost: float,
     initial_cache_indices: Sequence[int],
+    training_index_policy: str | None = None,
+    training_data_seed: int | None = None,
+    model_seed: int | None = None,
 ) -> dict[str, object]:
     """Serialize only the frozen surrogate and original training/cache facts."""
 
     dimension = 2 ** int(model.num_x_qubits)
     if dimension != 16:
         raise ValueError("Stage A dynamic metadata requires exactly 16 search states")
-    training = frozenset(int(index) for index in training_indices)
+    resolved_training_indices = tuple(int(index) for index in training_indices)
+    training = frozenset(resolved_training_indices)
     initial_cache = frozenset(int(index) for index in initial_cache_indices)
     model_dict = model.as_dict()
     rows: list[dict[str, object]] = []
@@ -83,8 +88,17 @@ def build_quantized_model_snapshot(
         "training_seed": int(training_seed),
         "num_search_qubits": int(model.num_x_qubits),
         "search_space_size": int(dimension),
-        "training_indices": [int(index) for index in training_indices],
-        "training_bitstrings": [bitstring_from_index(index, model.num_x_qubits) for index in training_indices],
+        "training_index_policy": str(
+            training_index_policy or "persisted_scenario_training_indices"
+        ),
+        "training_data_seed": int(
+            training_seed if training_data_seed is None else training_data_seed
+        ),
+        "model_seed": int(training_seed if model_seed is None else model_seed),
+        "training_indices": [int(index) for index in resolved_training_indices],
+        "training_indices_hash": training_indices_hash(resolved_training_indices),
+        "training_sample_count": len(resolved_training_indices),
+        "training_bitstrings": [bitstring_from_index(index, model.num_x_qubits) for index in resolved_training_indices],
         "training_labels": [
             {"state_index": int(index), "true_cost": float(cost)}
             for index, cost in training_labels
