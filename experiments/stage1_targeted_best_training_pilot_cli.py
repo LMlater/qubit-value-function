@@ -260,16 +260,28 @@ def augment_targeted_result_schema(
     first_outside_evaluation: int | None = None
     first_outside_improvement: int | None = None
     trace: list[dict[str, object]] = []
-    for raw_row in list(result.get("trial_trace", [])):
+    for position, raw_row in enumerate(list(result.get("trial_trace", [])), start=1):
         row = dict(raw_row)
-        index = int(row["measured_index"])
-        in_training = index in training
+        indexed_fields = [name for name in ("measured_index", "candidate_index") if name in row]
+        if len(indexed_fields) == 2 and int(row["measured_index"]) != int(row["candidate_index"]):
+            raise PilotPreflightError("trial_candidate_index_fields_disagree")
+        index = int(row[indexed_fields[0]]) if indexed_fields else None
+        row["normalized_candidate_index"] = index
+        row["candidate_state_recorded"] = index is not None
+        if "cache_hit" not in row and "candidate_cache_hit" in row:
+            row["cache_hit"] = bool(row["candidate_cache_hit"])
+        if "new_ed_lp_solve" not in row and "new_edlp_solve_performed" in row:
+            row["new_ed_lp_solve"] = bool(row["new_edlp_solve_performed"])
+        if "true_strict_improvement" not in row and "true_improvement" in row:
+            row["true_strict_improvement"] = bool(row["true_improvement"])
+        in_training = None if index is None else index in training
         row["sampled_in_training_set"] = in_training
-        row["sampled_initial_nontraining_joint_marked_candidate"] = index in candidates
-        if not in_training and bool(row.get("new_ed_lp_solve")) and first_outside_evaluation is None:
-            first_outside_evaluation = int(row["trial_number"])
-        if not in_training and bool(row.get("true_strict_improvement")) and first_outside_improvement is None:
-            first_outside_improvement = int(row["trial_number"])
+        row["sampled_initial_nontraining_joint_marked_candidate"] = index in candidates if index is not None else False
+        event_number = int(row.get("trial_number", row.get("proposal_number", position)))
+        if in_training is False and bool(row.get("new_ed_lp_solve")) and first_outside_evaluation is None:
+            first_outside_evaluation = event_number
+        if in_training is False and bool(row.get("true_strict_improvement")) and first_outside_improvement is None:
+            first_outside_improvement = event_number
         trace.append(row)
     return {
         **dict(result),

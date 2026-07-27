@@ -147,3 +147,86 @@ def test_fixed_candidate_manifest_is_four_snapshot_groups_times_twenty_seeds() -
     assert len(manifest["scenarios"]) == 4
     assert len(specs) == 80
     assert all(spec.training_seed == 1 and spec.method == "joint_bbht" for spec in specs)
+
+
+@pytest.mark.parametrize(
+    "method",
+    (
+        "full_space_random",
+        "logic_rejection_random",
+        "direct_logic_feasible_random",
+        "classical_joint_marked_random",
+    ),
+)
+def test_trial_augmentation_normalizes_classical_candidate_index_schema(method: str) -> None:
+    augmented = augment_targeted_result_schema(
+        {
+            "trial_trace": [{
+                "proposal_number": 1,
+                "candidate_source_method": method,
+                "candidate_index": 3,
+                "candidate_cache_hit": False,
+                "new_edlp_solve_performed": True,
+                "true_improvement": True,
+            }]
+        },
+        training_indices=(2,),
+        initial_nontraining_joint_marked_indices=(3,),
+    )
+
+    row = augmented["trial_trace"][0]
+    assert row["normalized_candidate_index"] == 3
+    assert row["sampled_in_training_set"] is False
+    assert row["sampled_initial_nontraining_joint_marked_candidate"] is True
+    assert row["cache_hit"] is False
+    assert row["new_ed_lp_solve"] is True
+    assert row["true_strict_improvement"] is True
+    assert augmented["targeted_pilot_events"] == {
+        "first_outside_training_evaluation_trial": 1,
+        "first_outside_training_strict_improvement_trial": 1,
+    }
+
+
+def test_trial_augmentation_preserves_bbht_measured_index_schema() -> None:
+    augmented = augment_targeted_result_schema(
+        {"trial_trace": [{"trial_number": 1, "measured_index": 2, "cache_hit": True, "new_ed_lp_solve": False, "true_strict_improvement": False}]},
+        training_indices=(2,),
+        initial_nontraining_joint_marked_indices=(3,),
+    )
+
+    row = augmented["trial_trace"][0]
+    assert row["measured_index"] == 2
+    assert "candidate_index" not in row
+    assert row["normalized_candidate_index"] == 2
+    assert row["sampled_in_training_set"] is True
+
+
+def test_trial_augmentation_accepts_trial_without_candidate_state() -> None:
+    augmented = augment_targeted_result_schema(
+        {"trial_trace": [{"trial_number": 1, "candidate_status": "no_joint_marked_state"}]},
+        training_indices=(2,),
+        initial_nontraining_joint_marked_indices=(3,),
+    )
+
+    row = augmented["trial_trace"][0]
+    assert row["normalized_candidate_index"] is None
+    assert row["sampled_in_training_set"] is None
+    assert row["sampled_initial_nontraining_joint_marked_candidate"] is False
+    assert augmented["targeted_pilot_events"] == {
+        "first_outside_training_evaluation_trial": None,
+        "first_outside_training_strict_improvement_trial": None,
+    }
+
+
+def test_trial_augmentation_preserves_empty_classical_joint_marked_trace() -> None:
+    augmented = augment_targeted_result_schema(
+        {"method": "classical_joint_marked_random", "trial_trace": []},
+        training_indices=(2,),
+        initial_nontraining_joint_marked_indices=(),
+    )
+
+    assert augmented["trial_trace"] == []
+    assert augmented["targeted_pilot_events"] == {
+        "first_outside_training_evaluation_trial": None,
+        "first_outside_training_strict_improvement_trial": None,
+    }
