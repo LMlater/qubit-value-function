@@ -1,0 +1,65 @@
+{
+  "experiment_name": "stage1_targeted_best_training_candidate_pilot",
+  "fixed_candidate_manifest": true,
+  "expected_code_sha": "eed16512e73e286fcc671c61e52732c1a8d5de77",
+  "targeted_case_study": true,
+  "formal": false,
+  "quantum_advantage_evidence": false,
+  "selection_note": "Fixed four-scenario, snapshot-derived case-study pilot. All four pre-registered nontraining joint-marked candidates are included without using true nontraining costs, global optimum, or historical search outcomes for scenario selection.",
+  "initial_incumbent_policy": "best_training",
+  "methods": ["joint_bbht"],
+  "run_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+  "bbht_config": {
+    "lambda_factor": 1.2,
+    "max_trials": 64,
+    "max_oracle_calls": 128,
+    "max_new_ed_lp_calls": 16,
+    "max_threshold_updates": 8,
+    "max_consecutive_nonimproving_marked": 16,
+    "max_same_encoded_threshold_updates": 3,
+    "max_auxiliary_syndrome_rejections": 8
+  },
+  "global_optimum_policy": "posthoc_only_from_existing_independent_records_or_not_assessed",
+  "scenarios": [
+    {
+      "scenario_id": "case14-g0g1-w2-s1",
+      "generator_pair": [0, 1], "window_start": 2,
+      "role": "nontraining_improvement_candidate",
+      "snapshot": "results/stage1_best_training_candidate_discovery_rewired_seed1_20260727_212932/scenario_snapshots/case14-g0g1-w2-s1.json",
+      "training_data_seed": 1, "model_seed": 0,
+      "training_indices": [2, 12, 0, 10, 11, 8, 15, 1],
+      "training_indices_hash": "2025506c08decd4a6fb77a5438a159413040d294687d853c72e87f865af6efca",
+      "expected_initial": {"tau_int": 136, "joint_marked_count": 1, "nontraining_joint_marked_indices": [3], "proxy_integer_value": 126, "margin": 10}
+    },
+    {
+      "scenario_id": "case14-g0g5-w0-s1",
+      "generator_pair": [0, 5], "window_start": 0,
+      "role": "nontraining_improvement_candidate",
+      "snapshot": "results/stage1_best_training_candidate_discovery_rewired_seed1_20260727_212932/scenario_snapshots/case14-g0g5-w0-s1.json",
+      "training_data_seed": 1, "model_seed": 0,
+      "training_indices": [13, 6, 9, 15, 11, 2, 14, 8],
+      "training_indices_hash": "1214ba5882c1507fc3dd63be9a7567b5c9eee8fe8d070a74a4bcb46b9da4ff69",
+      "expected_initial": {"tau_int": 113, "joint_marked_count": 2, "training_joint_marked_count": 1, "nontraining_joint_marked_indices": [3], "proxy_integer_value": 103, "margin": 10}
+    },
+    {
+      "scenario_id": "case14-g0g5-w2-s1",
+      "generator_pair": [0, 5], "window_start": 2,
+      "role": "nontraining_improvement_candidate",
+      "snapshot": "results/stage1_best_training_candidate_discovery_rewired_seed1_20260727_212932/scenario_snapshots/case14-g0g5-w2-s1.json",
+      "training_data_seed": 1, "model_seed": 0,
+      "training_indices": [13, 8, 9, 6, 2, 0, 12, 1],
+      "training_indices_hash": "52fc5c55c0cfa85d24cf7f0c834a222cf9e8fdd4a944fcd5468f6f7b2809b1be",
+      "expected_initial": {"tau_int": 104, "joint_marked_count": 1, "nontraining_joint_marked_indices": [3], "proxy_integer_value": 99, "margin": 5}
+    },
+    {
+      "scenario_id": "case14-g1g5-w0-s1",
+      "generator_pair": [1, 5], "window_start": 0,
+      "role": "nontraining_improvement_candidate",
+      "snapshot": "results/stage1_best_training_candidate_discovery_rewired_seed1_20260727_212932/scenario_snapshots/case14-g1g5-w0-s1.json",
+      "training_data_seed": 1, "model_seed": 0,
+      "training_indices": [12, 8, 11, 7, 4, 6, 14, 15],
+      "training_indices_hash": "92f29435a49a3a54c439accb633ad5c0fdf846c578c2ea4027db62ef2996bd11",
+      "expected_initial": {"tau_int": 107, "joint_marked_count": 1, "nontraining_joint_marked_indices": [0], "proxy_integer_value": 99, "margin": 8}
+    }
+  ]
+}
