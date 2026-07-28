@@ -157,7 +157,7 @@ def validate_selection(
 
 def preset_selection(preset: str) -> dict[str, tuple[object, ...]]:
     if preset == "smoke":
-        manifest = {
+        return {
             "generator_pairs": DEFAULT_GENERATOR_PAIRS,
             "windows": (0,),
             "training_seeds": (0,),
