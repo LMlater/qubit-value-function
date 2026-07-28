@@ -157,7 +157,7 @@ def validate_selection(
 
 def preset_selection(preset: str) -> dict[str, tuple[object, ...]]:
     if preset == "smoke":
-        return {
+        manifest = {
             "generator_pairs": DEFAULT_GENERATOR_PAIRS,
             "windows": (0,),
             "training_seeds": (0,),
@@ -380,7 +380,7 @@ class ClosedLoopBatchExecutor:
         groups = sorted({
             (spec.generator_pair, spec.window_start, spec.training_seed) for spec in specs
         })
-        return {
+        manifest = {
             "schema_version": BATCH_SCHEMA_VERSION,
             "batch_id": specs[0].batch_id if specs else "",
             "preset": specs[0].preset if specs else "",
@@ -405,6 +405,16 @@ class ClosedLoopBatchExecutor:
             "environment": dict(self.code),
             "workers": self.workers,
         }
+        for key in (
+            "actual_execution_head",
+            "manifest_declared_code_sha",
+            "externally_expected_head",
+            "head_match",
+            "working_tree_tracked_clean",
+        ):
+            if key in self.code:
+                manifest[key] = self.code[key]
+        return manifest
 
     def _write_manifest(
         self, specs: Sequence[RunSpec], counts: Mapping[str, int], *, interrupted: bool, started_at: str

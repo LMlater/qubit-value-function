@@ -6,6 +6,7 @@ import argparse
 from collections import defaultdict
 import json
 from pathlib import Path
+import subprocess
 import sys
 from typing import Mapping, Sequence
 
@@ -57,6 +58,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--instance", type=Path, default=Path("data/case14.json.gz"))
+    parser.add_argument("--expected-head")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--preflight", action="store_true")
     mode.add_argument("--run", action="store_true")
@@ -113,7 +115,35 @@ def _validate_manifest_shape(manifest: Mapping[str, object]) -> None:
         raise SelectedSplitBenchmarkError("selected_split_requires_all_twelve_base_scenarios")
 
 
-def preflight_selected_split_manifest(manifest: Mapping[str, object]) -> dict[str, object]:
+def _git_value(*args: str) -> str:
+    return subprocess.run(
+        ("git", *args), cwd=ROOT, check=True, capture_output=True, text=True, encoding="utf-8"
+    ).stdout.strip()
+
+
+def build_runtime_provenance(
+    *,
+    actual_execution_head: str,
+    manifest_declared_code_sha: str,
+    externally_expected_head: str | None,
+    working_tree_tracked_clean: bool,
+) -> dict[str, object]:
+    """Keep runtime identity separate from immutable manifest provenance."""
+
+    if externally_expected_head is not None and externally_expected_head != actual_execution_head:
+        raise SelectedSplitBenchmarkError("expected_head_mismatch")
+    return {
+        "actual_execution_head": str(actual_execution_head),
+        "manifest_declared_code_sha": str(manifest_declared_code_sha),
+        "externally_expected_head": externally_expected_head,
+        "head_match": externally_expected_head == actual_execution_head if externally_expected_head is not None else None,
+        "working_tree_tracked_clean": bool(working_tree_tracked_clean),
+    }
+
+
+def preflight_selected_split_manifest(
+    manifest: Mapping[str, object], *, runtime_provenance: Mapping[str, object] | None = None
+) -> dict[str, object]:
     """Validate only persisted snapshot/frozen formal metadata; never search or evaluate ED/LP."""
 
     _validate_manifest_shape(manifest)
@@ -140,7 +170,7 @@ def preflight_selected_split_manifest(manifest: Mapping[str, object]) -> dict[st
             raise SelectedSplitBenchmarkError("selected_split_snapshot_seed_mismatch")
         rows.append({"snapshot": str(item["snapshot"]), **facts})
     reachable = sum(row["oracle_reachability_stratum"] == "reachable" for row in rows)
-    return {
+    report = {
         "selection_status": "eligible",
         "formal": False,
         "global_optimum_used_in_preflight": False,
@@ -150,6 +180,7 @@ def preflight_selected_split_manifest(manifest: Mapping[str, object]) -> dict[st
         "scenarios": rows,
         "oracle_reachability_counts": {"reachable": reachable, "unreachable": len(rows) - reachable},
     }
+    return {**report, **dict(runtime_provenance or {})}
 
 
 def build_selected_split_run_specs(manifest: Mapping[str, object], *, expected_head: str) -> tuple[RunSpec, ...]:
@@ -188,7 +219,7 @@ def _percentiles(values: Sequence[float]) -> dict[str, float | None]:
     }
 
 
-def summarize_selected_split_batch(output_dir: Path, *, planned_runs: int = 360) -> dict[str, object]:
+def compute_selected_split_summary(output_dir: Path, *, planned_runs: int = 360) -> dict[str, object]:
     """Summarize completed JSON only; this function never invokes a search method."""
 
     rows: list[dict[str, object]] = []
@@ -244,6 +275,13 @@ def summarize_selected_split_batch(output_dir: Path, *, planned_runs: int = 360)
         "by_reachability_stratum": grouped(("oracle_reachability_stratum",)),
         "by_method_and_reachability_stratum": grouped(("method", "oracle_reachability_stratum")),
     }
+    return summary
+
+
+def summarize_selected_split_batch(output_dir: Path, *, planned_runs: int = 360) -> dict[str, object]:
+    """Persist the unchanged selected-split summary schema after pure recomputation."""
+
+    summary = compute_selected_split_summary(output_dir, planned_runs=planned_runs)
     atomic_write_json(Path(output_dir) / "summaries" / "selected_split_summary.json", summary)
     return summary
 
@@ -251,8 +289,16 @@ def summarize_selected_split_batch(output_dir: Path, *, planned_runs: int = 360)
 def main() -> int:
     args = build_argument_parser().parse_args()
     manifest = json.loads(args.config.read_text(encoding="utf-8"))
-    report = preflight_selected_split_manifest(manifest)
-    specs = build_selected_split_run_specs(manifest, expected_head=str(manifest["expected_code_sha"]))
+    actual_execution_head = _git_value("rev-parse", "HEAD")
+    tracked_clean = all(line[:2] == "??" for line in _git_value("status", "--porcelain").splitlines())
+    runtime_provenance = build_runtime_provenance(
+        actual_execution_head=actual_execution_head,
+        manifest_declared_code_sha=str(manifest["expected_code_sha"]),
+        externally_expected_head=args.expected_head,
+        working_tree_tracked_clean=tracked_clean,
+    )
+    report = preflight_selected_split_manifest(manifest, runtime_provenance=runtime_provenance)
+    specs = build_selected_split_run_specs(manifest, expected_head=actual_execution_head)
     if args.preflight:
         print(json.dumps(report, ensure_ascii=False, indent=2))
         return 0
@@ -272,7 +318,13 @@ def main() -> int:
         envelope["result_schema"] = {**result, **fact, "global_optimum_posthoc_status": "not_assessed"}
         envelope["quantized_model_snapshot"] = snapshots[scenario.scenario_id]
         return envelope
-    executor = ClosedLoopBatchExecutor(output_dir=args.output_dir, code={"execution": "frozen_selected_split_best_training", "head": manifest["expected_code_sha"]}, scenario_builder=scenario_builder, method_runner=method_runner, workers=1)
+    executor = ClosedLoopBatchExecutor(
+        output_dir=args.output_dir,
+        code={"execution": "frozen_selected_split_best_training", "head": actual_execution_head, **runtime_provenance},
+        scenario_builder=scenario_builder,
+        method_runner=method_runner,
+        workers=1,
+    )
     counts = executor.execute(specs, continue_on_error=True)
     summary = summarize_selected_split_batch(args.output_dir, planned_runs=len(specs))
     print(json.dumps({"preflight": report, "counts": counts, "summary": summary}, ensure_ascii=False, indent=2))
