@@ -42,6 +42,16 @@
 
 均匀经典基线从 16 状态均匀抽样后才调用同一 Boolean predicate，不预知目标 index；这只是 oracle-query 模型诊断。fixed-point margin sweep 使用已知训练集外真值，明确为 **posthoc diagnostic**：delta=0 时 joint precision=100.00%、state-level recall=44.44%；正 margin 没有提高召回却降低 precision，不能作为独立泛化结论。
 
+## 动态阈值闭环轨迹审计
+
+审计从保存的 run-level trace 重建了前期 1080 和后期 360 的所有已接受更新；每次接受均在 trace 中记录旧/新真实阈值与固定点阈值。前期 joint-BBHT 的平均接受更新为 0.9222/run，43.33% 的 run 在第一次接受后仍产生候选；后期 joint-BBHT 为 0.3333/run，8.33% 的 run 在第一次接受后继续搜索。因此两个批次都不是“第一次改善后总是立即停止”：接受更新会降低阈值，后续 trial 使用 trace 中新的 encoded threshold。四个后期正例的 20 个 joint-BBHT run 中，首次接受状态均为最终状态，且均为所选 16 状态子空间最优；其中 `g0g1-w2` 的五个 run 在接受后继续产生候选，其余三个场景的 run 在接受后直接因预算/停止条件结束。
+
+这份审计是对既有 trace 的只读重构；历史前期 run 未持久化每个动态阈值的完整 16 状态 VQC 表，因此报告不将缺失表格伪造为动态 oracle 全空间 precision/recall。
+
+## hard-logic oracle 正确性
+
+在 48 个冻结场景单元的全部 768 个 scenario-state pair 上，独立逐条 UC 规则检查器、生产 compiled hard logic、以及归一化后的量子相位语义完全一致（768/768）。相位错误与辅助比特反计算错误均为 0；量子 oracle 的语义是“可行状态获得负相位”。特别地，`case14-g1g5-w0-s1`, state 1 的 ED/LP 成本虽低，但 `g2` 在 t=0 启动后状态为 `10`，违反最小开机时间 4 的 `post_start_min_up` 规则；因此它不是硬逻辑可行严格改善状态，不能纳入主要 joint recall 分母。
+
 ## 局限与后续工作
 
 - Aer MPS 是经典门级模拟器。
