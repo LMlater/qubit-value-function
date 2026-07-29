@@ -2,30 +2,51 @@
 
 ## 执行摘要
 
-冻结的 selected-split（12 个四比特、16 状态子空间）真值审计补齐了 96 个训练集外 ED/LP 值：9 个为严格改善。初始 joint oracle 的训练集外候选有 4 个，均为该 16 状态子空间内的真实最优状态；这不是完整 UC 的全局最优声明。
+在冻结 selected-split 的 12 个四比特、16 状态子空间中，训练集外真值审计覆盖 96 个状态，得到 9 个真实严格改善状态。初始 joint oracle 覆盖 4 个正例场景；四个发现状态均是各自所选 16 状态子空间中的真实最优状态。这不是完整 UC 的全局最优声明。
 
 ## 技术链路
 
-稀疏相位 VQC → 固定点系数/值寄存器 → 严格 `<` 比较器 → hard-logic joint oracle → Grover/BBHT → Aer MPS 门级模拟测量 → ED/LP 真值验证 → 正常阈值更新。所有真值仅在后验审计中使用。
+稀疏相位 VQC → 固定点系数/值寄存器 → 严格 `<` 比较器 → hard-logic joint oracle → Grover/BBHT → Aer MPS 门级模拟测量 → ED/LP 真值验证 → 正常阈值更新。真值只用于事后审计，不参与在线选择。
 
 ## N=16、M=1 固定 oracle
 
-`case14-g0g1-w2-s1` 的阈值 136 仅标记 index 3。精确概率与五个 4096-shot Aer MPS 均值分别为：k=0：0.062500 / 0.062305；k=1：0.472656 / 0.472656；k=2：0.908447 / 0.909424；k=3：0.961319 / 0.959619。相位真值表只翻转目标状态，辅助寄存器归零概率为 1（数值误差内）。这是门级经典 MPS 模拟的 oracle-query 证据，不是硬件或端到端加速证据。
+`case14-g0g1-w2-s1` 在阈值 136 下只标记 index 3。理论/精确电路/五个 4096-shot Aer MPS 均值的 marked 概率为：k=0 `0.062500 / 0.062500 / 0.062305`，k=1 `0.472656 / 0.472656 / 0.472656`，k=2 `0.908447 / 0.908447 / 0.909424`，k=3 `0.961319 / 0.961319 / 0.959619`。相位真值表只翻转目标状态，辅助寄存器归零概率为 1（数值误差内）。这是门级经典 MPS 模拟中的 oracle-query 证据，不是量子硬件、墙钟时间或端到端加速证据。
 
-## 训练集外 oracle 真值
+## 训练集外候选质量
 
-状态级 cost oracle：TP/FP/FN/TN=5/2/4/85，precision=0.7143，recall=0.5556。joint oracle：4/0/5/87，precision=1.0000，recall=0.4444。八个 joint-unreachable 场景中，6 个没有训练集外真实严格改善；`case14-g0g1-w1-s1` 另有 cost 假阳性；`case14-g1g3-w0-s1` 有一个真实改善但被 cost oracle 漏标。没有“cost 标记真实改善、却被 hard logic 排除”的案例。
+必须区分三个不同的分母。
 
-四个正例 `g0g1-w2`、`g0g5-w0`、`g0g5-w2`、`g1g5-w0` 的发现 index 均为所选 16 状态子空间最优。
+- 20/20：四个 initial joint-marked 场景各有 5 个 selected-split joint-BBHT run；每个 run 都获得训练集外严格改善，故 run 级成功率为 20/20。
+- 4/4：这四个初始 unique joint-marked 状态都是真实严格改善，故 unique-state joint precision 为 4/4。
+- 4/5：真实存在训练集外改善的五个场景中，joint oracle 覆盖四个，故场景覆盖率为 4/5。
+- 4/9：按状态计，joint oracle 召回 9 个真实改善状态中的 4 个，state-level recall 为 44.44%。
 
-## 前后批次资源口径
+状态级 cost oracle 为 TP/FP/FN/TN=`5/2/4/85`，precision=`71.43%`、recall=`55.56%`；joint oracle 为 `4/0/5/87`，precision=`100.00%`、recall=`44.44%`。差异来自 `case14-g1g5-w0-s1`, index 1：它是 cost TP，但 hard logic 不可行，故 joint-marked=False；这正是 cost TP=5 而 joint TP=4 的唯一原因。
 
-对不可变 run JSON 重聚合：前期 1080，后期 360，均覆盖六种方法。前期 joint BBHT 的平均候选数/ oracle calls / 新 EDLP 分别为 14.0667 / 17.5611 / 0.2111；logic-rejection random 为 21.6667 / 0 / 3.6111。后期 joint BBHT 为 10.5833 / 14.4833 / 0.3333；logic-rejection random 为 21.2 / 0 / 3.75。资源均与成功率并列解释，不能脱离成功率单独比较。
+八个 joint-unreachable 场景中，六个没有训练集外真实严格改善；`case14-g0g1-w1-s1` 有 cost 假阳性；`case14-g1g3-w0-s1` 有一个真实改善但被 cost oracle 漏标。
 
-## 查询诊断与 margin
+## 资源口径：平均每 run 为主
 
-均匀经典基线每次从 16 状态抽样后调用相同 Boolean predicate，不预知目标 index；这是 oracle-query 模型的诊断。margin sweep 使用已知训练集外真值，明确属于 **posthoc diagnostic**：delta=0 的 joint precision=1、recall=0.4444；正 margin 未提高召回而降低 precision，不能作为独立泛化结论。
+前期 1080 run 和后期 360 run 均按 run JSON 重聚合；括号中的总数仅用于核验。
 
-## 局限
+| 批次 / 方法 | 严格改善率 | 平均候选 | 平均 oracle calls | 平均 MPS 执行 | 平均新增 ED/LP |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 前期 joint-BBHT | 50.00% (90/180) | 14.0667 | 17.5611 | 14.0667 | 0.2111 (38/180) |
+| 前期 logic-rejection random | 58.33% (105/180) | 21.6667 | 0 | 0 | 3.6111 (650/180) |
+| 后期 joint-BBHT | 33.33% (20/60) | 10.5833 | 14.4833 | 10.5833 | 0.3333 (20/60) |
+| 后期 logic-rejection random | 33.33% (20/60) | 21.2000 | 0 | 0 | 3.7500 (225/60) |
 
-MPS 仍是经典模拟器；搜索空间仅四比特/16 状态；selected-split 只代表该子空间；VQC 仍有假阴性；same-candidate-set 经典抽样与 BBHT 可能产生相近结果；未证明硬件速度、端到端量子优势或完整 UC 全局最优。
+两批的初始化与成功定义不同：前期允许训练缓存改善；后期 best-training 初始化排除了训练集内严格改善。因此不应只用全部 run 成功率直接比较，也不应将资源均值脱离成功率解读。
+
+## 查询诊断与 posthoc margin
+
+均匀经典基线从 16 状态均匀抽样后才调用同一 Boolean predicate，不预知目标 index；这只是 oracle-query 模型诊断。fixed-point margin sweep 使用已知训练集外真值，明确为 **posthoc diagnostic**：delta=0 时 joint precision=100.00%、state-level recall=44.44%；正 margin 没有提高召回却降低 precision，不能作为独立泛化结论。
+
+## 局限与后续工作
+
+- Aer MPS 是经典门级模拟器。
+- 当前搜索空间只有四比特、16 状态，selected-split 只代表这个子空间。
+- VQC 仍存在假阴性；hard logic 也会过滤部分 cost-level 真正改善。
+- same-candidate-set 经典抽样的表现可能接近 BBHT。
+- 未证明真实量子硬件速度、端到端量子优势或完整 UC 全局最优。
+- posthoc threshold sweep 不是独立泛化证据。

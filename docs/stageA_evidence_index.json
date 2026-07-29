@@ -1,0 +1,13 @@
+{
+  "schema_version": "stageA_evidence_index_v1",
+  "code_head": "b0d684ece90f5ba2c76c54a314b9e50bfd527dd0",
+  "environment": {"python": "3.11.15", "numpy": "2.4.6", "scipy": "1.17.1", "pytest": "9.1.1", "qiskit": "2.5.0", "qiskit_aer": "0.17.2"},
+  "artifacts": [
+    {"path": "results/stage1_selected_split_truth_audit_20260728_224010", "files": {"manifest.json": "1e44118cbe96b226e0f0d664c6b72cb9d2d84da13877e76c12169dba6999f8ba", "summary.json": "8e55cce7b494169090dea8f0dff98eed809be672493499369955ae8b94aa0bc9", "scenario_oracle_metrics.csv": "3da766e0109fe50b632a7b254add22d16e1c5417aec7180de63ae7976fa85df1", "scenario_state_truth_table.csv": "4aed1fb95ab33911fa9ab232b6f63d278b57bec458ff5c920c4b772683571b6b"}},
+    {"path": "results/stage1_fixed_oracle_m1_multishot_20260728_224145", "files": {"manifest.json": "8ec623a598389395efbbebc1032e6c9563bbe37ec56f2264d2aa671aeb6ab465", "summary.json": "2bfe9d9c73d94c3e72cc6dfff2fcd32b58f6de644dfdcd8a30ab835a37328c99", "aggregate.csv": "5cf11719121ff96917088a39071acfbfb91acf22ea667cd0e47adaa3b7eeb233"}},
+    {"path": "results/stage1_oracle_query_budget_comparison_20260728_224213", "files": {"manifest.json": "5ec450179e6c0d4d642387172e4b6ad6119211077e79b5fa1e15351c49a183bf", "summary.json": "4aeb7225013c0b260dd673ec5f2bdb1aeb9c21c64ba48bc795aff234e0e3c60f", "oracle_query_budget_comparison.csv": "23e290e306112b65967093a528c5e4547ca9b5a8f279b69e2add59bb4a475e86"}},
+    {"path": "results/stage1_front_back_resource_audit_20260728_224923", "files": {"manifest.json": "85069478b4f2ab83654106bd6ee43d45b4f14ad058e57c7acedb322961a6c048", "summary.json": "a88207b4ca7aeb003b79cf93abe3ed95d38fe272d0d04d3d60ecd6f06f68164e", "front_back_method_comparison.csv": "a245f70b78b7c74f074db41685f30989eb1423fc3dd465d7ea7f2a627a149301"}},
+    {"path": "results/stage1_vqc_recall_threshold_diagnostic_20260728_224532", "files": {"manifest.json": "b3ae3c5b57255cbbe3b00fe9927c6954e29aa7596991b7fe9f6897b5f83051d8", "summary.json": "b3ae3c5b57255cbbe3b00fe9927c6954e29aa7596991b7fe9f6897b5f83051d8", "margin_metrics.csv": "1993e0e0da00ba4facd998f23d66b884f72935d0ee5d72c3443fb128801d228b"}}
+  ],
+  "excluded": "Large caches, per-shot files, and historical results are intentionally not committed."
+}
