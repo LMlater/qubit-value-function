@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
+from experiments import stage2_case14_load_qnn_pilot_cli as stage2_cli
 from qubit_value_function.experiment_utils import time_window_instance
 from qubit_value_function.load_conditioned_qnn import (
     ExpectationQNNConfig,
@@ -96,3 +97,23 @@ def test_threshold_qnn_probabilities_and_fit_are_valid() -> None:
     assert fit.final_loss <= fit.initial_loss + 1e-12
     assert probabilities.shape == (8,)
     assert np.all((probabilities > 0.0) & (probabilities < 1.0))
+
+
+def test_training_quantile_thresholds_exclude_unseen_state_truth() -> None:
+    rows = [
+        {"state_index": 0, "true_cost": 10.0},
+        {"state_index": 1, "true_cost": 20.0},
+        {"state_index": 2, "true_cost": -1000.0},
+        {"state_index": 3, "true_cost": 1000.0},
+    ]
+
+    assert hasattr(stage2_cli, "training_quantile_thresholds")
+    thresholds = stage2_cli.training_quantile_thresholds(rows, frozenset({0, 1}))
+
+    assert np.allclose(thresholds, np.quantile([10.0, 20.0], (0.2, 0.4, 0.6, 0.8)))
+
+
+def test_confusion_metrics_reports_f1() -> None:
+    metrics = stage2_cli.confusion_metrics([1, 1, 0, 0], [0.9, 0.1, 0.8, 0.2], 0.5)
+
+    assert metrics["f1"] == 0.5

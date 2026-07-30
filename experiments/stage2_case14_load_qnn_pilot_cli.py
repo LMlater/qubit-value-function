@@ -162,7 +162,21 @@ def confusion_metrics(
         "precision": float(tp / (tp + fp)) if tp + fp else None,
         "recall": float(tp / (tp + fn)) if tp + fn else None,
         "accuracy": float((tp + tn) / len(truth)),
+        "f1": float(2 * tp / (2 * tp + fp + fn)) if 2 * tp + fp + fn else None,
     }
+
+
+def training_quantile_thresholds(
+    scenario_rows: Sequence[Mapping[str, object]], training_indices: frozenset[int]
+) -> np.ndarray:
+    training_costs = [
+        float(row["true_cost"])
+        for row in scenario_rows
+        if int(row["state_index"]) in training_indices
+    ]
+    if not training_costs:
+        raise ValueError("each training scenario must include at least one training state")
+    return np.quantile(training_costs, (0.2, 0.4, 0.6, 0.8))
 
 
 def threshold_regression_metrics(
@@ -350,10 +364,7 @@ def main() -> int:
         scenario_rows = [
             row for row in dataset if float(row["load_multiplier"]) == multiplier
         ]
-        scenario_costs = np.asarray(
-            [float(row["true_cost"]) for row in scenario_rows], dtype=float
-        )
-        for threshold in np.quantile(scenario_costs, (0.2, 0.4, 0.6, 0.8)):
+        for threshold in training_quantile_thresholds(scenario_rows, training_indices):
             normalized_threshold = (float(threshold) - training_cost_center) / training_cost_scale
             for row in scenario_rows:
                 if int(row["state_index"]) in training_indices:
