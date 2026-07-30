@@ -1,0 +1,32 @@
+{
+  "method": "joint_bbht",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 1,
+      "cached_exact_lookups": 0,
+      "circuit_executions": 2,
+      "new_exact_evaluation_attempts": 1,
+      "total_oracle_calls": 0
+    },
+    "final_incumbent_true_cost": 22638.996543999998,
+    "initial_incumbent_true_cost": 25892.48112211765,
+    "oracle_reachability_stratum": "reachable",
+    "stop_reason": "no_surrogate_marked_state_by_conservative_lower_bound",
+    "trial_trace": [
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": true
+      }
+    ]
+  },
+  "run_spec": {
+    "run_seed": 3
+  },
+  "scenario": {
+    "scenario_id": "case14-g0g5-w2-s1"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "method": "classical_joint_marked_random",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 0,
+      "cached_exact_lookups": 0,
+      "new_exact_evaluation_attempts": 0,
+      "proposals_used": 0
+    },
+    "final_incumbent_true_cost": 33223.5533,
+    "initial_incumbent_true_cost": 33223.5533,
+    "oracle_reachability_stratum": "unreachable",
+    "stop_reason": "no_classical_joint_marked_state",
+    "trial_trace": []
+  },
+  "run_spec": {
+    "run_seed": 3
+  },
+  "scenario": {
+    "scenario_id": "case14-g0g1-w0-s1"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "method": "full_space_random",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 2,
+      "cached_exact_lookups": 10,
+      "new_exact_evaluation_attempts": 6,
+      "proposals_used": 16
+    },
+    "final_incumbent_true_cost": 32113.5533375,
+    "initial_incumbent_true_cost": 32113.5533375,
+    "oracle_reachability_stratum": "unreachable",
+    "stop_reason": "max_consecutive_nonimproving_marked_reached",
+    "trial_trace": [
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      }
+    ]
+  },
+  "run_spec": {
+    "run_seed": 4
+  },
+  "scenario": {
+    "scenario_id": "case14-g1g3-w1-s1"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "method": "logic_rejection_random",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 3,
+      "cached_exact_lookups": 13,
+      "new_exact_evaluation_attempts": 3,
+      "proposals_used": 24
+    },
+    "final_incumbent_true_cost": 31487.909,
+    "initial_incumbent_true_cost": 31487.909,
+    "oracle_reachability_stratum": "unreachable",
+    "stop_reason": "max_consecutive_nonimproving_marked_reached",
+    "trial_trace": [
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      }
+    ]
+  },
+  "run_spec": {
+    "run_seed": 0
+  },
+  "scenario": {
+    "scenario_id": "case14-g1g3-w2-s1"
+  }
+}

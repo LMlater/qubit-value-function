@@ -1,0 +1,41 @@
+{
+  "method": "full_space_random",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 3,
+      "cached_exact_lookups": 3,
+      "new_exact_evaluation_attempts": 3,
+      "proposals_used": 6
+    },
+    "final_incumbent_true_cost": 20578.2152604,
+    "initial_incumbent_true_cost": 26853.5596684,
+    "oracle_reachability_stratum": "reachable",
+    "stop_reason": "max_threshold_updates_reached",
+    "trial_trace": [
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": true
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": true
+      },
+      {
+        "true_strict_improvement": true
+      }
+    ]
+  },
+  "run_spec": {
+    "run_seed": 0
+  },
+  "scenario": {
+    "scenario_id": "case14-g1g5-w0-s1"
+  }
+}

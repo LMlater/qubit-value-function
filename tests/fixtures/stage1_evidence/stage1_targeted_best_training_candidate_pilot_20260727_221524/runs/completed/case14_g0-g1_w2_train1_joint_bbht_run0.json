@@ -1,0 +1,214 @@
+{
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 1
+    },
+    "trial_trace": [
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": true,
+        "measured_index": 3,
+        "threshold_updated": true,
+        "true_strict_improvement": true
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 4,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 2,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 4,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 10,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 6,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 5,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 1,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 31665.512000000002,
+        "incumbent_updated": false,
+        "measured_index": 3,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      }
+    ]
+  },
+  "scenario": {
+    "scenario_id": "case14-g0g1-w2-s1",
+    "training_indices": [
+      2,
+      12,
+      0,
+      10,
+      11,
+      8,
+      15,
+      1
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 1
+    },
+    "trial_trace": [
+      {
+        "candidate_in_training_set": true,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 6,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": null,
+        "incumbent_updated": false,
+        "measured_index": 11,
+        "threshold_updated": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "candidate_true_cost": 22638.996543999998,
+        "incumbent_updated": true,
+        "measured_index": 3,
+        "threshold_updated": true,
+        "true_strict_improvement": true
+      }
+    ]
+  },
+  "scenario": {
+    "scenario_id": "case14-g0g5-w2-s1",
+    "training_indices": [
+      13,
+      8,
+      9,
+      6,
+      2,
+      0,
+      12,
+      1
+    ]
+  }
+}

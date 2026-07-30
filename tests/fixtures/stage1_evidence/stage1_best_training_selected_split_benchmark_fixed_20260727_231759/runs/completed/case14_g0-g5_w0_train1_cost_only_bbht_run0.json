@@ -1,0 +1,28 @@
+{
+  "method": "cost_only_bbht",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 1,
+      "cached_exact_lookups": 0,
+      "circuit_executions": 1,
+      "new_exact_evaluation_attempts": 1,
+      "total_oracle_calls": 0
+    },
+    "final_incumbent_true_cost": 24578.2152604,
+    "initial_incumbent_true_cost": 28212.01718604706,
+    "oracle_reachability_stratum": "reachable",
+    "stop_reason": "no_surrogate_marked_state_by_conservative_lower_bound",
+    "trial_trace": [
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": true
+      }
+    ]
+  },
+  "run_spec": {
+    "run_seed": 0
+  },
+  "scenario": {
+    "scenario_id": "case14-g0g5-w0-s1"
+  }
+}

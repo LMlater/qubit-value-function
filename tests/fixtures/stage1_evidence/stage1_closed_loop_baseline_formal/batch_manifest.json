@@ -1,0 +1,17 @@
+{
+  "budget_config": {
+    "lambda_factor": 1.2,
+    "max_new_ed_lp_calls": 8,
+    "max_oracle_calls": 48,
+    "max_threshold_updates": 3,
+    "max_trials": 24
+  },
+  "methods": [
+    "classical_joint_marked_random",
+    "cost_only_bbht",
+    "direct_logic_feasible_random",
+    "full_space_random",
+    "joint_bbht",
+    "logic_rejection_random"
+  ]
+}

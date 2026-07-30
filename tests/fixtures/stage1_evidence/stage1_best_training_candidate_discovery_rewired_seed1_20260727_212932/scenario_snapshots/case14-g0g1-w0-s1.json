@@ -1,0 +1,151 @@
+{
+  "best_training_encoded_threshold": 133,
+  "cost_unit": 1000.0,
+  "encoded_cost_scale": 4,
+  "generator_pair": [
+    0,
+    1
+  ],
+  "initial_cache_indices": [
+    1,
+    2,
+    3,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "initial_incumbent_index": 3,
+  "model_seed": 0,
+  "scenario_id": "case14-g0g1-w0-s1",
+  "state_proxy_table": [
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 186,
+      "state_index": 0
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 143,
+      "state_index": 1
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 184,
+      "state_index": 2
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 133,
+      "state_index": 3
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 164,
+      "state_index": 4
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 161,
+      "state_index": 5
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 162,
+      "state_index": 6
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 151,
+      "state_index": 7
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 202,
+      "state_index": 8
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 159,
+      "state_index": 9
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 200,
+      "state_index": 10
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 149,
+      "state_index": 11
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 162,
+      "state_index": 12
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 159,
+      "state_index": 13
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 160,
+      "state_index": 14
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 149,
+      "state_index": 15
+    }
+  ],
+  "training_data_seed": 1,
+  "training_indices": [
+    14,
+    3,
+    13,
+    2,
+    1,
+    12,
+    11,
+    15
+  ],
+  "training_indices_hash": "ebd2f2d66dfaee49f7e4ec6a918be002b69faa82bad7d55034d9a4f923dde396",
+  "training_labels": [
+    {
+      "state_index": 14,
+      "true_cost": 39973.672854588236
+    },
+    {
+      "state_index": 3,
+      "true_cost": 33223.5533
+    },
+    {
+      "state_index": 13,
+      "true_cost": 39794.7596684
+    },
+    {
+      "state_index": 2,
+      "true_cost": 46008.08335882358
+    },
+    {
+      "state_index": 1,
+      "true_cost": 35794.7596684
+    },
+    {
+      "state_index": 12,
+      "true_cost": 40544.87922298824
+    },
+    {
+      "state_index": 11,
+      "true_cost": 37223.5533
+    },
+    {
+      "state_index": 15,
+      "true_cost": 37223.5533
+    }
+  ],
+  "window_start": 0
+}

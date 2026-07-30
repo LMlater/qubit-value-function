@@ -1,0 +1,1680 @@
+{
+  "by_method": [
+    {
+      "absolute_improvement": {
+        "mean": 1296.5909079803928,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 2610.7161325294137,
+        "standard_deviation": 2032.3416909791774,
+        "total": 77795.45447882357
+      },
+      "cache_hits": 82,
+      "cache_misses": 20,
+      "final_true_cost": {
+        "mean": 26919.397941925,
+        "median": 28033.0621302,
+        "q25": 22123.8012231,
+        "q75": 32134.149078125003,
+        "standard_deviation": 5678.145446672115,
+        "total": 1615163.8765155
+      },
+      "method": "classical_joint_marked_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.3333333333333333,
+      "outside_training_strict_improvement_runs": 20,
+      "proposals": 102,
+      "relative_improvement": {
+        "mean": 0.046541706375572416,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0841803200896735,
+        "standard_deviation": 0.0747569082566247,
+        "total": 2.792502382534345
+      },
+      "runs": 60,
+      "search_stage_new_edlp": {
+        "mean": 0.3333333333333333,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0,
+        "standard_deviation": 0.4753826885415284,
+        "total": 20.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 5,
+        "no_classical_joint_marked_state": 55
+      },
+      "strict_improvement_rate": 0.3333333333333333,
+      "strict_improvement_runs": 20
+    },
+    {
+      "absolute_improvement": {
+        "mean": 1296.5909079803928,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 2610.7161325294137,
+        "standard_deviation": 2032.3416909791774,
+        "total": 77795.45447882357
+      },
+      "cache_hits": 122,
+      "cache_misses": 31,
+      "final_true_cost": {
+        "mean": 26919.397941925,
+        "median": 28033.0621302,
+        "q25": 22123.8012231,
+        "q75": 32134.149078125003,
+        "standard_deviation": 5678.145446672115,
+        "total": 1615163.8765155
+      },
+      "method": "cost_only_bbht",
+      "mps_executions": 642,
+      "oracle_calls": 776,
+      "outside_training_strict_improvement_rate": 0.3333333333333333,
+      "outside_training_strict_improvement_runs": 20,
+      "proposals": 642,
+      "relative_improvement": {
+        "mean": 0.046541706375572416,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0841803200896735,
+        "standard_deviation": 0.0747569082566247,
+        "total": 2.792502382534345
+      },
+      "runs": 60,
+      "search_stage_new_edlp": {
+        "mean": 0.3333333333333333,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0,
+        "standard_deviation": 0.4753826885415284,
+        "total": 20.0
+      },
+      "stop_reasons": {
+        "max_trials_reached": 25,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 35
+      },
+      "strict_improvement_rate": 0.3333333333333333,
+      "strict_improvement_runs": 20
+    },
+    {
+      "absolute_improvement": {
+        "mean": 1076.455380059314,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 2396.459984000001,
+        "standard_deviation": 1892.462970081875,
+        "total": 64587.32280355884
+      },
+      "cache_hits": 844,
+      "cache_misses": 235,
+      "final_true_cost": {
+        "mean": 27139.533469846076,
+        "median": 29849.96309302353,
+        "q25": 22638.996543999998,
+        "q75": 32195.9363,
+        "standard_deviation": 5631.423263760555,
+        "total": 1628372.0081907646
+      },
+      "method": "direct_logic_feasible_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.36666666666666664,
+      "outside_training_strict_improvement_runs": 22,
+      "proposals": 1079,
+      "relative_improvement": {
+        "mean": 0.03868349035158152,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.07035587913482211,
+        "standard_deviation": 0.06952035315703317,
+        "total": 2.3210094210948915
+      },
+      "runs": 60,
+      "search_stage_new_edlp": {
+        "mean": 3.9166666666666665,
+        "median": 4.0,
+        "q25": 3.0,
+        "q75": 4.0,
+        "standard_deviation": 1.393589033926511,
+        "total": 235.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 52,
+        "max_proposals_reached": 8
+      },
+      "strict_improvement_rate": 0.36666666666666664,
+      "strict_improvement_runs": 22
+    },
+    {
+      "absolute_improvement": {
+        "mean": 923.3849895563236,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 15.122962499997811,
+        "standard_deviation": 1926.522409313938,
+        "total": 55403.09937337942
+      },
+      "cache_hits": 709,
+      "cache_misses": 305,
+      "final_true_cost": {
+        "mean": 27292.603860349067,
+        "median": 29849.96309302353,
+        "q25": 22123.8012231,
+        "q75": 32195.9363,
+        "standard_deviation": 5591.6205796443965,
+        "total": 1637556.231620944
+      },
+      "method": "full_space_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.26666666666666666,
+      "outside_training_strict_improvement_runs": 16,
+      "proposals": 1014,
+      "relative_improvement": {
+        "mean": 0.03286480925299452,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.00045518799158661367,
+        "standard_deviation": 0.07055298269846402,
+        "total": 1.9718885551796714
+      },
+      "runs": 60,
+      "search_stage_new_edlp": {
+        "mean": 3.15,
+        "median": 3.0,
+        "q25": 2.0,
+        "q75": 4.0,
+        "standard_deviation": 1.4000605313790628,
+        "total": 189.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 56,
+        "max_proposals_reached": 3,
+        "max_threshold_updates_reached": 1
+      },
+      "strict_improvement_rate": 0.26666666666666666,
+      "strict_improvement_runs": 16
+    },
+    {
+      "absolute_improvement": {
+        "mean": 1296.5909079803928,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 2610.7161325294137,
+        "standard_deviation": 2032.3416909791774,
+        "total": 77795.45447882357
+      },
+      "cache_hits": 68,
+      "cache_misses": 20,
+      "final_true_cost": {
+        "mean": 26919.397941925,
+        "median": 28033.0621302,
+        "q25": 22123.8012231,
+        "q75": 32134.149078125003,
+        "standard_deviation": 5678.145446672115,
+        "total": 1615163.8765155
+      },
+      "method": "joint_bbht",
+      "mps_executions": 635,
+      "oracle_calls": 869,
+      "outside_training_strict_improvement_rate": 0.3333333333333333,
+      "outside_training_strict_improvement_runs": 20,
+      "proposals": 635,
+      "relative_improvement": {
+        "mean": 0.046541706375572416,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0841803200896735,
+        "standard_deviation": 0.0747569082566247,
+        "total": 2.792502382534345
+      },
+      "runs": 60,
+      "search_stage_new_edlp": {
+        "mean": 0.3333333333333333,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 1.0,
+        "standard_deviation": 0.4753826885415284,
+        "total": 20.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 2,
+        "max_trials_reached": 23,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 35
+      },
+      "strict_improvement_rate": 0.3333333333333333,
+      "strict_improvement_runs": 20
+    },
+    {
+      "absolute_improvement": {
+        "mean": 1036.2623309509806,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 2305.623302000001,
+        "standard_deviation": 1889.5578100712235,
+        "total": 62175.73985705884
+      },
+      "cache_hits": 760,
+      "cache_misses": 225,
+      "final_true_cost": {
+        "mean": 27179.72651895441,
+        "median": 29849.96309302353,
+        "q25": 22638.996543999998,
+        "q75": 32195.9363,
+        "standard_deviation": 5672.6899772780025,
+        "total": 1630783.5911372646
+      },
+      "method": "logic_rejection_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.3333333333333333,
+      "outside_training_strict_improvement_runs": 20,
+      "proposals": 1272,
+      "relative_improvement": {
+        "mean": 0.03750330589947471,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.07035587913482211,
+        "standard_deviation": 0.0695745426485058,
+        "total": 2.2501983539684827
+      },
+      "runs": 60,
+      "search_stage_new_edlp": {
+        "mean": 3.75,
+        "median": 4.0,
+        "q25": 3.0,
+        "q75": 4.0,
+        "standard_deviation": 1.2969978372497422,
+        "total": 225.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 40,
+        "max_proposals_reached": 19,
+        "max_threshold_updates_reached": 1
+      },
+      "strict_improvement_rate": 0.3333333333333333,
+      "strict_improvement_runs": 20
+    }
+  ],
+  "by_method_and_reachability_stratum": [
+    {
+      "absolute_improvement": {
+        "mean": 3889.7727239411784,
+        "median": 3443.643251882355,
+        "q25": 3039.228429588239,
+        "q75": 4294.187546235294,
+        "standard_deviation": 1486.015411582328,
+        "total": 77795.45447882357
+      },
+      "cache_hits": 82,
+      "cache_misses": 20,
+      "final_true_cost": {
+        "mean": 24865.234766199992,
+        "median": 23608.605902199997,
+        "q25": 22123.8012231,
+        "q75": 26350.0394453,
+        "standard_deviation": 4281.564627880984,
+        "total": 497304.69532399985
+      },
+      "method": "classical_joint_marked_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "reachable",
+      "outside_training_strict_improvement_rate": 1.0,
+      "outside_training_strict_improvement_runs": 20,
+      "proposals": 102,
+      "relative_improvement": {
+        "mean": 0.13962511912671724,
+        "median": 0.1272284894203094,
+        "q25": 0.1118292019993763,
+        "q75": 0.15502440654765035,
+        "standard_deviation": 0.060607222390211775,
+        "total": 2.792502382534345
+      },
+      "runs": 20,
+      "search_stage_new_edlp": {
+        "mean": 1.0,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0,
+        "standard_deviation": 0.0,
+        "total": 20.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 5,
+        "no_classical_joint_marked_state": 15
+      },
+      "strict_improvement_rate": 1.0,
+      "strict_improvement_runs": 20
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "final_true_cost": {
+        "mean": 27946.479529787495,
+        "median": 31800.73116875,
+        "q25": 22344.1672284,
+        "q75": 32452.84055,
+        "standard_deviation": 6049.68127775294,
+        "total": 1117859.1811914998
+      },
+      "method": "classical_joint_marked_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "unreachable",
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 0,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 40,
+      "search_stage_new_edlp": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "stop_reasons": {
+        "no_classical_joint_marked_state": 40
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 3889.7727239411784,
+        "median": 3443.643251882355,
+        "q25": 3039.228429588239,
+        "q75": 4294.187546235294,
+        "standard_deviation": 1486.015411582328,
+        "total": 77795.45447882357
+      },
+      "cache_hits": 55,
+      "cache_misses": 26,
+      "final_true_cost": {
+        "mean": 24865.234766199992,
+        "median": 23608.605902199997,
+        "q25": 22123.8012231,
+        "q75": 26350.0394453,
+        "standard_deviation": 4281.564627880984,
+        "total": 497304.69532399985
+      },
+      "method": "cost_only_bbht",
+      "mps_executions": 162,
+      "oracle_calls": 159,
+      "oracle_reachability_stratum": "reachable",
+      "outside_training_strict_improvement_rate": 1.0,
+      "outside_training_strict_improvement_runs": 20,
+      "proposals": 162,
+      "relative_improvement": {
+        "mean": 0.13962511912671724,
+        "median": 0.1272284894203094,
+        "q25": 0.1118292019993763,
+        "q75": 0.15502440654765035,
+        "standard_deviation": 0.060607222390211775,
+        "total": 2.792502382534345
+      },
+      "runs": 20,
+      "search_stage_new_edlp": {
+        "mean": 1.0,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0,
+        "standard_deviation": 0.0,
+        "total": 20.0
+      },
+      "stop_reasons": {
+        "max_trials_reached": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 15
+      },
+      "strict_improvement_rate": 1.0,
+      "strict_improvement_runs": 20
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 67,
+      "cache_misses": 5,
+      "final_true_cost": {
+        "mean": 27946.479529787495,
+        "median": 31800.73116875,
+        "q25": 22344.1672284,
+        "q75": 32452.84055,
+        "standard_deviation": 6049.68127775294,
+        "total": 1117859.1811914998
+      },
+      "method": "cost_only_bbht",
+      "mps_executions": 480,
+      "oracle_calls": 617,
+      "oracle_reachability_stratum": "unreachable",
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 480,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 40,
+      "search_stage_new_edlp": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "stop_reasons": {
+        "max_trials_reached": 20,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 20
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 3225.5853995529433,
+        "median": 3253.484578117652,
+        "q25": 2396.459984000001,
+        "q75": 3633.801925647058,
+        "standard_deviation": 1956.6318225877465,
+        "total": 64511.707991058865
+      },
+      "cache_hits": 319,
+      "cache_misses": 90,
+      "final_true_cost": {
+        "mean": 25529.422090588232,
+        "median": 24578.2152604,
+        "q25": 22638.996543999998,
+        "q75": 29075.390889535294,
+        "standard_deviation": 4393.409785524639,
+        "total": 510588.4418117646
+      },
+      "method": "direct_logic_feasible_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "reachable",
+      "outside_training_strict_improvement_rate": 0.85,
+      "outside_training_strict_improvement_runs": 17,
+      "proposals": 409,
+      "relative_improvement": {
+        "mean": 0.1159366740568479,
+        "median": 0.12565364295422768,
+        "q25": 0.07035587913482211,
+        "q75": 0.12880333588639112,
+        "standard_deviation": 0.07473079842118145,
+        "total": 2.318733481136958
+      },
+      "runs": 20,
+      "search_stage_new_edlp": {
+        "mean": 4.5,
+        "median": 4.0,
+        "q25": 3.0,
+        "q75": 6.0,
+        "standard_deviation": 1.7320508075688772,
+        "total": 90.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 14,
+        "max_proposals_reached": 6
+      },
+      "strict_improvement_rate": 0.85,
+      "strict_improvement_runs": 17
+    },
+    {
+      "absolute_improvement": {
+        "mean": 1.8903703124997264,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 5.065165036789023,
+        "total": 75.61481249998906
+      },
+      "cache_hits": 525,
+      "cache_misses": 145,
+      "final_true_cost": {
+        "mean": 27944.589159475,
+        "median": 31800.73116875,
+        "q25": 22344.1672284,
+        "q75": 32449.059809375,
+        "standard_deviation": 6047.991931266652,
+        "total": 1117783.566379
+      },
+      "method": "direct_logic_feasible_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "unreachable",
+      "outside_training_strict_improvement_rate": 0.125,
+      "outside_training_strict_improvement_runs": 5,
+      "proposals": 670,
+      "relative_improvement": {
+        "mean": 5.68984989483267e-05,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.00015245705331551703,
+        "total": 0.002275939957933068
+      },
+      "runs": 40,
+      "search_stage_new_edlp": {
+        "mean": 3.625,
+        "median": 4.0,
+        "q25": 3.0,
+        "q75": 4.0,
+        "standard_deviation": 1.1021540680610808,
+        "total": 145.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 38,
+        "max_proposals_reached": 2
+      },
+      "strict_improvement_rate": 0.125,
+      "strict_improvement_runs": 5
+    },
+    {
+      "absolute_improvement": {
+        "mean": 2768.642672418972,
+        "median": 2396.459984000001,
+        "q25": 0.0,
+        "q75": 4294.187546235294,
+        "standard_deviation": 2479.687108861658,
+        "total": 55372.853448379436
+      },
+      "cache_hits": 267,
+      "cache_misses": 102,
+      "final_true_cost": {
+        "mean": 25986.3648177222,
+        "median": 25892.48112211765,
+        "q25": 22123.8012231,
+        "q75": 29075.390889535294,
+        "standard_deviation": 4391.923778727879,
+        "total": 519727.296354444
+      },
+      "method": "full_space_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "reachable",
+      "outside_training_strict_improvement_rate": 0.7,
+      "outside_training_strict_improvement_runs": 14,
+      "proposals": 369,
+      "relative_improvement": {
+        "mean": 0.0985489089598249,
+        "median": 0.07035587913482211,
+        "q25": 0.0,
+        "q75": 0.15502440654765035,
+        "standard_deviation": 0.09297799863969695,
+        "total": 1.9709781791964982
+      },
+      "runs": 20,
+      "search_stage_new_edlp": {
+        "mean": 3.9,
+        "median": 3.0,
+        "q25": 3.0,
+        "q75": 5.0,
+        "standard_deviation": 1.651155894963793,
+        "total": 78.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 16,
+        "max_proposals_reached": 3,
+        "max_threshold_updates_reached": 1
+      },
+      "strict_improvement_rate": 0.7,
+      "strict_improvement_runs": 14
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.7561481249998906,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 3.3379618765204233,
+        "total": 30.245924999995623
+      },
+      "cache_hits": 442,
+      "cache_misses": 203,
+      "final_true_cost": {
+        "mean": 27945.723381662498,
+        "median": 31800.73116875,
+        "q25": 22344.1672284,
+        "q75": 32449.059809375,
+        "standard_deviation": 6049.00566848255,
+        "total": 1117828.9352664999
+      },
+      "method": "full_space_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "unreachable",
+      "outside_training_strict_improvement_rate": 0.05,
+      "outside_training_strict_improvement_runs": 2,
+      "proposals": 645,
+      "relative_improvement": {
+        "mean": 2.2759399579330683e-05,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.00010046974344915788,
+        "total": 0.0009103759831732273
+      },
+      "runs": 40,
+      "search_stage_new_edlp": {
+        "mean": 2.775,
+        "median": 2.5,
+        "q25": 2.0,
+        "q75": 3.0,
+        "standard_deviation": 1.0974913118048724,
+        "total": 111.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 40
+      },
+      "strict_improvement_rate": 0.05,
+      "strict_improvement_runs": 2
+    },
+    {
+      "absolute_improvement": {
+        "mean": 3889.7727239411784,
+        "median": 3443.643251882355,
+        "q25": 3039.228429588239,
+        "q75": 4294.187546235294,
+        "standard_deviation": 1486.015411582328,
+        "total": 77795.45447882357
+      },
+      "cache_hits": 68,
+      "cache_misses": 20,
+      "final_true_cost": {
+        "mean": 24865.234766199992,
+        "median": 23608.605902199997,
+        "q25": 22123.8012231,
+        "q75": 26350.0394453,
+        "standard_deviation": 4281.564627880984,
+        "total": 497304.69532399985
+      },
+      "method": "joint_bbht",
+      "mps_executions": 155,
+      "oracle_calls": 187,
+      "oracle_reachability_stratum": "reachable",
+      "outside_training_strict_improvement_rate": 1.0,
+      "outside_training_strict_improvement_runs": 20,
+      "proposals": 155,
+      "relative_improvement": {
+        "mean": 0.13962511912671724,
+        "median": 0.1272284894203094,
+        "q25": 0.1118292019993763,
+        "q75": 0.15502440654765035,
+        "standard_deviation": 0.060607222390211775,
+        "total": 2.792502382534345
+      },
+      "runs": 20,
+      "search_stage_new_edlp": {
+        "mean": 1.0,
+        "median": 1.0,
+        "q25": 1.0,
+        "q75": 1.0,
+        "standard_deviation": 0.0,
+        "total": 20.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 2,
+        "max_trials_reached": 3,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 15
+      },
+      "strict_improvement_rate": 1.0,
+      "strict_improvement_runs": 20
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 0,
+      "cache_misses": 0,
+      "final_true_cost": {
+        "mean": 27946.479529787495,
+        "median": 31800.73116875,
+        "q25": 22344.1672284,
+        "q75": 32452.84055,
+        "standard_deviation": 6049.68127775294,
+        "total": 1117859.1811914998
+      },
+      "method": "joint_bbht",
+      "mps_executions": 480,
+      "oracle_calls": 682,
+      "oracle_reachability_stratum": "unreachable",
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 480,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 40,
+      "search_stage_new_edlp": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "stop_reasons": {
+        "max_trials_reached": 20,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 20
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 3105.762400352943,
+        "median": 3253.484578117652,
+        "q25": 2366.181090000001,
+        "q75": 3633.801925647058,
+        "standard_deviation": 2079.594531411371,
+        "total": 62115.248007058864
+      },
+      "cache_hits": 264,
+      "cache_misses": 92,
+      "final_true_cost": {
+        "mean": 25649.24508978823,
+        "median": 24578.2152604,
+        "q25": 22638.996543999998,
+        "q75": 29075.390889535294,
+        "standard_deviation": 4597.508470624178,
+        "total": 512984.90179576457
+      },
+      "method": "logic_rejection_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "reachable",
+      "outside_training_strict_improvement_rate": 0.8,
+      "outside_training_strict_improvement_runs": 16,
+      "proposals": 421,
+      "relative_improvement": {
+        "mean": 0.11241888010010681,
+        "median": 0.12565364295422768,
+        "q25": 0.07035587913482211,
+        "q75": 0.12880333588639112,
+        "standard_deviation": 0.07854779251140376,
+        "total": 2.248377602002136
+      },
+      "runs": 20,
+      "search_stage_new_edlp": {
+        "mean": 4.6,
+        "median": 4.0,
+        "q25": 4.0,
+        "q75": 5.25,
+        "standard_deviation": 1.465390194130093,
+        "total": 92.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 10,
+        "max_proposals_reached": 9,
+        "max_threshold_updates_reached": 1
+      },
+      "strict_improvement_rate": 0.8,
+      "strict_improvement_runs": 16
+    },
+    {
+      "absolute_improvement": {
+        "mean": 1.5122962499997812,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 4.594685841203342,
+        "total": 60.491849999991246
+      },
+      "cache_hits": 496,
+      "cache_misses": 133,
+      "final_true_cost": {
+        "mean": 27944.9672335375,
+        "median": 31800.73116875,
+        "q25": 22344.1672284,
+        "q75": 32449.059809375,
+        "standard_deviation": 6048.329886789626,
+        "total": 1117798.6893415
+      },
+      "method": "logic_rejection_random",
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "oracle_reachability_stratum": "unreachable",
+      "outside_training_strict_improvement_rate": 0.1,
+      "outside_training_strict_improvement_runs": 4,
+      "proposals": 851,
+      "relative_improvement": {
+        "mean": 4.5518799158661366e-05,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.00013829603955105375,
+        "total": 0.0018207519663464547
+      },
+      "runs": 40,
+      "search_stage_new_edlp": {
+        "mean": 3.325,
+        "median": 3.0,
+        "q25": 3.0,
+        "q75": 4.0,
+        "standard_deviation": 0.9710554659486336,
+        "total": 133.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 30,
+        "max_proposals_reached": 10
+      },
+      "strict_improvement_rate": 0.1,
+      "strict_improvement_runs": 4
+    }
+  ],
+  "by_reachability_stratum": [
+    {
+      "absolute_improvement": {
+        "mean": 3461.551440691399,
+        "median": 3253.484578117652,
+        "q25": 2396.459984000001,
+        "q75": 3633.801925647058,
+        "standard_deviation": 1882.822353847483,
+        "total": 415386.17288296786
+      },
+      "cache_hits": 1055,
+      "cache_misses": 350,
+      "final_true_cost": {
+        "mean": 25293.456049449775,
+        "median": 24578.2152604,
+        "q25": 22638.996543999998,
+        "q75": 29075.390889535294,
+        "standard_deviation": 4303.601153132288,
+        "total": 3035214.7259339727
+      },
+      "mps_executions": 317,
+      "oracle_calls": 346,
+      "oracle_reachability_stratum": "reachable",
+      "outside_training_strict_improvement_rate": 0.8916666666666667,
+      "outside_training_strict_improvement_runs": 107,
+      "proposals": 1618,
+      "relative_improvement": {
+        "mean": 0.12429663674948856,
+        "median": 0.12565364295422768,
+        "q25": 0.07035587913482211,
+        "q75": 0.12880333588639112,
+        "standard_deviation": 0.07267622679715122,
+        "total": 14.915596409938626
+      },
+      "runs": 120,
+      "search_stage_new_edlp": {
+        "mean": 2.6666666666666665,
+        "median": 1.5,
+        "q25": 1.0,
+        "q75": 4.0,
+        "standard_deviation": 2.026435929663411,
+        "total": 320.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 47,
+        "max_proposals_reached": 18,
+        "max_threshold_updates_reached": 2,
+        "max_trials_reached": 8,
+        "no_classical_joint_marked_state": 15,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 30
+      },
+      "strict_improvement_rate": 0.8916666666666667,
+      "strict_improvement_runs": 107
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.6931357812498997,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 3.1691762137513813,
+        "total": 166.35258749997593
+      },
+      "cache_hits": 1530,
+      "cache_misses": 486,
+      "final_true_cost": {
+        "mean": 27945.78639400625,
+        "median": 31800.73116875,
+        "q25": 22344.1672284,
+        "q75": 32449.059809375,
+        "standard_deviation": 5985.452826724995,
+        "total": 6706988.7345615
+      },
+      "mps_executions": 960,
+      "oracle_calls": 1299,
+      "oracle_reachability_stratum": "unreachable",
+      "outside_training_strict_improvement_rate": 0.04583333333333333,
+      "outside_training_strict_improvement_runs": 11,
+      "proposals": 3126,
+      "relative_improvement": {
+        "mean": 2.086278294771979e-05,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 9.53894420965316e-05,
+        "total": 0.00500706790745275
+      },
+      "runs": 240,
+      "search_stage_new_edlp": {
+        "mean": 1.6208333333333333,
+        "median": 0.5,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.8024806631816201,
+        "total": 389.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 108,
+        "max_proposals_reached": 12,
+        "max_trials_reached": 40,
+        "no_classical_joint_marked_state": 40,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 40
+      },
+      "strict_improvement_rate": 0.04583333333333333,
+      "strict_improvement_runs": 11
+    }
+  ],
+  "by_scenario": [
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 185,
+      "cache_misses": 55,
+      "final_true_cost": {
+        "mean": 33223.55330000001,
+        "median": 33223.5533,
+        "q25": 33223.5533,
+        "q75": 33223.5533,
+        "standard_deviation": 7.40034196810459e-12,
+        "total": 996706.5990000002
+      },
+      "mps_executions": 240,
+      "oracle_calls": 332,
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 503,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 30,
+      "scenario_id": "case14-g0g1-w0-s1",
+      "search_stage_new_edlp": {
+        "mean": 1.4333333333333333,
+        "median": 0.5,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.590561239773956,
+        "total": 43.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 15,
+        "max_trials_reached": 10,
+        "no_classical_joint_marked_state": 5
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 249,
+      "cache_misses": 62,
+      "final_true_cost": {
+        "mean": 32195.93629999999,
+        "median": 32195.9363,
+        "q25": 32195.9363,
+        "q75": 32195.9363,
+        "standard_deviation": 1.1100512952156884e-11,
+        "total": 965878.0889999997
+      },
+      "mps_executions": 240,
+      "oracle_calls": 344,
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 502,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 30,
+      "scenario_id": "case14-g0g1-w1-s1",
+      "search_stage_new_edlp": {
+        "mean": 1.5333333333333334,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.6344003083137533,
+        "total": 46.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 14,
+        "max_proposals_reached": 1,
+        "max_trials_reached": 10,
+        "no_classical_joint_marked_state": 5
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 2076.9319861333342,
+        "median": 2396.459984000001,
+        "q25": 2396.459984000001,
+        "q75": 2396.459984000001,
+        "standard_deviation": 828.5662227093991,
+        "total": 62307.959584000026
+      },
+      "cache_hits": 410,
+      "cache_misses": 79,
+      "final_true_cost": {
+        "mean": 31985.039997866672,
+        "median": 31665.512000000002,
+        "q25": 31665.512000000002,
+        "q75": 31665.512000000002,
+        "standard_deviation": 828.566222709399,
+        "total": 959551.1999360002
+      },
+      "mps_executions": 239,
+      "oracle_calls": 298,
+      "outside_training_strict_improvement_rate": 0.8666666666666667,
+      "outside_training_strict_improvement_runs": 26,
+      "proposals": 630,
+      "relative_improvement": {
+        "mean": 0.060975095250179155,
+        "median": 0.07035587913482211,
+        "q25": 0.07035587913482211,
+        "q75": 0.07035587913482211,
+        "standard_deviation": 0.024325257007979547,
+        "total": 1.8292528575053746
+      },
+      "runs": 30,
+      "scenario_id": "case14-g0g1-w2-s1",
+      "search_stage_new_edlp": {
+        "mean": 2.033333333333333,
+        "median": 1.5,
+        "q25": 1.0,
+        "q75": 3.0,
+        "standard_deviation": 1.188546876720022,
+        "total": 61.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 18,
+        "max_proposals_reached": 4,
+        "max_trials_reached": 8
+      },
+      "strict_improvement_rate": 0.8666666666666667,
+      "strict_improvement_runs": 26
+    },
+    {
+      "absolute_improvement": {
+        "mean": 3157.808372804803,
+        "median": 3633.801925647058,
+        "q25": 3633.801925647058,
+        "q75": 3633.801925647058,
+        "standard_deviation": 1234.9793444564439,
+        "total": 94734.2511841441
+      },
+      "cache_hits": 234,
+      "cache_misses": 102,
+      "final_true_cost": {
+        "mean": 25054.20881324225,
+        "median": 24578.2152604,
+        "q25": 24578.2152604,
+        "q75": 24578.2152604,
+        "standard_deviation": 1234.9793444564436,
+        "total": 751626.2643972675
+      },
+      "mps_executions": 23,
+      "oracle_calls": 13,
+      "outside_training_strict_improvement_rate": 0.9,
+      "outside_training_strict_improvement_runs": 27,
+      "proposals": 345,
+      "relative_improvement": {
+        "mean": 0.11193132174776126,
+        "median": 0.12880333588639112,
+        "q25": 0.12880333588639112,
+        "q75": 0.12880333588639112,
+        "standard_deviation": 0.04377493946328775,
+        "total": 3.3579396524328375
+      },
+      "runs": 30,
+      "scenario_id": "case14-g0g5-w0-s1",
+      "search_stage_new_edlp": {
+        "mean": 3.4,
+        "median": 2.0,
+        "q25": 1.0,
+        "q75": 6.0,
+        "standard_deviation": 2.633995260907422,
+        "total": 102.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 8,
+        "max_proposals_reached": 7,
+        "no_classical_joint_marked_state": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 10
+      },
+      "strict_improvement_rate": 0.9,
+      "strict_improvement_runs": 27
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 166,
+      "cache_misses": 74,
+      "final_true_cost": {
+        "mean": 23344.1672284,
+        "median": 23344.1672284,
+        "q25": 23344.1672284,
+        "q75": 23344.1672284,
+        "standard_deviation": 0.0,
+        "total": 700325.016852
+      },
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 240,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 30,
+      "scenario_id": "case14-g0g5-w1-s1",
+      "search_stage_new_edlp": {
+        "mean": 2.466666666666667,
+        "median": 1.5,
+        "q25": 0.0,
+        "q75": 5.0,
+        "standard_deviation": 2.6747005418374874,
+        "total": 74.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 15,
+        "no_classical_joint_marked_state": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 10
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 2602.787662494122,
+        "median": 3253.484578117652,
+        "q25": 3253.484578117652,
+        "q75": 3253.484578117652,
+        "standard_deviation": 1323.6414912088378,
+        "total": 78083.62987482366
+      },
+      "cache_hits": 191,
+      "cache_misses": 94,
+      "final_true_cost": {
+        "mean": 23289.69345962353,
+        "median": 22638.996543999998,
+        "q25": 22638.996543999998,
+        "q75": 22638.996543999998,
+        "standard_deviation": 1323.6414912088376,
+        "total": 698690.8037887058
+      },
+      "mps_executions": 31,
+      "oracle_calls": 25,
+      "outside_training_strict_improvement_rate": 0.8,
+      "outside_training_strict_improvement_runs": 24,
+      "proposals": 306,
+      "relative_improvement": {
+        "mean": 0.10052291436338218,
+        "median": 0.12565364295422768,
+        "q25": 0.12565364295422768,
+        "q75": 0.12565364295422768,
+        "standard_deviation": 0.05112068963055718,
+        "total": 3.0156874309014654
+      },
+      "runs": 30,
+      "scenario_id": "case14-g0g5-w2-s1",
+      "search_stage_new_edlp": {
+        "mean": 3.1333333333333333,
+        "median": 2.0,
+        "q25": 1.0,
+        "q75": 5.0,
+        "standard_deviation": 2.330211376135492,
+        "total": 94.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 13,
+        "max_proposals_reached": 2,
+        "no_classical_joint_marked_state": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 10
+      },
+      "strict_improvement_rate": 0.8,
+      "strict_improvement_runs": 24
+    },
+    {
+      "absolute_improvement": {
+        "mean": 5.545086249999198,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 15.122962499997811,
+        "standard_deviation": 7.412255687528911,
+        "total": 166.35258749997593
+      },
+      "cache_hits": 219,
+      "cache_misses": 58,
+      "final_true_cost": {
+        "mean": 33218.00821375001,
+        "median": 33223.5533,
+        "q25": 33208.4303375,
+        "q75": 33223.5533,
+        "standard_deviation": 7.41225568752891,
+        "total": 996540.2464125003
+      },
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.36666666666666664,
+      "outside_training_strict_improvement_runs": 11,
+      "proposals": 312,
+      "relative_improvement": {
+        "mean": 0.00016690226358175833,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.00045518799158661367,
+        "standard_deviation": 0.0002231024364130525,
+        "total": 0.00500706790745275
+      },
+      "runs": 30,
+      "scenario_id": "case14-g1g3-w0-s1",
+      "search_stage_new_edlp": {
+        "mean": 1.5,
+        "median": 0.5,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.6557111192308964,
+        "total": 45.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 9,
+        "max_proposals_reached": 6,
+        "no_classical_joint_marked_state": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 10
+      },
+      "strict_improvement_rate": 0.36666666666666664,
+      "strict_improvement_runs": 11
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 179,
+      "cache_misses": 60,
+      "final_true_cost": {
+        "mean": 32113.553337499998,
+        "median": 32113.5533375,
+        "q25": 32113.5533375,
+        "q75": 32113.5533375,
+        "standard_deviation": 3.700170984052295e-12,
+        "total": 963406.6001249999
+      },
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 270,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 30,
+      "scenario_id": "case14-g1g3-w1-s1",
+      "search_stage_new_edlp": {
+        "mean": 1.4666666666666666,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.5916448515084427,
+        "total": 44.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 14,
+        "max_proposals_reached": 1,
+        "no_classical_joint_marked_state": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 10
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 178,
+      "cache_misses": 60,
+      "final_true_cost": {
+        "mean": 31487.908999999996,
+        "median": 31487.909,
+        "q25": 31487.909,
+        "q75": 31487.909,
+        "standard_deviation": 3.700170984052295e-12,
+        "total": 944637.2699999999
+      },
+      "mps_executions": 0,
+      "oracle_calls": 0,
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 275,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 30,
+      "scenario_id": "case14-g1g3-w2-s1",
+      "search_stage_new_edlp": {
+        "mean": 1.6333333333333333,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.7515182248421004,
+        "total": 49.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 14,
+        "max_proposals_reached": 1,
+        "no_classical_joint_marked_state": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 10
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 6008.677741333335,
+        "median": 6275.344408000001,
+        "q25": 6275.344408000001,
+        "q75": 6275.344408000001,
+        "standard_deviation": 1014.8325268098497,
+        "total": 180260.33224000005
+      },
+      "cache_hits": 220,
+      "cache_misses": 75,
+      "final_true_cost": {
+        "mean": 20844.88192706666,
+        "median": 20578.2152604,
+        "q25": 20578.2152604,
+        "q75": 20578.2152604,
+        "standard_deviation": 1014.8325268098497,
+        "total": 625346.4578119998
+      },
+      "mps_executions": 24,
+      "oracle_calls": 10,
+      "outside_training_strict_improvement_rate": 1.0,
+      "outside_training_strict_improvement_runs": 30,
+      "proposals": 337,
+      "relative_improvement": {
+        "mean": 0.22375721563663173,
+        "median": 0.23368761853142805,
+        "q25": 0.23368761853142805,
+        "q75": 0.23368761853142805,
+        "standard_deviation": 0.037791359482372715,
+        "total": 6.712716469098952
+      },
+      "runs": 30,
+      "scenario_id": "case14-g1g5-w0-s1",
+      "search_stage_new_edlp": {
+        "mean": 2.1,
+        "median": 1.5,
+        "q25": 1.0,
+        "q75": 3.0,
+        "standard_deviation": 1.241522980192001,
+        "total": 63.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 8,
+        "max_proposals_reached": 5,
+        "max_threshold_updates_reached": 2,
+        "no_classical_joint_marked_state": 5,
+        "no_surrogate_marked_state_by_conservative_lower_bound": 10
+      },
+      "strict_improvement_rate": 1.0,
+      "strict_improvement_runs": 30
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 178,
+      "cache_misses": 57,
+      "final_true_cost": {
+        "mean": 19344.1672284,
+        "median": 19344.1672284,
+        "q25": 19344.1672284,
+        "q75": 19344.1672284,
+        "standard_deviation": 0.0,
+        "total": 580325.016852
+      },
+      "mps_executions": 240,
+      "oracle_calls": 318,
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 513,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 30,
+      "scenario_id": "case14-g1g5-w1-s1",
+      "search_stage_new_edlp": {
+        "mean": 1.4666666666666666,
+        "median": 0.5,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.6344003083137535,
+        "total": 44.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 13,
+        "max_proposals_reached": 2,
+        "max_trials_reached": 10,
+        "no_classical_joint_marked_state": 5
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    },
+    {
+      "absolute_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "cache_hits": 176,
+      "cache_misses": 60,
+      "final_true_cost": {
+        "mean": 18638.996544,
+        "median": 18638.996544,
+        "q25": 18638.996544,
+        "q75": 18638.996544,
+        "standard_deviation": 0.0,
+        "total": 559169.89632
+      },
+      "mps_executions": 240,
+      "oracle_calls": 305,
+      "outside_training_strict_improvement_rate": 0.0,
+      "outside_training_strict_improvement_runs": 0,
+      "proposals": 511,
+      "relative_improvement": {
+        "mean": 0.0,
+        "median": 0.0,
+        "q25": 0.0,
+        "q75": 0.0,
+        "standard_deviation": 0.0,
+        "total": 0.0
+      },
+      "runs": 30,
+      "scenario_id": "case14-g1g5-w2-s1",
+      "search_stage_new_edlp": {
+        "mean": 1.4666666666666666,
+        "median": 1.0,
+        "q25": 0.0,
+        "q75": 3.0,
+        "standard_deviation": 1.5916448515084427,
+        "total": 44.0
+      },
+      "stop_reasons": {
+        "max_consecutive_nonimproving_marked_reached": 14,
+        "max_proposals_reached": 1,
+        "max_trials_reached": 10,
+        "no_classical_joint_marked_state": 5
+      },
+      "strict_improvement_rate": 0.0,
+      "strict_improvement_runs": 0
+    }
+  ],
+  "completed_runs": 360,
+  "failed_runs": 0,
+  "global_optimum_posthoc_status": "not_assessed",
+  "overall": {
+    "absolute_improvement": {
+      "mean": 1154.3125707512993,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 2396.459984000001,
+      "standard_deviation": 1960.6597426492033,
+      "total": 415552.52547046775
+    },
+    "cache_hits": 2585,
+    "cache_misses": 836,
+    "final_true_cost": {
+      "mean": 27061.67627915409,
+      "median": 29849.96309302353,
+      "q25": 22638.996543999998,
+      "q75": 32195.9363,
+      "standard_deviation": 5617.599371335908,
+      "total": 9742203.460495472
+    },
+    "mps_executions": 1277,
+    "oracle_calls": 1645,
+    "outside_training_strict_improvement_rate": 0.3277777777777778,
+    "outside_training_strict_improvement_runs": 118,
+    "proposals": 4744,
+    "relative_improvement": {
+      "mean": 0.041446120771794666,
+      "median": 0.0,
+      "q25": 0.0,
+      "q75": 0.07035587913482211,
+      "standard_deviation": 0.07205881714996071,
+      "total": 14.920603477846079
+    },
+    "runs": 360,
+    "search_stage_new_edlp": {
+      "mean": 1.9694444444444446,
+      "median": 1.0,
+      "q25": 0.0,
+      "q75": 3.0,
+      "standard_deviation": 1.941099169481797,
+      "total": 709.0
+    },
+    "stop_reasons": {
+      "max_consecutive_nonimproving_marked_reached": 155,
+      "max_proposals_reached": 30,
+      "max_threshold_updates_reached": 2,
+      "max_trials_reached": 48,
+      "no_classical_joint_marked_state": 55,
+      "no_surrogate_marked_state_by_conservative_lower_bound": 70
+    },
+    "strict_improvement_rate": 0.3277777777777778,
+    "strict_improvement_runs": 118
+  },
+  "planned_runs": 360,
+  "scope": "selected-split descriptive baseline; no claim of end-to-end quantum advantage"
+}

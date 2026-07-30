@@ -1,0 +1,120 @@
+{
+  "method": "joint_bbht",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 0,
+      "cached_exact_lookups": 0,
+      "circuit_executions": 24,
+      "new_exact_evaluation_attempts": 0,
+      "total_oracle_calls": 30
+    },
+    "final_incumbent_true_cost": 32195.9363,
+    "initial_incumbent_true_cost": 32195.9363,
+    "oracle_reachability_stratum": "unreachable",
+    "stop_reason": "max_trials_reached",
+    "trial_trace": [
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": true,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      },
+      {
+        "candidate_in_training_set": false,
+        "true_strict_improvement": false
+      }
+    ]
+  },
+  "run_spec": {
+    "run_seed": 3
+  },
+  "scenario": {
+    "scenario_id": "case14-g0g1-w1-s1"
+  }
+}

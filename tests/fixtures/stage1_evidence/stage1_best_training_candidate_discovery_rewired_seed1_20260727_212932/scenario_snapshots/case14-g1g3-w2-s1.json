@@ -1,0 +1,151 @@
+{
+  "best_training_encoded_threshold": 126,
+  "cost_unit": 1000.0,
+  "encoded_cost_scale": 4,
+  "generator_pair": [
+    1,
+    3
+  ],
+  "initial_cache_indices": [
+    0,
+    2,
+    3,
+    6,
+    7,
+    8,
+    10,
+    14
+  ],
+  "initial_incumbent_index": 0,
+  "model_seed": 0,
+  "scenario_id": "case14-g1g3-w2-s1",
+  "state_proxy_table": [
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 126,
+      "state_index": 0
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 126,
+      "state_index": 1
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 2
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 3
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 126,
+      "state_index": 4
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 126,
+      "state_index": 5
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 6
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 7
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 126,
+      "state_index": 8
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 126,
+      "state_index": 9
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 10
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 11
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 126,
+      "state_index": 12
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 126,
+      "state_index": 13
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 14
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 15
+    }
+  ],
+  "training_data_seed": 1,
+  "training_indices": [
+    0,
+    7,
+    10,
+    14,
+    2,
+    6,
+    3,
+    8
+  ],
+  "training_indices_hash": "18d260f59bd8158406ad446904b7c021096bd47b690a6e6ca90031a14ba46c24",
+  "training_labels": [
+    {
+      "state_index": 0,
+      "true_cost": 31487.909
+    },
+    {
+      "state_index": 7,
+      "true_cost": 35555.169
+    },
+    {
+      "state_index": 10,
+      "true_cost": 35598.252
+    },
+    {
+      "state_index": 14,
+      "true_cost": 35665.512
+    },
+    {
+      "state_index": 2,
+      "true_cost": 35487.909
+    },
+    {
+      "state_index": 6,
+      "true_cost": 35555.169
+    },
+    {
+      "state_index": 3,
+      "true_cost": 35487.909
+    },
+    {
+      "state_index": 8,
+      "true_cost": 31598.252
+    }
+  ],
+  "window_start": 2
+}

@@ -1,0 +1,151 @@
+{
+  "best_training_encoded_threshold": 136,
+  "cost_unit": 1000.0,
+  "encoded_cost_scale": 4,
+  "generator_pair": [
+    0,
+    1
+  ],
+  "initial_cache_indices": [
+    0,
+    1,
+    2,
+    8,
+    10,
+    11,
+    12,
+    15
+  ],
+  "initial_incumbent_index": 1,
+  "model_seed": 0,
+  "scenario_id": "case14-g0g1-w2-s1",
+  "state_proxy_table": [
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 138,
+      "state_index": 0
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 136,
+      "state_index": 1
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 136,
+      "state_index": 2
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 126,
+      "state_index": 3
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 138,
+      "state_index": 4
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 136,
+      "state_index": 5
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 136,
+      "state_index": 6
+    },
+    {
+      "hard_logic_feasible": false,
+      "integer_vqc_value": 126,
+      "state_index": 7
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 154,
+      "state_index": 8
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 152,
+      "state_index": 9
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 152,
+      "state_index": 10
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 11
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 154,
+      "state_index": 12
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 152,
+      "state_index": 13
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 152,
+      "state_index": 14
+    },
+    {
+      "hard_logic_feasible": true,
+      "integer_vqc_value": 142,
+      "state_index": 15
+    }
+  ],
+  "training_data_seed": 1,
+  "training_indices": [
+    2,
+    12,
+    0,
+    10,
+    11,
+    8,
+    15,
+    1
+  ],
+  "training_indices_hash": "2025506c08decd4a6fb77a5438a159413040d294687d853c72e87f865af6efca",
+  "training_labels": [
+    {
+      "state_index": 2,
+      "true_cost": 34124.93656
+    },
+    {
+      "state_index": 12,
+      "true_cost": 38521.396544
+    },
+    {
+      "state_index": 0,
+      "true_cost": 34521.396544
+    },
+    {
+      "state_index": 10,
+      "true_cost": 38124.93656
+    },
+    {
+      "state_index": 11,
+      "true_cost": 35665.512
+    },
+    {
+      "state_index": 8,
+      "true_cost": 38521.396544
+    },
+    {
+      "state_index": 15,
+      "true_cost": 35665.512
+    },
+    {
+      "state_index": 1,
+      "true_cost": 34061.971984
+    }
+  ],
+  "window_start": 2
+}

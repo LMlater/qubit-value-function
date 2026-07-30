@@ -16,14 +16,19 @@ from qubit_value_function.selected_split_best_training_audit import (
     SelectedSplitAuditError,
     audit_targeted_best_training_candidate_pilot,
 )
+from tests.stage1_evidence_fixture import (
+    load_selected_split_fixture_manifest,
+    stage1_evidence_fixture_root,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST_PATH = ROOT / "experiments" / "configs" / "stage1_best_training_selected_split_benchmark.json"
+FIXTURE_ROOT = stage1_evidence_fixture_root()
+TARGETED_PILOT_DIR = FIXTURE_ROOT / "stage1_targeted_best_training_candidate_pilot_20260727_221524"
 
 
 def test_selected_split_manifest_reuses_twelve_seed_one_snapshots_and_formal_methods() -> None:
-    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest = load_selected_split_fixture_manifest()
 
     report = preflight_selected_split_manifest(manifest)
     specs = build_selected_split_run_specs(manifest, expected_head="head")
@@ -43,7 +48,7 @@ def test_selected_split_manifest_reuses_twelve_seed_one_snapshots_and_formal_met
 
 
 def test_selected_split_rejects_changed_formal_method_list() -> None:
-    manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest = load_selected_split_fixture_manifest()
     manifest["methods"] = manifest["methods"][:-1]
 
     with pytest.raises(SelectedSplitBenchmarkError, match="formal_method_list_mismatch"):
@@ -52,7 +57,7 @@ def test_selected_split_rejects_changed_formal_method_list() -> None:
 
 def test_read_only_targeted_pilot_audit_accepts_existing_eighty_run_case_study() -> None:
     report = audit_targeted_best_training_candidate_pilot(
-        ROOT / "results" / "stage1_targeted_best_training_candidate_pilot_20260727_221524"
+        TARGETED_PILOT_DIR
     )
 
     assert report["completed_runs"] == 80
@@ -73,5 +78,5 @@ def test_read_only_targeted_pilot_audit_detects_summary_inconsistency(monkeypatc
     monkeypatch.setattr(audit_module, "_load", inconsistent_summary)
     with pytest.raises(SelectedSplitAuditError, match="pilot_summary_completed_runs_mismatch"):
         audit_targeted_best_training_candidate_pilot(
-            ROOT / "results" / "stage1_targeted_best_training_candidate_pilot_20260727_221524"
+            TARGETED_PILOT_DIR
         )

@@ -16,10 +16,12 @@ from qubit_value_function.selected_split_provenance_audit import (
     ProvenanceAuditError,
     audit_selected_split_provenance,
 )
+from tests.stage1_evidence_fixture import stage1_evidence_fixture_root
 
 
 ROOT = Path(__file__).resolve().parents[1]
-RESULT_DIR = ROOT / "results" / "stage1_best_training_selected_split_benchmark_fixed_20260727_231759"
+FIXTURE_ROOT = stage1_evidence_fixture_root()
+RESULT_DIR = FIXTURE_ROOT / "stage1_best_training_selected_split_benchmark_fixed_20260727_231759"
 ACTUAL_HEAD = "6d530a353c523bcf72659fe27d26ceb4fb22504e"
 DECLARED_HEAD = "c959bbdc021e1236f82b2ce958b95568bc38b98f"
 

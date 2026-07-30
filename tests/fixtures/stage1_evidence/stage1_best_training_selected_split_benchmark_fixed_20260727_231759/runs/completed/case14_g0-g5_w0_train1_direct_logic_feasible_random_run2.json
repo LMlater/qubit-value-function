@@ -1,0 +1,83 @@
+{
+  "method": "direct_logic_feasible_random",
+  "result": {
+    "counters": {
+      "actual_ed_lp_solves": 6,
+      "cached_exact_lookups": 14,
+      "new_exact_evaluation_attempts": 6,
+      "proposals_used": 20
+    },
+    "final_incumbent_true_cost": 24578.2152604,
+    "initial_incumbent_true_cost": 28212.01718604706,
+    "oracle_reachability_stratum": "reachable",
+    "stop_reason": "max_consecutive_nonimproving_marked_reached",
+    "trial_trace": [
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": true
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      },
+      {
+        "true_strict_improvement": false
+      }
+    ]
+  },
+  "run_spec": {
+    "run_seed": 2
+  },
+  "scenario": {
+    "scenario_id": "case14-g0g5-w0-s1"
+  }
+}
