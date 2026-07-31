@@ -110,6 +110,12 @@ def decision_cutoff_for_model(model: Any) -> float | None:
     return None if cutoff is None else _finite(cutoff)
 
 
+def is_regression_model(name: str) -> bool:
+    """Threshold QNN output is a probability, never a surrogate cost."""
+
+    return str(name) != "threshold_conditioned_qnn"
+
+
 def _truth_rows(instance: Any) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for pair in GENERATOR_PAIRS:
@@ -139,6 +145,19 @@ def _aggregate(rows: Iterable[dict[str, Any]], keys: tuple[str, ...], metric_fie
             values = [float(row[field]) for row in group if row.get(field) is not None]
             result[field] = _finite(np.mean(values)) if values else None
         result["count"] = len(group); output.append(result)
+    return output
+
+
+def _seed_stability_rows(regression_rows: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Aggregate random seeds inside each unit; never inflate the unit denominator."""
+
+    keys = ("generator_pair", "window_start", "split_seed", "model", "slice")
+    grouped: dict[tuple[Any, ...], list[dict[str, Any]]] = {}
+    for row in regression_rows: grouped.setdefault(tuple(row[key] for key in keys), []).append(row)
+    output = []
+    for key, group in grouped.items():
+        values = np.asarray([float(row["mae"]) for row in group])
+        output.append({**dict(zip(keys, key)), "seed_count": len(group), "mae_seed_mean": _finite(values.mean()), "mae_seed_std": _finite(values.std()), "rmse_seed_mean": _finite(np.mean([float(row["rmse"]) for row in group]))})
     return output
 
 
@@ -187,15 +206,19 @@ def main() -> int:
             rows = [p for p in subset if p["slice"] == slice_name or p["slice_extra"] == slice_name]
             if not rows: continue
             truth_v, pred_v = np.asarray([p["true_cost"] for p in rows]), np.asarray([p["prediction"] for p in rows])
-            metrics = regression_metrics(truth_v, pred_v); regression.append({**dict(zip(("generator_pair", "window_start", "split_seed", "model", "seed"), key)), "slice": slice_name, **metrics, "median_absolute_error": _finite(np.median(np.abs(pred_v-truth_v))), "spearman": _spearman(truth_v, pred_v)})
-            for load in sorted(set(p["load_multiplier"] for p in rows)):
+            if is_regression_model(key[3]):
+                metrics = regression_metrics(truth_v, pred_v); regression.append({**dict(zip(("generator_pair", "window_start", "split_seed", "model", "seed"), key)), "slice": slice_name, **metrics, "median_absolute_error": _finite(np.median(np.abs(pred_v-truth_v))), "spearman": _spearman(truth_v, pred_v)})
+            for load in (sorted(set(p["load_multiplier"] for p in rows)) if is_regression_model(key[3]) else ()):
                 g = [p for p in rows if p["load_multiplier"] == load]; gt=np.asarray([p["true_cost"] for p in g]); gp=np.asarray([p["prediction"] for p in g]); selected_i=int(np.argmin(gp)); best_i=int(np.argmin(gt)); top=np.argsort(gp)[:min(3,len(gp))]
                 ranking.append({**dict(zip(("generator_pair", "window_start", "split_seed", "model", "seed"), key)), "slice": slice_name, "load_multiplier": load, "true_best_predicted_rank": int(np.where(np.argsort(gp)==best_i)[0][0]+1), "top1": int(selected_i==best_i), "top3": int(best_i in top), "predicted_best_true_cost": _finite(gt[selected_i]), "regret": _finite(gt[selected_i]-gt.min())})
             # Strict incumbent threshold from this unit's training states at each load.
             for load in sorted(set(p["load_multiplier"] for p in rows)):
                 g=[p for p in rows if p["load_multiplier"]==load]; all_unit=[p for p in subset if p["load_multiplier"]==load]; train_costs=[p["true_cost"] for p in all_unit if p["state_index"] in build_state_split(key[2])[0]]; threshold=float(np.median(train_costs)); actual=np.asarray([p["true_cost"] < threshold for p in g]); predicted=np.asarray([(p["prediction"] >= next((s["decision_cutoff"] for s in selected if tuple(s[k] for k in ("generator_pair","window_start","split_seed","model","seed"))==key), .5)) if key[3]=="threshold_conditioned_qnn" else (p["prediction"] < threshold) for p in g]); classification.append({**dict(zip(("generator_pair", "window_start", "split_seed", "model", "seed"), key)), "slice": slice_name, "load_multiplier": load, "training_incumbent_threshold": threshold, **_classification(actual,predicted)})
     _write_csv(args.output_dir / "truth_table.csv", truth); _write_csv(args.output_dir / "state_splits.csv", state_splits); _write_csv(args.output_dir / "selected_hyperparameters.csv", selected); _write_csv(args.output_dir / "model_fit_summary.csv", fits); _write_csv(args.output_dir / "predictions.csv", predictions); _write_csv(args.output_dir / "regression_metrics.csv", regression); _write_csv(args.output_dir / "ranking_metrics.csv", ranking); _write_csv(args.output_dir / "classification_metrics.csv", classification)
-    seed_stability = _aggregate(regression, ("model", "slice"), ("mae", "rmse", "maximum_absolute_error", "median_absolute_error", "mean_signed_error")); _write_csv(args.output_dir / "seed_stability.csv", seed_stability); per_scenario = _aggregate(regression, ("generator_pair", "window_start", "split_seed", "model", "slice"), ("mae", "rmse")); _write_csv(args.output_dir / "per_scenario_summary.csv", per_scenario); _write_csv(args.output_dir / "paired_model_comparison.csv", [])
+    seed_stability = _seed_stability_rows(regression); _write_csv(args.output_dir / "seed_stability.csv", seed_stability); per_scenario = _aggregate(regression, ("generator_pair", "window_start", "split_seed", "model", "slice"), ("mae", "rmse")); _write_csv(args.output_dir / "per_scenario_summary.csv", per_scenario)
+    baseline = {(row["generator_pair"], row["window_start"], row["split_seed"], row["slice"]): row for row in per_scenario if row["model"] == "quadratic_ridge"}
+    paired = [{"generator_pair": row["generator_pair"], "window_start": row["window_start"], "split_seed": row["split_seed"], "slice": row["slice"], "model": row["model"], "reference_model": "quadratic_ridge", "mae_difference_vs_reference": _finite(float(row["mae"]) - float(baseline[(row["generator_pair"], row["window_start"], row["split_seed"], row["slice"])]["mae"]))} for row in per_scenario if row["model"] != "quadratic_ridge"]
+    _write_csv(args.output_dir / "paired_model_comparison.csv", paired)
     protocol={"version":"stage2-generalization-diagnostic-v1","generator_pairs":[list(p) for p in GENERATOR_PAIRS],"windows":list(WINDOWS),"split_seeds":list(SPLIT_SEEDS),"loads":list(LOADS),"train_loads":list(TRAIN_LOAD_MULTIPLIERS),"interpolation_loads":list(INTERPOLATION_LOAD_MULTIPLIERS),"extrapolation_loads":list(EXTRAPOLATION_LOAD_MULTIPLIERS),"fit_validation":"6/2 per training load; fit-only normalizers","frozen_qnn_maxiter":{"simplified_expectation_qnn":20,"full_expectation_qnn":20,"threshold_conditioned_qnn":40},"model_seeds":list(MODEL_SEEDS),"test_selection_forbidden":True}
     runtime={"truth_solves":len(truth),"fit_count":len(fits),"qnn_optimization_count":sum(1 for row in fits if "qnn" in row["model"]),"total_runtime_seconds":perf_counter()-run_started}; aggregate={"completed_fits":sum(r["completion_status"]=="completed" for r in fits),"failed_fits":sum(r["completion_status"]!="completed" for r in fits),"nonconverged_fits":sum(not r["converged"] for r in fits),"truth_rows":len(truth),"prediction_rows":len(predictions)}
     manifest={"git_commit":subprocess.check_output(["git","rev-parse","HEAD"],cwd=ROOT,text=True).strip(),"started_at_utc":started.isoformat(),"finished_at_utc":datetime.now(timezone.utc).isoformat(),"completion_status":"completed","expected_truth_rows":1008,"actual_truth_rows":len(truth),"protocol":protocol}
