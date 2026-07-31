@@ -17,6 +17,8 @@ def _write(p:Path,rows):
  fields=list(dict.fromkeys(k for r in rows for k in r))
  with p.open('w',newline='',encoding='utf8') as h:w=csv.DictWriter(h,fieldnames=fields);w.writeheader();w.writerows(rows)
 def _bits():return np.asarray([[(i>>b)&1 for b in range(4)] for i in range(16)],int)
+def is_development_unit_row(row:dict[str,object])->bool:
+ return tuple(int(x) for x in ast.literal_eval(str(row['generator_pair'])))==(0,1) and int(row['window_start'])==0
 def main():
  p=argparse.ArgumentParser(description=__doc__);p.add_argument('--formal-benchmark-dir',type=Path,required=True);p.add_argument('--output-dir',type=Path,required=True);a=p.parse_args()
  if a.output_dir.exists():raise RuntimeError(f'refusing_existing_output_directory:{a.output_dir}')
@@ -26,7 +28,7 @@ def main():
    model=cls(layers=1,head_regularization=.5,theta_regularization=1e-5,maxiter=200,seed=11).fit(bits,loads,target);pred=model.predict(bits,loads);rows.append({'diagnostic':'synthetic','target':target_name,'model':name,'seed':11,'initial_mae':float(np.mean(np.abs(target-target.mean()))),'final_fit_mae':float(np.mean(np.abs(target-pred))),'objective_initial':model.objective_initial,'objective_final':model.objective_final,'converged':model.converged,'fit_status':model.fit_status,'runtime_seconds':model.runtime_seconds})
  truth=_read(a.formal_benchmark_dir/'truth_table.csv');splits=_read(a.formal_benchmark_dir/'state_splits.csv');split=next(r for r in splits if r['generator_pair']=='(0, 1)' and int(r['window_start'])==0 and int(r['split_seed'])==1);fit_by={float(x['load_multiplier']):set(x['indices']) for x in ast.literal_eval(split['fit_indices_by_load'])};unit=[]
  for r in truth:
-  if str(ast.literal_eval(r['generator_pair']))!='(0, 1)' or int(r['window_start'])!=0:continue
+  if not is_development_unit_row(r):continue
   row={'load_multiplier':float(r['load_multiplier']),'state_index':int(r['state_index']),'state_bits':ast.literal_eval(r['state_bits']),'load_vector':ast.literal_eval(r['load_vector']),'true_cost':float(r['true_cost'])};unit.append(row)
  fit=[r for r in unit if r['load_multiplier'] in fit_by and r['state_index'] in fit_by[r['load_multiplier']]];norm=fit_normalizers_from_fit_rows(fit)
  for r in unit:r['normalized_load']=norm.load.transform(r['load_vector']).tolist()

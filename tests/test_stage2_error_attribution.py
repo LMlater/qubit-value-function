@@ -14,6 +14,7 @@ from qubit_value_function.stage2_error_attribution import (
     reserve_penalty_group_label,
 )
 from qubit_value_function.stage2_controlled_alternatives import PairwiseLinearRanker, QuadraticResidualModel
+from experiments.stage2_qnn_capacity_diagnostics_cli import is_development_unit_row
 
 
 def _keyed_row(*, state: int, value: float) -> dict[str, object]:
@@ -71,3 +72,7 @@ def test_pairwise_ranker_uses_only_within_load_fit_pairs() -> None:
     loads = np.asarray([[0.0, 0.0], [0.0, 0.0], [1.0, 1.0], [1.0, 1.0]])
     ranker = PairwiseLinearRanker(seed=7, iterations=5).fit(states, loads, [1.0, 2.0, 4.0, 3.0], [0.85, 0.85, 1.0, 1.0])
     assert np.all(np.isfinite(ranker.score(states, loads)))
+
+
+def test_capacity_diagnostic_matches_development_pair_numerically_not_by_string_format() -> None:
+    assert is_development_unit_row({"generator_pair": "[0, 1]", "window_start": "0"})
