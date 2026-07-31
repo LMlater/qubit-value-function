@@ -14,6 +14,7 @@ class ExpectationQNNConfig:
     theta_regularization: float = 1e-5
     maxiter: int = 20
     seed: int = 0
+    readout: str = "all_nonempty_z_strings"
 
     def __post_init__(self) -> None:
         if int(self.layers) <= 0:
@@ -24,6 +25,8 @@ class ExpectationQNNConfig:
             raise ValueError("theta_regularization must be nonnegative")
         if int(self.maxiter) <= 0:
             raise ValueError("maxiter must be positive")
+        if self.readout not in {"all_nonempty_z_strings", "single_z"}:
+            raise ValueError("readout must be all_nonempty_z_strings or single_z")
 
 
 @dataclass(frozen=True)
@@ -58,6 +61,7 @@ class ExpectationQNNRegressor:
     head: tuple[float, ...]
     target_center: float
     target_scale: float
+    readout: str = "all_nonempty_z_strings"
 
     def predict(
         self,
@@ -69,6 +73,7 @@ class ExpectationQNNRegressor:
             normalized_loads,
             theta=self.theta,
             layers=self.layers,
+            readout=self.readout,
         )
         design = np.column_stack([np.ones(len(features), dtype=float), features])
         normalized = design @ np.asarray(self.head, dtype=float)
@@ -84,7 +89,7 @@ class ExpectationQNNRegressor:
             "head": list(self.head),
             "target_center": float(self.target_center),
             "target_scale": float(self.target_scale),
-            "readout": "all_nonempty_Z_strings_plus_linear_head",
+            "readout": self.readout,
         }
 
 
@@ -177,7 +182,7 @@ def fit_expectation_qnn(
 
     def objective(theta: np.ndarray) -> float:
         features = expectation_feature_matrix(
-            bits, loads, theta=theta, layers=int(config.layers)
+            bits, loads, theta=theta, layers=int(config.layers), readout=config.readout
         )
         head = solve_head(features)
         design = np.column_stack([np.ones(len(features), dtype=float), features])
@@ -202,7 +207,7 @@ def fit_expectation_qnn(
     )
     final_theta = np.asarray(result.x, dtype=float)
     final_features = expectation_feature_matrix(
-        bits, loads, theta=final_theta, layers=int(config.layers)
+        bits, loads, theta=final_theta, layers=int(config.layers), readout=config.readout
     )
     final_head = solve_head(final_features)
     model = ExpectationQNNRegressor(
@@ -213,6 +218,7 @@ def fit_expectation_qnn(
         head=tuple(float(value) for value in final_head),
         target_center=center,
         target_scale=scale,
+        readout=config.readout,
     )
     return QNNFitResult(
         model=model,
@@ -298,14 +304,18 @@ def expectation_feature_matrix(
     *,
     theta: Sequence[float],
     layers: int,
+    readout: str = "all_nonempty_z_strings",
 ) -> np.ndarray:
     bits, loads = _validate_inputs(state_bits, normalized_loads)
-    return np.vstack(
+    if readout not in {"all_nonempty_z_strings", "single_z"}:
+        raise ValueError("readout must be all_nonempty_z_strings or single_z")
+    features = np.vstack(
         [
             _expectation_features(row, load, theta, int(layers))
             for row, load in zip(bits, loads)
         ]
     )
+    return features[:, : bits.shape[1]] if readout == "single_z" else features
 
 
 def threshold_probability(
