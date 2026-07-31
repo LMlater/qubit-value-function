@@ -26,6 +26,11 @@ def _write(path:Path,rows:list[dict[str,object]])->None:
     with path.open('w',newline='',encoding='utf8') as h:
         w=csv.DictWriter(h,fieldnames=fields,extrasaction='raise');w.writeheader();w.writerows(rows)
 def _pair(v:object)->tuple[int,int]:return tuple(int(x) for x in ast.literal_eval(str(v))) # type: ignore[return-value]
+def _as_bool(value:object)->bool:
+    if isinstance(value,bool): return value
+    if str(value).strip().lower() in {'true','1'}: return True
+    if str(value).strip().lower() in {'false','0'}: return False
+    raise ValueError(f'invalid_boolean_value:{value!r}')
 def _array(rows:list[dict[str,object]]):return np.asarray([r['state_bits'] for r in rows],int),np.asarray([r['normalized_load'] for r in rows],float),np.asarray([r['true_cost'] for r in rows],float)
 def _slice(row:dict[str,object],training:set[int],fit:set[tuple[float,int]],validation:set[tuple[float,int]])->str:
     load=float(row['load_multiplier']);state=int(row['state_index'])
@@ -43,7 +48,7 @@ def main()->int:
     component_by_key={(str(_pair(r['generator_pair'])),int(r['window_start']),float(r['load_multiplier']),int(r['state_index'])):r for r in components}
     split_map={(str(r['generator_pair']),int(r['window_start']),int(r['split_seed'])):r for r in splits}; outputs=[];fits=[];reg=[];classification=[];ranking=[];started=datetime.now(timezone.utc)
     for key,split in split_map.items():
-        pair,window,split_seed=key; unit=[{'generator_pair':str(r['generator_pair']),'window_start':int(r['window_start']),'load_multiplier':float(r['load_multiplier']),'state_index':int(r['state_index']),'state_bits':ast.literal_eval(str(r['state_bits'])),'load_vector':ast.literal_eval(str(r['load_vector'])),'true_cost':float(r['true_cost']),'hard_logic_feasible':bool(component_by_key[(str(_pair(r['generator_pair'])),int(r['window_start']),float(r['load_multiplier']),int(r['state_index']))]['hard_logic_feasible'])} for r in truth if str(_pair(r['generator_pair']))==pair and int(r['window_start'])==window]
+        pair,window,split_seed=key; unit=[{'generator_pair':str(r['generator_pair']),'window_start':int(r['window_start']),'load_multiplier':float(r['load_multiplier']),'state_index':int(r['state_index']),'state_bits':ast.literal_eval(str(r['state_bits'])),'load_vector':ast.literal_eval(str(r['load_vector'])),'true_cost':float(r['true_cost']),'hard_logic_feasible':_as_bool(component_by_key[(str(_pair(r['generator_pair'])),int(r['window_start']),float(r['load_multiplier']),int(r['state_index']))]['hard_logic_feasible'])} for r in truth if str(_pair(r['generator_pair']))==pair and int(r['window_start'])==window]
         training=set(ast.literal_eval(str(split['training_indices']))); fit_by={float(x['load_multiplier']):set(x['indices']) for x in ast.literal_eval(str(split['fit_indices_by_load']))}; val_by={float(x['load_multiplier']):set(x['indices']) for x in ast.literal_eval(str(split['validation_indices_by_load']))}; fit_pairs={(l,s) for l,ss in fit_by.items() for s in ss};val_pairs={(l,s) for l,ss in val_by.items() for s in ss}
         fit_rows=[r for r in unit if (r['load_multiplier'],r['state_index']) in fit_pairs];val_rows=[r for r in unit if (r['load_multiplier'],r['state_index']) in val_pairs];norm=fit_normalizers_from_fit_rows(fit_rows)
         for r in unit:r['normalized_load']=norm.load.transform(r['load_vector']).tolist();r['slice']=_slice(r,training,fit_pairs,val_pairs)

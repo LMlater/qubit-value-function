@@ -14,6 +14,7 @@ from qubit_value_function.stage2_error_attribution import (
     reserve_penalty_group_label,
 )
 from qubit_value_function.stage2_controlled_alternatives import PairwiseLinearRanker, QuadraticResidualModel
+from experiments.stage2_controlled_alternatives_cli import _as_bool
 from experiments.stage2_qnn_capacity_diagnostics_cli import is_development_unit_row
 
 
@@ -41,6 +42,13 @@ def test_residual_and_margin_targets_are_constructed_only_from_fit_values() -> N
 def test_feasible_strict_improvement_denominator_excludes_hard_logic_infeasible_rows() -> None:
     labels = feasible_improvement_labels(true_costs=[9.0, 8.0], thresholds=[10.0, 10.0], hard_logic_feasible=[True, False], edlp_success=[True, True])
     assert np.array_equal(labels, np.asarray([True, False]))
+
+
+def test_controlled_alternative_csv_boolean_parser_preserves_false() -> None:
+    assert _as_bool("True") is True
+    assert _as_bool("False") is False
+    with pytest.raises(ValueError, match="invalid_boolean_value"):
+        _as_bool("not-a-bool")
 
 
 def test_unit_seed_aggregation_and_bootstrap_are_deterministic() -> None:
