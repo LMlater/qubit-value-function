@@ -103,6 +103,13 @@ def _model(name: str, seed: int):
     raise ValueError(name)
 
 
+def decision_cutoff_for_model(model: Any) -> float | None:
+    """Return a finite cutoff only for fitted threshold-QNN instances."""
+
+    cutoff = getattr(model, "decision_cutoff", None)
+    return None if cutoff is None else _finite(cutoff)
+
+
 def _truth_rows(instance: Any) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for pair in GENERATOR_PAIRS:
@@ -164,8 +171,9 @@ def main() -> int:
                             if not np.all(np.isfinite(prediction)): raise RuntimeError("nonfinite_prediction")
                         except Exception as exc:
                             status = f"failed:{type(exc).__name__}"; prediction = np.full(len(unit), np.nan)
-                        fits.append({"generator_pair": str(pair), "window_start": window, "split_seed": split_seed, "model": name, "seed": seed, "completion_status": status, "parameter_count": model.parameter_count, "fit_status": model.fit_status, "optimizer_message": model.optimizer_message, "iteration_count": model.iteration_count, "objective_initial": _finite(model.objective_initial), "objective_final": _finite(model.objective_final), "converged": model.converged, "runtime_seconds": _finite(model.runtime_seconds), "decision_cutoff": _finite(model.decision_cutoff) if model.decision_cutoff is not None else None})
-                        selected.append({"generator_pair": str(pair), "window_start": window, "split_seed": split_seed, "model": name, "seed": seed, "selection_source": "frozen_protocol", "qnn_maxiter": getattr(model, "maxiter", None), "decision_cutoff": _finite(model.decision_cutoff) if model.decision_cutoff is not None else None})
+                        cutoff = decision_cutoff_for_model(model)
+                        fits.append({"generator_pair": str(pair), "window_start": window, "split_seed": split_seed, "model": name, "seed": seed, "completion_status": status, "parameter_count": model.parameter_count, "fit_status": model.fit_status, "optimizer_message": model.optimizer_message, "iteration_count": model.iteration_count, "objective_initial": _finite(model.objective_initial), "objective_final": _finite(model.objective_final), "converged": model.converged, "runtime_seconds": _finite(model.runtime_seconds), "decision_cutoff": cutoff})
+                        selected.append({"generator_pair": str(pair), "window_start": window, "split_seed": split_seed, "model": name, "seed": seed, "selection_source": "frozen_protocol", "qnn_maxiter": getattr(model, "maxiter", None), "decision_cutoff": cutoff})
                         for row, value in zip(unit, prediction):
                             predictions.append({"generator_pair": str(pair), "window_start": window, "split_seed": split_seed, "model": name, "seed": seed, "load_multiplier": row["load_multiplier"], "state_index": row["state_index"], "true_cost": row["true_cost"], "prediction": _finite(value), "slice": _slice(row), "unseen_state": row["state_index"] in unseen})
     regression: list[dict[str, Any]] = []; ranking: list[dict[str, Any]] = []; classification: list[dict[str, Any]] = []
