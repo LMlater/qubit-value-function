@@ -13,7 +13,7 @@ from qubit_value_function.stage2_error_attribution import (
     residual_targets_from_fit_rows,
     reserve_penalty_group_label,
 )
-from qubit_value_function.stage2_controlled_alternatives import QuadraticResidualModel
+from qubit_value_function.stage2_controlled_alternatives import PairwiseLinearRanker, QuadraticResidualModel
 
 
 def _keyed_row(*, state: int, value: float) -> dict[str, object]:
@@ -64,3 +64,10 @@ def test_residual_model_constructs_targets_from_fit_costs_only() -> None:
     model = QuadraticResidualModel(correction="linear", seed=11).fit(states, loads, [1.0, 2.0, 3.0, 5.0])
     assert np.isfinite(model.fit_residual_mae)
     assert np.all(np.isfinite(model.predict(states, loads)))
+
+
+def test_pairwise_ranker_uses_only_within_load_fit_pairs() -> None:
+    states = np.asarray([[0, 0, 0, 0], [1, 0, 0, 0], [0, 1, 0, 0], [1, 1, 0, 0]], dtype=int)
+    loads = np.asarray([[0.0, 0.0], [0.0, 0.0], [1.0, 1.0], [1.0, 1.0]])
+    ranker = PairwiseLinearRanker(seed=7, iterations=5).fit(states, loads, [1.0, 2.0, 4.0, 3.0], [0.85, 0.85, 1.0, 1.0])
+    assert np.all(np.isfinite(ranker.score(states, loads)))
